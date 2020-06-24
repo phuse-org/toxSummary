@@ -175,11 +175,11 @@ server <- function(input,output,session) {
   output$selectData <- renderUI({
     datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Program'
+    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     if (is.null(values$selectData)) {
-      selectInput('selectData','Select Program:',datasets,selected='blankData.rds')
+      selectInput('selectData','Select Application:',datasets,selected='blankData.rds')
     } else {
-      selectInput('selectData','Select Program:',datasets,selected=values$selectData)
+      selectInput('selectData','Select Application:',datasets,selected=values$selectData)
     }
   })
   
@@ -217,8 +217,8 @@ server <- function(input,output,session) {
     saveRDS(Data,values$Application)
     datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Program'
-    selectInput('selectData','Select Program:',datasets)
+    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
+    selectInput('selectData','Select Application:',datasets)
     updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
   })
   
@@ -226,8 +226,8 @@ server <- function(input,output,session) {
     file.remove(values$Application)
     datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Program'
-    selectInput('selectData','Select Program:',datasets)
+    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
+    selectInput('selectData','Select Application:',datasets)
     updateSelectInput(session,'selectData',choices=datasets,selected='blankData.rds')
   })
   
@@ -1334,7 +1334,7 @@ server <- function(input,output,session) {
                              conditionalPanel('input.selectData=="blankData.rds"',
                                               textInput('newApplication','Enter Tox Progam Name:')
                              ),
-                             actionButton('saveData','Open New Program',icon=icon('plus-circle')),
+                             actionButton('saveData','Open New Application',icon=icon('plus-circle')),
                              br()
                     ),
                     br(),
@@ -1347,9 +1347,9 @@ server <- function(input,output,session) {
                     menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                              uiOutput('selectData'),
                              conditionalPanel('input.selectData=="blankData.rds"',
-                                              textInput('newApplication','Enter Tox Program Name:')
+                                              textInput('newApplication','Enter Application Number:')
                              ),
-                             actionButton('deleteData','Delete Program',icon=icon('minus-circle')),
+                             actionButton('deleteData','Delete Application',icon=icon('minus-circle')),
                              br()
                     ),
                     hr(),
@@ -1426,9 +1426,9 @@ server <- function(input,output,session) {
                   menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                            uiOutput('selectData'),
                            conditionalPanel('input.selectData=="blankData.rds"',
-                                            textInput('newApplication','Enter Tox Program Name:')
+                                            textInput('newApplication','Enter Application Number:')
                            ),
-                           actionButton('saveData','Open New Program',icon=icon('plus-circle')),
+                           actionButton('saveData','Open New Application',icon=icon('plus-circle')),
                            br()
                   ),
                   br(),
