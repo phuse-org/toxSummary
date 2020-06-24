@@ -4,13 +4,10 @@ library(stringr)
 library(htmltools)
 library(shinydashboard)
 library(shinycssloaders)
-
 library(tidyverse)
 library(ggstance)
 library(ggrepel)
 library(RColorBrewer)
-library(patchwork)
-# library(ggh4x)
 library(DT)
 library(plotly)
 library(officer)
@@ -317,6 +314,7 @@ server <- function(input,output,session) {
     # studyName and data -----
     
     Data <- getData()
+   
     studyName <- paste(input$Species,input$Duration,sep=': ')
     Data[['Nonclinical Information']][[studyName]] <- list(
       Species = input$Species,
@@ -459,7 +457,7 @@ server <- function(input,output,session) {
     } else {
       Data <- getData()
       studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-      print(studyData)
+      #print(studyData)
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
         lapply(1:(numerator*input$nFindings), function(i) {
@@ -594,6 +592,12 @@ server <- function(input,output,session) {
   plotData$Rev <- gsub("\\[|\\]", "", plotData$Reversibility)
   plotData$finding_rev <- paste0(plotData$Findings,"_", plotData$Rev)
   plotData$find_rev_b <- paste0(plotData$Findings, plotData$Reversibility)
+  # plotData$Study <- str_to_lower(plotData$Study)
+  # plotData$Study <- str_to_title(plotData$Study)
+  plotData$Findings <- tolower(plotData$Findings)
+  plotData$Findings <- str_to_title(plotData$Findings)
+  plotData$Dose <- as.numeric(plotData$Dose)
+  
   
   plotData$Rev[plotData$Rev == ""] <- "Not Assessed"
   plotData$Rev[plotData$Rev == "Rev"] <- "Reversible"
@@ -638,31 +642,61 @@ server <- function(input,output,session) {
     df_plot <- getPlotData()
    
     count <- 0
-
     for (i in unique(df_plot$Study)){
-
+      
       ind <- which(df_plot$Study == i)
       study <- df_plot[ind,]
       row_num <- nrow(study)
-
-
+      
+      
       for (j in seq(nrow(study))) {
-
-        dose <- study$Dose[which(study$NOAEL == TRUE)]
-        dose <- unique(dose)
-        k <- count+j
-        df_plot[k, "noael_value"] <- dose
-
+        if (any(study$NOAEL == TRUE)) {
+          dose <- study$Dose[which(study$NOAEL == TRUE)]
+          dose <- unique(dose)
+          k <- count+j
+          df_plot[k, "noael_value"] <- as.numeric(dose)
+          
+        } else {
+          dose <- min(study$Dose)
+          dose <- as.numeric(dose) - 1
+          k <- count + j
+          df_plot[k, "noael_value"] <- as.numeric(dose)
+          
+        }
+        
+        
       }
-
+      
       count <- count +row_num
     }
+ 
     
     df_plot
 
   })
   
    #observeEvent(filter_NOAEL(), {print(filter_NOAEL())})
+  
+  # 
+  # for (i in unique(df_plot$Study)){
+  #   
+  #   ind <- which(df_plot$Study == i)
+  #   study <- df_plot[ind,]
+  #   row_num <- nrow(study)
+  #   
+  #   
+  #   for (j in seq(nrow(study))) {
+  #     
+  #     dose <- study$Dose[which(study$NOAEL == TRUE)]
+  #     dose <- unique(dose)
+  #     k <- count+j
+  #     df_plot[k, "noael_value"] <- dose
+  #     
+  #   }
+  #   
+  #   count <- count +row_num
+  # }
+  
   
 # ## calculate safety margin (SM) ------
 #
@@ -779,15 +813,9 @@ server <- function(input,output,session) {
                                   "}"),
 
                                 rowsGroup = list(0,1,2))) %>%
-      formatStyle(columns = colnames(plotData_tab), `font-size` = "18px") %>% 
-      formatStyle(
-        "Clinical Safety Margin",
-        background = styleColorBar(plotData_tab$"Clinical Safety Margin", 'steelblue'),
-        backgroundSize = '100% 90%',
-        backgroundRepeat = 'no-repeat',
-        backgroundPosition = 'center')
+      formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
-    path <- "yousuf" # folder containing dataTables.rowsGroup.js
+    path <- "DT_extension" # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
       "RowsGroup", "2.0.0",
       path, script = "dataTables.rowsGroup.js")
@@ -877,12 +905,11 @@ server <- function(input,output,session) {
                                 initComplete = JS(
                                   "function(settings, json) {",
                                   "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-                                  "}")))
-      #                           rowsGroup = list(0,1,2,3,4,5)
-      #                         )) %>% 
-      # formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
+                                  "}"),
+                                rowsGroup = list(0,1,2,3,4))) %>%
+      formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
-    path <- "yousuf" # folder containing dataTables.rowsGroup.js
+    path <- "DT_extension" # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
       "RowsGroup", "2.0.0", 
       path, script = "dataTables.rowsGroup.js")
@@ -1111,6 +1138,7 @@ server <- function(input,output,session) {
   output$figure <- renderPlotly({
     
     plotData <- filtered_plot()
+    plotData$Dose <- as.numeric(plotData$Dose)
 
       axis_limit <- calculateSM()
       SM_max <- max(axis_limit$SM)
@@ -1119,32 +1147,56 @@ server <- function(input,output,session) {
       #y_min <- as.numeric(min(axis_limit$Value_order)) -1
       
       # p plot tile height and weight
-      if (SM_max < 400) {
-        p_tile_width <- 0.35
-        p_tile_height <- 0.65
-      } else {
-        p_tile_width <- 0.45
-        p_tile_height <- 0.7
-
-      }
       
-      # 
-      # p_tile_width <- 0.45
-      # p_tile_height <- 0.70
-      
-      finding_count <- length(unique(axis_limit$Findings))
-      
-      # if (finding_count < 3) {
-      #   q_col_width <- 0.2
+      # if (SM_max <= 3) {
+      #   p_tile_width <- 0.17
+      #   p_tile_height <- 0.65
+      # } else if (SM_max > 5 & SM_max <= 100) {
+      #   p_tile_width <- 0.45
+      #   p_tile_height <- 0.65
+      # } else if (SM_max > 5 & SM_max <= 100) {
+      #   p_tile_width <- 0.45
+      #   p_tile_height <- 0.65
+      # } else if (SM_max > 100 & SM_max <= 500) {
+      #   p_tile_width <- 0.60
+      #   p_tile_height <- 0.65
+      # } else if (SM_max > 500 & SM_max <= 1000) {
+      #   p_tile_width <- 0.65
+      #   p_tile_height <- 0.65
       # } else {
-      #   q_col_width <- 0.9
+      #   p_tile_width <- log10(SM_max)*(0.158)
+      #   p_tile_height <- 0.7
       # }
+      
+      # SM_max_log <- log10(SM_max)
+      # p_tile_width <- 0.11641234+ (SM_max_log * 0.23974182) - ((SM_max_log)^2 * 0.04421635) + ((SM_max_log)^3 * 0.00547356)
+      
+      if (SM_max < 2) {
+        p_tile_width <- 0.21
+      } else {
+        x <- log10(SM_max)
+        p_tile_width <- 0.218141 + (x *0.177231) + ( (x)^2 * 0.000962 )- ((x)^3 *0.012639) + ((x)^4 * 0.002044 )
+      }
+
+      
+  
+      p_tile_height <- 0.70
+      
+      finding_count <- length(unique(plotData$Findings))
+      
+      
+      if (finding_count < 4) {
+        q_col_width <- 0.2* finding_count
+      } else {
+        q_col_width <- 0.9
+      }
       # q_col_width <- 0.9
       
       
 
     ## plotdata for p plot (changed) ----
     plotData_p <- plotData
+  
     plotData_p <- plotData_p %>% 
       select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order) %>% 
       #group_by(Study, Dose, SM) %>% 
@@ -1173,11 +1225,13 @@ server <- function(input,output,session) {
       
       plotData$Findings <- as.factor(plotData$Findings)
       plotData$Severity <- as.factor(plotData$Severity)
+      
+      
       # make severity ordered factor
       plotData$Severity <- factor(plotData$Severity, 
                                   levels= c('Absent','Present','Minimal', 'Mild',
                                             'Moderate', 'Marked', 'Severe'), ordered = TRUE)
-      
+    
       #color_manual <- c('transparent','grey','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#b10026')
       color_manual <- c('Absent' = 'transparent',
                         'Present' = 'grey',
@@ -1221,7 +1275,8 @@ server <- function(input,output,session) {
       q <- ggplot(plotData)+
         geom_col(aes(x= Findings, y = Value, fill = Severity, group = Dose),
                  position = position_stack(reverse = TRUE),
-                 color = 'transparent')+
+                 color = 'transparent',
+                 width = q_col_width)+
         geom_text(aes(x = Findings, y = Value, label = Dose, group = Dose, text = Findings),
                   size = 4,
                   color = 'white',
