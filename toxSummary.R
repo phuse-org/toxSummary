@@ -15,6 +15,39 @@ library(flextable)
 library(magrittr)
 # Bugs ####
 
+# Notes from 6/29: ################################
+
+# Data Selection:
+# - Change Enter Tox Program to Enter Application Number
+# - Automatically open new application after entering it rather than having user select from list
+
+# Clinical Data:
+# - Set default to check Start Dose and MRHD
+# - Fix that need to enter both a Start Dose and MRHD
+# - Add solid-lines above Start Dose/MRHD/Custom Dose
+# - Wait for feedback on everything above Start Dose Information: in Clinical Data
+
+# Nonclinical Data:
+# - Move study name below Species and Duration
+# - Add a save button at bottom of Nonclincial Data
+# - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc. 
+# - Move NOAEL checkbox below Cmax and AUC
+# - Add solid-lines above number of Dose levels and above number of findings
+# - Add asterisk next to Dose 1/2/3/etc.
+# - Fix typo in "Partially Revesible"
+
+# Main Panel:
+# - Generate informative error message if safety margin calculation method of Cmax or
+#   AUC is selected but no Cmax or AUC clinical (or nonclinical) data has been provided.
+# - Wait for feedback on table names
+
+# General Notes:
+# - Fix numericInputs to not take negative values for dose and Cmax and AUC
+# - Figure out how to handle data entry in the context of updates to the application'
+# - Explore User-based updates
+
+###################################################
+
 # Project Improvement Ideas:
 # - Add legend to figure that lists dose compared and PK/HED option
 # - Allow user to create display names of findings with legend at bottom
