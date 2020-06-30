@@ -24,17 +24,19 @@ library(magrittr)
 # Clinical Data:
 # - Set default to check Start Dose and MRHD
 # - Fix that need to enter both a Start Dose and MRHD
-# - Add solid-lines above Start Dose/MRHD/Custom Dose
+
+# - Add solid-lines above Start Dose/MRHD/Custom Dose ## yousuf working on
+
 # - Wait for feedback on everything above Start Dose Information: in Clinical Data
 
 # Nonclinical Data:
-# - Move study name below Species and Duration
-# - Add a save button at bottom of Nonclincial Data
-# - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc. 
-# - Move NOAEL checkbox below Cmax and AUC
-# - Add solid-lines above number of Dose levels and above number of findings
-# - Add asterisk next to Dose 1/2/3/etc.
-# - Fix typo in "Partially Revesible"
+# - Move study name below Species and Duration  ## Done
+# - Add a save button at bottom of Nonclincial Data 
+# - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc.  ## working
+# - Move NOAEL checkbox below Cmax and AUC # done
+# - Add solid-lines above number of Dose levels and above number of findings # done
+# - Add asterisk next to Dose 1/2/3/etc. ???
+# - Fix typo in "Partially Revesible" # done
 
 # Main Panel:
 # - Generate informative error message if safety margin calculation method of Cmax or
@@ -42,7 +44,7 @@ library(magrittr)
 # - Wait for feedback on table names
 
 # General Notes:
-# - Fix numericInputs to not take negative values for dose and Cmax and AUC
+# - Fix numericInputs to not take negative values for dose and Cmax and AUC # done, what should be the minimum number? 0?
 # - Figure out how to handle data entry in the context of updates to the application'
 # - Explore User-based updates
 
@@ -427,17 +429,25 @@ server <- function(input,output,session) {
       lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
         if (i %% 4 == 1) {
-          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),NULL)
+          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL)
         } else if (i %% 4 == 2) {
-          checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F)
+          div(style="display: inline-block;vertical-align:top; width: 115px;",
+              numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
+          
+          
         }
         else if (i %% 4 == 3) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'),NULL))
+              numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),min = 0, NULL))
+          
         } else {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),NULL))
+          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F),
+          tags$hr(style = "border-top: 3px dashed red"))
         }
+        
+        
+        
+        
       })
     } else {
       Data <- getData()
@@ -448,16 +458,25 @@ server <- function(input,output,session) {
         if (i %% 4 == 1) {
           textInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']])
         } else if (i %% 4 == 2) {
-          checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']])
+          div(style="display: inline-block;vertical-align:top; width: 115px;",
+              numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'),studyData$Doses[[doseName]][['Cmax']]))
+          
+          
+          
         }
         else if (i %% 4 == 3) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'),studyData$Doses[[doseName]][['Cmax']]))
-        } else {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
               numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),studyData$Doses[[doseName]][['AUC']]))
+          
+        } else {
+         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]),
+
+          hr(style = "border-top: 3px dashed red"))
         }
+       
+        
       })
+
     }
   })
   
@@ -496,6 +515,9 @@ server <- function(input,output,session) {
         lapply(1:(numerator*input$nFindings), function(i) {
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
+            
+            
+            
             textInput(paste0('Finding',I),paste0('Finding ',I,':'),
                       studyData$Findings[[paste0('Finding',I)]]$Finding)
           } else if (i %% numerator == 2) {
@@ -505,17 +527,27 @@ server <- function(input,output,session) {
                          choiceValues=c('[Rev]','[NR]','[PR]',''),
                          selected=studyData$Findings[[paste0('Finding',I)]]$Reversibility)
           } else {
+            
             lapply(1:input$nDoses, function(j) {
               if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
+                
                 selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
                             choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'),
                             selected=studyData$Findings[[paste0('Finding',I)]]$Severity[[paste0('Dose',j)]])
+                
+                
               }
+              
+              
+              
             })
           }
+          
+        
         })
       }
     }
+    
   })
   
   # output$Findings <- renderUI({
@@ -635,7 +667,7 @@ server <- function(input,output,session) {
   plotData$Rev[plotData$Rev == ""] <- "Not Assessed"
   plotData$Rev[plotData$Rev == "Rev"] <- "Reversible"
   plotData$Rev[plotData$Rev == "NR"] <- "Not Reversible"
-  plotData$Rev[plotData$Rev == "PR"] <- "Partially Revesible"
+  plotData$Rev[plotData$Rev == "PR"] <- "Partially Reversible"
   
   plotData <- plotData[which(plotData$Study %in% input$displayStudies),]
 
@@ -1396,6 +1428,9 @@ server <- function(input,output,session) {
                              checkboxInput('MgKg','Dosing in mg/kg?',value=F),
                              conditionalPanel(
                                condition='input.clinDosing.includes("Start Dose")',
+              # hr line                 
+                               tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
+                               
                                h4('Start Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
                                                 numericInput('StartDoseMgKg','*Start Dose (mg/kg/day):',value=NULL)
@@ -1408,6 +1443,9 @@ server <- function(input,output,session) {
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("MRHD")',
+                               ## hr
+                               tags$hr(style="height:3px;border-width:0;color:white;background-color:skyblue"),
+                               
                                h4('MRHD Information:'),
                                conditionalPanel(condition='input.MgKg==true',
                                                 numericInput('MRHDMgKG','*MRHD (mg/kg):',value=NULL)
@@ -1420,6 +1458,11 @@ server <- function(input,output,session) {
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("Custom Dose")',
+                               
+                               
+                            ## hr tag 
+                            tags$hr(style="height:3px;border-width:0;color:white;background-color:white"),
+                               
                                h4('Custom Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
                                                 numericInput('CustomDoseMgKG','*Custom Dose (mg/kg):',value=NULL)
@@ -1438,13 +1481,23 @@ server <- function(input,output,session) {
                              actionButton('saveStudy','Save Study',icon=icon('plus-circle')),
                              actionButton('deleteStudy','Remove Study',icon=icon('minus-circle')),
                              
-                             h4('Study Name:'),
-                             verbatimTextOutput('studyTitle'),
+                           
                              
                              selectInput('Species','*Select Species:',choices=names(speciesConversion)),
                              textInput('Duration','*Study Duration/Description:'),
+                             
+                             h4('Study Name:'),
+                             verbatimTextOutput('studyTitle'),
+                             
+                             tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
+                             
                              numericInput('nDoses','Number of Dose Levels:',value=3,step=1,min=1),
+                            
                              uiOutput('Doses'),
+                             
+                             
+                             tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
+                             
                              numericInput('nFindings','Number of Findings:',value=0,step=1,min=0),
                              uiOutput('Findings'),
                              br()
