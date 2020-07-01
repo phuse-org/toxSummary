@@ -18,25 +18,27 @@ library(magrittr)
 # Notes from 6/29: ################################
 
 # Data Selection:
-# - Change Enter Tox Program to Enter Application Number
+#### - Change Enter Tox Program to Enter Application Number # done
+
 # - Automatically open new application after entering it rather than having user select from list
 
 # Clinical Data:
 # - Set default to check Start Dose and MRHD
 # - Fix that need to enter both a Start Dose and MRHD
+# pop up delete button to confirm delete # added by yousuf
 
-# - Add solid-lines above Start Dose/MRHD/Custom Dose ## yousuf working on
+#### - Add solid-lines above Start Dose/MRHD/Custom Dose ## Done
 
 # - Wait for feedback on everything above Start Dose Information: in Clinical Data
 
 # Nonclinical Data:
-# - Move study name below Species and Duration  ## Done
-# - Add a save button at bottom of Nonclincial Data 
-# - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc.  ## working
-# - Move NOAEL checkbox below Cmax and AUC # done
-# - Add solid-lines above number of Dose levels and above number of findings # done
+#### - Move study name below Species and Duration  ## Done
+#### - Add a save button at bottom of Nonclincial Data 
+#### - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc.  ## Done # dashed line above 1/2/3
+#### - Move NOAEL checkbox below Cmax and AUC # done
+#### - Add solid-lines above number of Dose levels and above number of findings # done
 # - Add asterisk next to Dose 1/2/3/etc. ???
-# - Fix typo in "Partially Revesible" # done
+#### - Fix typo in "Partially Revesible" # done
 
 # Main Panel:
 # - Generate informative error message if safety margin calculation method of Cmax or
@@ -44,7 +46,7 @@ library(magrittr)
 # - Wait for feedback on table names
 
 # General Notes:
-# - Fix numericInputs to not take negative values for dose and Cmax and AUC # done, what should be the minimum number? 0?
+#### - Fix numericInputs to not take negative values for dose and Cmax and AUC # done, what should be the minimum number? 0?
 # - Figure out how to handle data entry in the context of updates to the application'
 # - Explore User-based updates
 
@@ -429,7 +431,9 @@ server <- function(input,output,session) {
       lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
         if (i %% 4 == 1) {
-          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL)
+          div(
+            hr(style = "border-top: 1px dashed skyblue"),
+          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL))
         } else if (i %% 4 == 2) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
               numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
@@ -441,8 +445,7 @@ server <- function(input,output,session) {
               numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),min = 0, NULL))
           
         } else {
-          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F),
-          tags$hr(style = "border-top: 3px dashed red"))
+          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F))
         }
         
         
@@ -456,7 +459,8 @@ server <- function(input,output,session) {
         I <- ceiling(i/4)
         doseName <- names(studyData$Doses)[I]
         if (i %% 4 == 1) {
-          textInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']])
+          div(hr(style = "border-top: 1px dashed skyblue"),
+          textInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']]))
         } else if (i %% 4 == 2) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
               numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'),studyData$Doses[[doseName]][['Cmax']]))
@@ -469,9 +473,7 @@ server <- function(input,output,session) {
               numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),studyData$Doses[[doseName]][['AUC']]))
           
         } else {
-         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]),
-
-          hr(style = "border-top: 3px dashed red"))
+         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
         }
        
         
@@ -488,9 +490,14 @@ server <- function(input,output,session) {
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
         lapply(1:(numerator*input$nFindings), function(i) {
+          
+          
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
-            textInput(paste0('Finding',I),paste0('Finding ',I,':'))
+            div(
+              hr(style = "border-top: 1px dashed skyblue"),
+            textInput(paste0('Finding',I),paste0('Finding ',I,':')))
+            
           } else if (i %% numerator == 2) {
             radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -499,8 +506,9 @@ server <- function(input,output,session) {
           } else {
             lapply(1:input$nDoses, function(j) {
               if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-                selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
+               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
                             choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
+                
               }
             })
           }
@@ -518,8 +526,10 @@ server <- function(input,output,session) {
             
             
             
-            textInput(paste0('Finding',I),paste0('Finding ',I,':'),
-                      studyData$Findings[[paste0('Finding',I)]]$Finding)
+            div(
+              hr(style = "border-top: 1px dashed skyblue"),
+                textInput(paste0('Finding',I),paste0('Finding ',I,':'),
+                      studyData$Findings[[paste0('Finding',I)]]$Finding))
           } else if (i %% numerator == 2) {
             radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -1202,13 +1212,15 @@ server <- function(input,output,session) {
   
   output$figure <- renderPlotly({
     
+    
     plotData <- filtered_plot()
     plotData$Dose <- as.numeric(plotData$Dose)
-
-      axis_limit <- calculateSM()
-      SM_max <- max(axis_limit$SM)
-      y_max <- as.numeric(max(axis_limit$Value_order)) +1
-      q_y_max <- as.numeric(max(axis_limit$Value_order))
+    
+    axis_limit <- calculateSM()
+    suppressWarnings(SM_max <- max(axis_limit$SM))
+    
+    suppressWarnings(y_max <- as.numeric(max(axis_limit$Value_order)) +1)
+    suppressWarnings(q_y_max <- as.numeric(max(axis_limit$Value_order)))
       #y_min <- as.numeric(min(axis_limit$Value_order)) -1
       
       # p plot tile height and weight
@@ -1315,10 +1327,10 @@ server <- function(input,output,session) {
       
       
       p <- ggplot(plotData_p)+
-        geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
-                  color = "transparent", width = p_tile_width, height = p_tile_height)+
-        geom_text(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), text = paste("SM:", SM)), #DoseLabel changed
-                  color = "white", fontface = "bold")+
+      suppressWarnings(geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
+                  color = "transparent", width = p_tile_width, height = p_tile_height))+
+       suppressWarnings(geom_text(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), text = paste("SM:", SM)), #DoseLabel changed
+                  color = "white", fontface = "bold"))+
         scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)),sec.axis = dup_axis())+
         scale_fill_manual(values = color_NOAEL)+
         ylim(0,y_max)+
@@ -1342,11 +1354,11 @@ server <- function(input,output,session) {
                  position = position_stack(reverse = TRUE),
                  color = 'transparent',
                  width = q_col_width)+
-        geom_text(aes(x = Findings, y = Value, label = Dose, group = Dose, text = Findings),
+        suppressWarnings(geom_text(aes(x = Findings, y = Value, label = Dose, group = Dose, text = Findings),
                   size = 4,
                   color = 'white',
                   fontface = 'bold',
-                  position = position_stack(vjust = 0.5, reverse = TRUE))+
+                  position = position_stack(vjust = 0.5, reverse = TRUE)))+
         #scale_y_discrete(position = 'right')+
         ylim(0, q_y_max)+
         scale_fill_manual(values = color_manual)+
@@ -1397,7 +1409,7 @@ server <- function(input,output,session) {
                     menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                              uiOutput('selectData'),
                              conditionalPanel('input.selectData=="blankData.rds"',
-                                              textInput('newApplication','Enter Tox Progam Name:')
+                                              textInput('newApplication','Enter Application Number:')
                              ),
                              actionButton('saveData','Open New Application',icon=icon('plus-circle')),
                              br()
@@ -1428,8 +1440,10 @@ server <- function(input,output,session) {
                              checkboxInput('MgKg','Dosing in mg/kg?',value=F),
                              conditionalPanel(
                                condition='input.clinDosing.includes("Start Dose")',
-              # hr line                 
-                               tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
+                               hr(),
+              # hr line         
+             
+                               #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                                
                                h4('Start Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
@@ -1443,8 +1457,8 @@ server <- function(input,output,session) {
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("MRHD")',
-                               ## hr
-                               tags$hr(style="height:3px;border-width:0;color:white;background-color:skyblue"),
+                               hr(),
+                               #tags$hr(style="height:3px;border-width:0;color:white;background-color:skyblue"),
                                
                                h4('MRHD Information:'),
                                conditionalPanel(condition='input.MgKg==true',
@@ -1460,8 +1474,8 @@ server <- function(input,output,session) {
                                condition='input.clinDosing.includes("Custom Dose")',
                                
                                
-                            ## hr tag 
-                            tags$hr(style="height:3px;border-width:0;color:white;background-color:white"),
+                            hr(),
+                            #tags$hr(style="height:3px;border-width:0;color:white;background-color:white"),
                                
                                h4('Custom Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
@@ -1489,16 +1503,18 @@ server <- function(input,output,session) {
                              h4('Study Name:'),
                              verbatimTextOutput('studyTitle'),
                              
-                             tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
+                             hr(),
+                             #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
                              numericInput('nDoses','Number of Dose Levels:',value=3,step=1,min=1),
                             
                              uiOutput('Doses'),
                              
-                             
-                             tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
+                             hr(),
+                             #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
                              numericInput('nFindings','Number of Findings:',value=0,step=1,min=0),
+                            
                              uiOutput('Findings'),
                              br()
                     ),
