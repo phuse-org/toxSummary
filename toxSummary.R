@@ -1174,7 +1174,7 @@ server <- function(input,output,session) {
     plotData <- calculateSM()
     nStudies <- length(unique(plotData$Study))
     if (nStudies < 2){
-      plotHeight <- as.numeric(350*nStudies)
+      plotHeight <- as.numeric(550*nStudies)
     } else {
       plotHeight <- as.numeric(250*nStudies)
       }
@@ -1249,10 +1249,10 @@ server <- function(input,output,session) {
       # p_tile_width <- 0.11641234+ (SM_max_log * 0.23974182) - ((SM_max_log)^2 * 0.04421635) + ((SM_max_log)^3 * 0.00547356)
       
       if (SM_max < 2) {
-        p_tile_width <- 0.21
+        p_tile_width <- 0.81
       } else {
         x <- log10(SM_max)
-        p_tile_width <- 0.218141 + (x *0.177231) + ( (x)^2 * 0.000962 )- ((x)^3 *0.012639) + ((x)^4 * 0.002044 )
+        p_tile_width <- 0.118141 + (x *0.177231) + ( (x)^2 * 0.000962 )- ((x)^3 *0.012639) + ((x)^4 * 0.002044 )
       }
 
       
