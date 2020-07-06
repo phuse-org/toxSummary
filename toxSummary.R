@@ -1170,15 +1170,15 @@ server <- function(input,output,session) {
  
  #### plotheight ----
 
-  plotHeight <- function() {
-    plotData <- calculateSM()
-    nStudies <- length(unique(plotData$Study))
-    if (nStudies < 2){
-      plotHeight <- as.numeric(550*nStudies)
-    } else {
-      plotHeight <- as.numeric(250*nStudies)
-      }
-  }
+  # plotHeight <- function() {
+  #   plotData <- calculateSM()
+  #   nStudies <- length(unique(plotData$Study))
+  #   if (nStudies < 2){
+  #     plotHeight <- as.numeric(550*nStudies)
+  #   } else {
+  #     plotHeight <- as.numeric(250*nStudies)
+  #     }
+  # }
   
   # y_limit <- function() {
   #   y_axis <- calculateSM()
@@ -1208,6 +1208,21 @@ server <- function(input,output,session) {
   })
   
 
+  
+   plotHeight <- reactive({
+     plotData <- calculateSM()
+     nStudies <- length(unique(plotData$Study))
+     plot_height <- (input$plotheight) * (nStudies)
+     plot_height
+   })
+   
+   
+   p_tile_width <- reactive({
+     width <- input$textbox
+     width
+   })
+  
+  
   
   
   output$figure <- renderPlotly({
@@ -1248,12 +1263,14 @@ server <- function(input,output,session) {
       # SM_max_log <- log10(SM_max)
       # p_tile_width <- 0.11641234+ (SM_max_log * 0.23974182) - ((SM_max_log)^2 * 0.04421635) + ((SM_max_log)^3 * 0.00547356)
       
-      if (SM_max < 2) {
-        p_tile_width <- 0.81
-      } else {
-        x <- log10(SM_max)
-        p_tile_width <- 0.118141 + (x *0.177231) + ( (x)^2 * 0.000962 )- ((x)^3 *0.012639) + ((x)^4 * 0.002044 )
-      }
+    
+    
+      # if (SM_max < 2) {
+      #   p_tile_width <- 0.81
+      # } else {
+      #   x <- log10(SM_max)
+      #   p_tile_width <- 0.118141 + (x *0.177231) + ( (x)^2 * 0.000962 )- ((x)^3 *0.012639) + ((x)^4 * 0.002044 )
+      # }
 
       
   
@@ -1328,7 +1345,7 @@ server <- function(input,output,session) {
       
       p <- ggplot(plotData_p)+
       suppressWarnings(geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
-                  color = "transparent", width = p_tile_width, height = p_tile_height))+
+                  color = "transparent", width = p_tile_width(), height = p_tile_height))+
        suppressWarnings(geom_text(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), text = paste("SM:", SM)), #DoseLabel changed
                   color = "white", fontface = "bold"))+
         scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)),sec.axis = dup_axis())+
@@ -1385,7 +1402,7 @@ server <- function(input,output,session) {
       
       p <- ggplotly(p, tooltip = c("text","text"), height = plotHeight()) %>% 
         plotly::style(showlegend = FALSE)
-      q <- ggplotly(q, tooltip = "text",  height = plotHeight() ) #show warning though
+      q <- ggplotly(q, tooltip = "text",  height = plotHeight()) #show warning though
       
       subplot(p, q, nrows = 1, widths = c(0.7, 0.3), titleX = TRUE, titleY = TRUE) %>% 
         layout(title= "Summary of Toxicology Studies",
@@ -1581,8 +1598,14 @@ ui <- dashboardPage(
         tabPanel('Figure',
                  actionButton('refreshPlot','Refresh Plot'),
                  br(),
-                 selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
-                             selected = "ALL"),
+                
+                 div(style = "display:inline-block;vertical-align:top; width: 215px;", selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
+                             selected = "ALL")),
+            
+                 
+                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2)),
+                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 250, max = 500, value = 250)),
+                
                  br(),
                  withSpinner(plotlyOutput('figure'))
         ),
