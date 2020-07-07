@@ -1599,12 +1599,16 @@ ui <- dashboardPage(
                  actionButton('refreshPlot','Refresh Plot'),
                  br(),
                 
+                 fluidRow(
+                   column(4,
                  div(style = "display:inline-block;vertical-align:top; width: 215px;", selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
-                             selected = "ALL")),
+                             selected = "ALL"))),
             
+                 column(4,
+                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2))),
                  
-                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2)),
-                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 250, max = 500, value = 250)),
+                 column(4, 
+                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 250, max = 500, value = 250)))),
                 
                  br(),
                  withSpinner(plotlyOutput('figure'))
