@@ -259,14 +259,42 @@ server <- function(input,output,session) {
     updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
   })
   
-  observeEvent(input$deleteData,{
+  
+  
+  
+  # observeEvent(input$deleteData,{
+  #   file.remove(values$Application)
+  #   datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+  #   names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
+  #   names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
+  #   selectInput('selectData','Select Application:',datasets)
+  #   updateSelectInput(session,'selectData',choices=datasets,selected='blankData.rds')
+  # })
+  
+  
+  observeEvent(input$deleteData, {
+    showModal(modalDialog(
+      title="Delete Application?",
+      footer = tagList(modalButton("Cancel"),
+                       actionButton("confirmDelete", "Delete")
+                       
+      )
+    ))
+  })
+  
+  
+  observeEvent(input$confirmDelete, {
+
     file.remove(values$Application)
     datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
     updateSelectInput(session,'selectData',choices=datasets,selected='blankData.rds')
+    
+    removeModal()
   })
+  
   
   output$selectStudy <- renderUI({
     req(input$selectData)
@@ -395,8 +423,33 @@ server <- function(input,output,session) {
     saveRDS(Data,values$Application)
   })
   
+  # 
+  # observeEvent(input$deleteStudy,{
+  #   Data <- getData()
+  #   studyIndex <- which(names(Data[['Nonclinical Information']])==input$selectStudy)
+  #   restIndex <- seq(length(names(Data[['Nonclinical Information']])))[-studyIndex]
+  #   restNames <- names(Data[['Nonclinical Information']])[restIndex]
+  #   Data[['Nonclinical Information']] <- Data[['Nonclinical Information']][restNames]
+  #   saveRDS(Data,values$Application)
+  #   studyList <- names(Data[['Nonclinical Information']])
+  #   updateSelectInput(session,'selectStudy',choices=studyList,selected='New Study')
+  # })
   
-  observeEvent(input$deleteStudy,{
+  observeEvent(input$deleteStudy, {
+    showModal(modalDialog(
+
+      title="Delete Study?",
+      footer = tagList(modalButton("Cancel"),
+                       
+                       actionButton("confirmRemove", "Delete")
+                       
+      )
+    ))
+  })
+  
+  
+  observeEvent(input$confirmRemove, {
+    
     Data <- getData()
     studyIndex <- which(names(Data[['Nonclinical Information']])==input$selectStudy)
     restIndex <- seq(length(names(Data[['Nonclinical Information']])))[-studyIndex]
@@ -405,7 +458,14 @@ server <- function(input,output,session) {
     saveRDS(Data,values$Application)
     studyList <- names(Data[['Nonclinical Information']])
     updateSelectInput(session,'selectStudy',choices=studyList,selected='New Study')
+
+
+    removeModal()
   })
+  
+  
+  
+  
   
   output$studyTitle <- renderText({
     paste(input$Species,input$Duration,sep=': ')
@@ -1510,7 +1570,7 @@ server <- function(input,output,session) {
                     menuItem('Nonclinical Data',icon=icon('flask'),tabName = 'Nonclinical Info',
                              uiOutput('selectStudy'),
                              actionButton('saveStudy','Save Study',icon=icon('plus-circle')),
-                             actionButton('deleteStudy','Remove Study',icon=icon('minus-circle')),
+                             actionButton('deleteStudy','Delete Study',icon=icon('minus-circle')),
                              
                            
                              
