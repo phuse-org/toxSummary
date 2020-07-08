@@ -13,6 +13,8 @@ library(plotly)
 library(officer)
 library(flextable)
 library(magrittr)
+library(ggiraph)
+library(patchwork)
 # Bugs ####
 
 # Notes from 6/29: ################################
@@ -1234,9 +1236,9 @@ server <- function(input,output,session) {
   #   plotData <- calculateSM()
   #   nStudies <- length(unique(plotData$Study))
   #   if (nStudies < 2){
-  #     plotHeight <- as.numeric(550*nStudies)
+  #     plotHeight <- as.numeric(8*nStudies)
   #   } else {
-  #     plotHeight <- as.numeric(250*nStudies)
+  #     plotHeight <- as.numeric(5*nStudies)
   #     }
   # }
   
@@ -1275,17 +1277,17 @@ server <- function(input,output,session) {
      plot_height <- (input$plotheight) * (nStudies)
      plot_height
    })
-   
-   
-   p_tile_width <- reactive({
-     width <- input$textbox
-     width
-   })
+   # 
+   # 
+   # p_tile_width <- reactive({
+   #   width <- input$textbox
+   #   width
+   # })
   
   
   
   
-  output$figure <- renderPlotly({
+  output$figure <- renderGirafe({
     
     
     plotData <- filtered_plot()
@@ -1404,10 +1406,17 @@ server <- function(input,output,session) {
       
       
       p <- ggplot(plotData_p)+
-      suppressWarnings(geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
-                  color = "transparent", width = p_tile_width(), height = p_tile_height))+
-       suppressWarnings(geom_text(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), text = paste("SM:", SM)), #DoseLabel changed
-                  color = "white", fontface = "bold"))+
+      # suppressWarnings(geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
+      #             color = "transparent", width = p_tile_width(), height = p_tile_height))+
+        
+        
+       geom_label_interactive(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), tooltip = SM), #DoseLabel changed
+                  color = "white",
+                  fontface = "bold",
+                  size = 6,
+                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
+                  label.padding = unit(0.6, "lines")
+                  )+
         scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)),sec.axis = dup_axis())+
         scale_fill_manual(values = color_NOAEL)+
         ylim(0,y_max)+
@@ -1427,15 +1436,15 @@ server <- function(input,output,session) {
       
       
       q <- ggplot(plotData)+
-        geom_col(aes(x= Findings, y = Value, fill = Severity, group = Dose),
+        geom_col_interactive(aes(x= Findings, y = Value, fill = Severity, group = Dose,  tooltip = Findings),
                  position = position_stack(reverse = TRUE),
                  color = 'transparent',
                  width = q_col_width)+
-        suppressWarnings(geom_text(aes(x = Findings, y = Value, label = Dose, group = Dose, text = Findings),
+        geom_text_interactive(aes(x = Findings, y = Value, label = Dose, group = Dose),
                   size = 4,
                   color = 'white',
                   fontface = 'bold',
-                  position = position_stack(vjust = 0.5, reverse = TRUE)))+
+                  position = position_stack(vjust = 0.5, reverse = TRUE))+
         #scale_y_discrete(position = 'right')+
         ylim(0, q_y_max)+
         scale_fill_manual(values = color_manual)+
@@ -1456,18 +1465,26 @@ server <- function(input,output,session) {
         labs(title = 'Findings' )+
         guides(fill = guide_legend(override.aes = aes(label = "")))
       
-      #p + q + plot_layout(ncol=2,widths=c(3,1))
+      
+      
+      girafe(code = print(p+q+plot_layout(ncol = 2, widths = c(3,1))),
+             fonts = list(sans= "Roboto"),
+             
+             width_svg = 16, height_svg = plotHeight())
+      
+      #q <- girafe(ggobj = q)
+      # p + q + plot_layout(ncol=2,widths=c(3,1))
       
       #ggplotly(p, tooltip = "x")
       
-      p <- ggplotly(p, tooltip = c("text","text"), height = plotHeight()) %>% 
-        plotly::style(showlegend = FALSE)
-      q <- ggplotly(q, tooltip = "text",  height = plotHeight()) #show warning though
-      
-      subplot(p, q, nrows = 1, widths = c(0.7, 0.3), titleX = TRUE, titleY = TRUE) %>% 
-        layout(title= "Summary of Toxicology Studies",
-               xaxis = list(title = "Safety Margin"), 
-               xaxis2 = list(title = ""))
+      # p <- ggplotly(p, tooltip = c("text","text"), height = plotHeight()) %>% 
+      #   plotly::style(showlegend = FALSE)
+      # q <- ggplotly(q, tooltip = "text",  height = plotHeight()) #show warning though
+      # 
+      # subplot(p, q, nrows = 1, widths = c(0.7, 0.3), titleX = TRUE, titleY = TRUE) %>% 
+      #   layout(title= "Summary of Toxicology Studies",
+      #          xaxis = list(title = "Safety Margin"), 
+      #          xaxis2 = list(title = ""))
       
     }
   })
@@ -1664,14 +1681,14 @@ ui <- dashboardPage(
                  div(style = "display:inline-block;vertical-align:top; width: 215px;", selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL"))),
             
-                 column(4,
-                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2))),
+                 # column(4,
+                 # div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2))),
                  
                  column(4, 
-                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 250, max = 500, value = 250)))),
+                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 2, max = 20, value = 8)))),
                 
                  br(),
-                 withSpinner(plotlyOutput('figure'))
+                 withSpinner(girafeOutput('figure'))
         ),
         
         
