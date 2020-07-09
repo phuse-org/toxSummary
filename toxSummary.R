@@ -1402,7 +1402,7 @@ server <- function(input,output,session) {
 # # Study vs safety margin plot  (changed) -------
       color_NOAEL <- c("TRUE" = "#239B56", "FALSE" = "black")
       
-
+      tooltip_css <- "background-color:#3DE3D8;color:black;padding:2px;border-radius:5px;"
       
       
       p <- ggplot(plotData_p)+
@@ -1410,28 +1410,32 @@ server <- function(input,output,session) {
       #             color = "transparent", width = p_tile_width(), height = p_tile_height))+
         
         
-       geom_label_interactive(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), tooltip = SM), #DoseLabel changed
+       geom_label_interactive(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), tooltip =paste0("SM: ", SM)), #DoseLabel changed
                   color = "white",
                   fontface = "bold",
                   size = 6,
                   fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
                   label.padding = unit(0.6, "lines")
                   )+
-        scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)),sec.axis = dup_axis())+
-        scale_fill_manual(values = color_NOAEL)+
+        scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
+        #scale_fill_manual(values = color_NOAEL)+
         ylim(0,y_max)+
         facet_grid( Study ~ .)+
-        labs( title = "Summary of Toxicology Studies")+
+        labs( title = "      Summary of Toxicology Studies", x = "Safety Margin")+
         theme_bw(base_size=12)+
         theme(
           axis.title.y = element_blank(),
               axis.ticks.y= element_blank(),
               axis.text.y = element_blank(),
+           
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
-              plot.title = element_text(hjust = 0.5),
+              plot.title = element_text(size= 20, hjust = 1),
+              
+              axis.title.x = element_text(size = 18, vjust = -0.9),
+              axis.text.x = element_text(size = 16),
               legend.position = "none",
-              strip.text.y = element_text(size=9, color="black", face="bold"),
+              strip.text.y = element_text(size=14, color="black"),
               strip.background = element_rect( fill = "white"))
       
       
@@ -1441,7 +1445,7 @@ server <- function(input,output,session) {
                  color = 'transparent',
                  width = q_col_width)+
         geom_text_interactive(aes(x = Findings, y = Value, label = Dose, group = Dose),
-                  size = 4,
+                  size = 6,
                   color = 'white',
                   fontface = 'bold',
                   position = position_stack(vjust = 0.5, reverse = TRUE))+
@@ -1455,22 +1459,24 @@ server <- function(input,output,session) {
               axis.ticks.y = element_blank(),
               axis.text.y = element_blank(),
               axis.title.x = element_blank(),
-              axis.text.x = element_text(angle = 90),
-              plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(size= 16, angle = 90), #need to work
+              #plot.title = element_text(size=20,hjust = 0.5),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank(),
               panel.grid.major.x = element_line(),
               panel.grid.minor.x = element_blank(),
+              legend.text = element_text(size = 14),
+              legend.title=element_text(size=16),
               legend.justification = "top")+
-        labs(title = 'Findings' )+
+        #labs(title = '' )+
         guides(fill = guide_legend(override.aes = aes(label = "")))
       
       
       
       girafe(code = print(p+q+plot_layout(ncol = 2, widths = c(3,1))),
+             options = list(opts_tooltip(css = tooltip_css)),
              fonts = list(sans= "Roboto"),
-             
-             width_svg = 16, height_svg = plotHeight())
+             width_svg = 18, height_svg = plotHeight())
       
       #q <- girafe(ggobj = q)
       # p + q + plot_layout(ncol=2,widths=c(3,1))
@@ -1640,7 +1646,12 @@ server <- function(input,output,session) {
 # ui function ------
 ui <- dashboardPage(
   
+  
+
   dashboardHeader(title="Nonclinical Summary Tool",titleWidth = 250),
+ 
+
+  
   
   dashboardSidebar(width = 250,
                    sidebarMenuOutput('menu'),
@@ -1652,7 +1663,15 @@ ui <- dashboardPage(
                    
   ),
   
+  
+  
   dashboardBody(
+    
+
+    # tags$head(
+    #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
+    # ),
+
     fluidRow(
       column(4,
              uiOutput('humanDosing')
