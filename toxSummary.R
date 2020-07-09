@@ -1269,8 +1269,14 @@ server <- function(input,output,session) {
     plot_data
   })
   
-
-  
+# 
+#    observeEvent(calculateSM(),{
+#      
+#      
+#      updateSliderInput()
+#    })
+#   
+   
    plotHeight <- reactive({
      plotData <- calculateSM()
      nStudies <- length(unique(plotData$Study))
@@ -1336,7 +1342,7 @@ server <- function(input,output,session) {
 
       
   
-      p_tile_height <- 0.70
+      #p_tile_height <- 0.70
       
       finding_count <- length(unique(plotData$Findings))
       
@@ -1692,23 +1698,26 @@ ui <- dashboardPage(
         
         
         tabPanel('Figure',
-                 actionButton('refreshPlot','Refresh Plot'),
-                 br(),
+                 
+                 
+               
                 
                  fluidRow(
+                   
                    column(4,
-                 div(style = "display:inline-block;vertical-align:top; width: 215px;", selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
+                          span(actionButton('refreshPlot','Refresh Plot'))),
+                  column(4,
+                 span(style = "vertical-align:top; width: 175px;margin:0px;", selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL"))),
             
                  # column(4,
                  # div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2))),
                  
                  column(4, 
-                 div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 2, max = 20, value = 8)))),
+                 span(style = "vertical-align:top; width: 175px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 2, max = 20, value = 6)))),
                 
                  br(),
-                 withSpinner(girafeOutput('figure'))
-        ),
+                 withSpinner(girafeOutput('figure'))),
         
         
   
