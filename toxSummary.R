@@ -1705,17 +1705,16 @@ ui <- dashboardPage(
                  fluidRow(
                    
                    column(4,
-                          span(actionButton('refreshPlot','Refresh Plot'))),
+                        div(actionButton('refreshPlot','Refresh Plot'))),
                   column(4,
-                 span(style = "vertical-align:top; width: 175px;margin:0px;", selectInput("NOAEL_choices", "NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
+                 div(style = "display:inline-block;vertical-align:top;", selectInput("NOAEL_choices", "Filter NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL"))),
             
                  # column(4,
                  # div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2))),
                  
                  column(4, 
-                 span(style = "vertical-align:top; width: 175px;", sliderInput("plotheight", h5("Adjust Plot Height"), min = 2, max = 20, value = 6)))),
-                
+                 div(style = "display:inline-block;vertical-align:top;", sliderInput("plotheight", "Adjust Plot Height", min = 2, max = 20, value = 6)))),
                  br(),
                  withSpinner(girafeOutput('figure'))),
         
