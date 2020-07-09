@@ -35,7 +35,7 @@ library(patchwork)
 
 # Nonclinical Data:
 #### - Move study name below Species and Duration  ## Done
-#### - Add a save button at bottom of Nonclincial Data 
+# - Add a save button at bottom of Nonclincial Data 
 #### - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc.  ## Done # dashed line above 1/2/3
 #### - Move NOAEL checkbox below Cmax and AUC # done
 #### - Add solid-lines above number of Dose levels and above number of findings # done
@@ -1705,16 +1705,12 @@ ui <- dashboardPage(
                  fluidRow(
                    
                    column(4,
-                        div(actionButton('refreshPlot','Refresh Plot'))),
-                  column(4,
-                 div(style = "display:inline-block;vertical-align:top;", selectInput("NOAEL_choices", "Filter NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
-                             selected = "ALL"))),
-            
-                 # column(4,
-                 # div(style = "display:inline-block;vertical-align:top; width: 215px;", sliderInput("textbox", h5("Adjust Text Box"), min = 0.2, max = 0.9, value = 0.2))),
-                 
+                          actionButton('refreshPlot','Refresh Plot')),
+                  column(4, 
+                         selectInput("NOAEL_choices", "Filter NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
+                             selected = "ALL")),
                  column(4, 
-                 div(style = "display:inline-block;vertical-align:top;", sliderInput("plotheight", "Adjust Plot Height", min = 2, max = 20, value = 6)))),
+                        sliderInput("plotheight", "Adjust Plot Height", min = 2, max = 20, value = 6))),
                  br(),
                  withSpinner(girafeOutput('figure'))),
         
