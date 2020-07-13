@@ -345,7 +345,7 @@ server <- function(input,output,session) {
     
   })
   
-  observeEvent(eventExpr = input$saveStudy, {
+  observeEvent(eventExpr = c(input$saveStudy, input$saveStudy_02), {
     doseList <- as.list(seq(input$nDoses))
     names(doseList) <- paste0('Dose',seq(input$nDoses))
     for (i in seq(input$nDoses)) {
@@ -1622,7 +1622,8 @@ server <- function(input,output,session) {
                              numericInput('nFindings','Number of Findings:',value=0,step=1,min=0),
                             
                              uiOutput('Findings'),
-                             br()
+                             br(),
+                             actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'))
                     ),
                     hr(),
                     h6('* Indicates Required Fields')
