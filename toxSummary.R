@@ -17,6 +17,29 @@ library(ggiraph)
 library(patchwork)
 # Bugs ####
 
+
+# notes from 07/13/2020
+
+# nonclinical 
+# group findings, rearranging like study option and put right side of Study
+# fix finding plot so that dose text readable when there are lot more findings
+# add autocompletion for adding findings
+# male/female (sex) severity filtered in plot
+# warning message for save study while required field empty
+# save automatically for study 
+# doule save button not working for savestudy
+
+#clinical
+# fix the issue that two start dose appeared 
+# dosing units
+
+#table 
+# check filter option for numeric column
+# table 2 does not show table sometimes
+# export any appication (whole dataset in rds)
+
+
+
 # Notes from 6/29: ################################
 
 # Data Selection:
