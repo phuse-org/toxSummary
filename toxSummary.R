@@ -27,7 +27,7 @@ library(patchwork)
 # Clinical Data:
 # - Set default to check Start Dose and MRHD
 # - Fix that need to enter both a Start Dose and MRHD
-# pop up delete button to confirm delete # added by yousuf
+#### pop up delete button to confirm delete # added by yousuf
 
 #### - Add solid-lines above Start Dose/MRHD/Custom Dose ## Done
 
@@ -35,7 +35,7 @@ library(patchwork)
 
 # Nonclinical Data:
 #### - Move study name below Species and Duration  ## Done
-# - Add a save button at bottom of Nonclincial Data 
+#### - Add a save button at bottom of Nonclincial Data 
 #### - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc.  ## Done # dashed line above 1/2/3
 #### - Move NOAEL checkbox below Cmax and AUC # done
 #### - Add solid-lines above number of Dose levels and above number of findings # done
@@ -45,6 +45,7 @@ library(patchwork)
 # Main Panel:
 # - Generate informative error message if safety margin calculation method of Cmax or
 #   AUC is selected but no Cmax or AUC clinical (or nonclinical) data has been provided.
+
 # - Wait for feedback on table names
 
 # General Notes:
