@@ -22,20 +22,22 @@ library(patchwork)
 
 # nonclinical 
 # group findings, rearranging like study option and put right side of Study
-# fix finding plot so that dose text readable when there are lot more findings
+# fix finding plot so that dose text readable when there are lot more findings --
+# (text size 4, when more than 6 findings, else textsize 6)
+
 # add autocompletion for adding findings
-# male/female (sex) severity filtered in plot
 # warning message for save study while required field empty
 # save automatically for study 
-# doule save button not working for savestudy
+# double save button not working properly for savestudy
+# male/female (sex) severity filtered in plot
 
 #clinical
 # fix the issue that two start dose appeared 
 # dosing units
 
 #table 
-# check filter option for numeric column
-# table 2 does not show table sometimes
+# check filter option for numeric column (only slider option available)
+# table 2 does not show table sometimes (only shows NOAEL and no absent severity)
 # export any appication (whole dataset in rds)
 
 
@@ -369,7 +371,7 @@ server <- function(input,output,session) {
     
   })
   
-  observeEvent(eventExpr = c(input$saveStudy, input$saveStudy_02), {
+  observeEvent(eventExpr = input$saveStudy, {
     doseList <- as.list(seq(input$nDoses))
     names(doseList) <- paste0('Dose',seq(input$nDoses))
     for (i in seq(input$nDoses)) {
@@ -504,9 +506,23 @@ server <- function(input,output,session) {
     isolate(Data <- getData())
     studyList <- names(Data[['Nonclinical Information']])
     studyList <- studyList[-which(studyList=='New Study')]
-    addUIDep(selectizeInput('displayStudies',label='Select Studies to Display:',choices=studyList,
+    addUIDep(selectizeInput('displayStudies',label='Select and Order Studies to Display:',choices=studyList,
                             selected=studyList,
                             multiple=TRUE,width='100%',options=list(plugins=list('drag_drop','remove_button'))))
+  })
+  
+  ## display findings ----
+  
+  output$displayFindings <- renderUI({
+    req(input$clinDosing)
+    input$selectData
+    input$selectStudy
+    data <- calculateSM()
+    findings <- unique(data$Findings)
+    
+    addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display', choice= findings, selected = findings,
+                            multiple = TRUE, width = "100%", options=list(plugins=list('drag_drop','remove_button'))))
+    
   })
   
   ## output$Doses -----
@@ -609,13 +625,12 @@ server <- function(input,output,session) {
         lapply(1:(numerator*input$nFindings), function(i) {
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
-            
-            
-            
             div(
               hr(style = "border-top: 1px dashed skyblue"),
-                textInput(paste0('Finding',I),paste0('Finding ',I,':'),
-                      studyData$Findings[[paste0('Finding',I)]]$Finding))
+              
+                textInput(paste0('Finding',I),paste0('Finding ',I,':'), studyData$Findings[[paste0('Finding',I)]]$Finding))
+            
+              
           } else if (i %% numerator == 2) {
             radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -1040,7 +1055,7 @@ server <- function(input,output,session) {
       mutate(Findings = as.factor(Findings),
              Study = as.factor(Study)) %>% 
              filter(NOAEL == TRUE) %>% 
-             filter(Severity != "Absent") %>% 
+             #filter(Severity != "Absent") %>% 
              dplyr::select(-NOAEL) %>%
           #group_by(Findings, Rev, Study) %>%
              dplyr::arrange(Study, Dose)
@@ -1704,18 +1719,21 @@ ui <- dashboardPage(
     # ),
 
     fluidRow(
-      column(4,
+      column(2,
              uiOutput('humanDosing')
       ),
-      column(4,
+      column(2,
              conditionalPanel(
                'input.clinDosing != null && input.clinDosing != ""',
                selectInput('SMbasis','Base Safety Margin on:',c('HED','Cmax','AUC'))
              )
       ),
-      column(4,
+      column(3,
              uiOutput('displayStudies')
-      )
+      ),
+      
+      column(5, 
+             uiOutput('displayFindings'))
     ),
     conditionalPanel(
       condition='input.selectData!="blankData.rds"',
@@ -1729,12 +1747,12 @@ ui <- dashboardPage(
                 
                  fluidRow(
                    
-                   column(4,
+                   column(2,
                           actionButton('refreshPlot','Refresh Plot')),
-                  column(4, 
+                  column(2, 
                          selectInput("NOAEL_choices", "Filter NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
-                 column(4, 
+                 column(3, 
                         sliderInput("plotheight", "Adjust Plot Height", min = 2, max = 20, value = 6))),
                  br(),
                  withSpinner(girafeOutput('figure'))),
