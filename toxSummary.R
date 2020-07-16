@@ -371,6 +371,9 @@ server <- function(input,output,session) {
     
   })
   
+  
+  #first save study button
+  
   observeEvent(eventExpr = input$saveStudy, {
     doseList <- as.list(seq(input$nDoses))
     names(doseList) <- paste0('Dose',seq(input$nDoses))
@@ -424,6 +427,64 @@ server <- function(input,output,session) {
     updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
     input$refreshPlot
   })
+  
+  #second save study button
+  
+  observeEvent(eventExpr = input$saveStudy_02, {
+    doseList <- as.list(seq(input$nDoses))
+    names(doseList) <- paste0('Dose',seq(input$nDoses))
+    for (i in seq(input$nDoses)) {
+      doseList[[i]] <- list(Dose=input[[paste0('dose',i)]],
+                            NOAEL = input[[paste0('NOAEL',i)]],
+                            Cmax = input[[paste0('Cmax',i)]],
+                            AUC = input[[paste0('AUC',i)]]
+      )
+    }
+    
+    findingList <- as.list(seq(input$nFindings))
+    names(findingList) <- paste0('Finding',seq(input$nFindings))
+    if (input$nFindings > 0) {
+      for (i in seq(input$nFindings)) {
+        severity <- list()
+        for (j in seq(input$nDoses)) {
+          severity[[paste0("Dose", j)]] <- input[[paste0("Severity", i, "_", j)]]
+        }
+        findingList[[i]] <- list(Finding=input[[paste0('Finding',i)]],
+                                 Reversibility = input[[paste0('Reversibility',i)]],
+                                 # FindingDoses = input[[paste0('FindingDoses',i)]],
+                                 Severity = severity
+        )
+      }
+    } else {
+      findingList[[1]] <- NULL
+    }
+    
+    # Severity data update -----
+    
+    
+    
+    # studyName and data -----
+    
+    Data <- getData()
+    
+    studyName <- paste(input$Species,input$Duration,sep=': ')
+    Data[['Nonclinical Information']][[studyName]] <- list(
+      Species = input$Species,
+      Duration = input$Duration,
+      nDoses = input$nDoses,
+      Doses = doseList,
+      nFindings = input$nFindings,
+      Findings = findingList
+    )
+    
+    saveRDS(Data,values$Application)
+    
+    studyList <- names(Data[['Nonclinical Information']])
+    updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
+    input$refreshPlot
+  })
+  
+  
   
 
   observeEvent(input$saveClinicalInfo, {
