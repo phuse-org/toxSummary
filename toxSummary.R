@@ -579,7 +579,7 @@ server <- function(input,output,session) {
     findings <- unique(find_fact)
     
     addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display', choice= findings, selected = findings,
-                            multiple = TRUE, width = "100%", options=list(plugins=list('drag_drop'))))
+                            multiple = TRUE, width = "100%", options=list(plugins=list('drag_drop','remove_button' ))))
     
   })
   
@@ -633,6 +633,8 @@ server <- function(input,output,session) {
 
   output$Findings <- renderUI({
     req(input$selectStudy)
+ 
+    
     if (input$selectStudy=='New Study') {
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
@@ -641,11 +643,45 @@ server <- function(input,output,session) {
           
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
-            div(
-              hr(style = "border-top: 1px dashed skyblue"),
-            textInput(paste0('Finding',I),paste0('Finding ',I,':')))
             
-          } else if (i %% numerator == 2) {
+            data <- calculateSM()
+            find_fact <- as.factor(data$Findings)
+            findings <- unique(find_fact)
+            
+            print(data)
+            print(findings)
+            
+            if (is.null(findings)) {
+              
+              
+            
+              div(
+                hr(style = "border-top: 1px dashed skyblue"),
+                
+                #rightnow
+                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings, options = list(create = TRUE)))
+ 
+            } else { div(
+              hr(style = "border-top: 1px dashed skyblue"),
+              
+              #rightnow
+              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings, options = list(create = TRUE)))
+              
+            }
+            
+            
+            # div(
+            #   hr(style = "border-top: 1px dashed skyblue"),
+            #   
+            #   #rightnow
+            # selectizeInput(paste0('Finding',I),paste0('Finding ',I,':')), choices = , options = list(create = TRUE))
+            # 
+          
+            
+            
+            
+            
+            } else if (i %% numerator == 2) {
             radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
                                        'Partially Reversible [PR]','Not Assessed'),
@@ -670,10 +706,17 @@ server <- function(input,output,session) {
         lapply(1:(numerator*input$nFindings), function(i) {
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
+            
+            data <- calculateSM()
+            find_fact <- as.factor(data$Findings)
+            findings <- unique(find_fact)
+          
+            
             div(
               hr(style = "border-top: 1px dashed skyblue"),
               
-                textInput(paste0('Finding',I),paste0('Finding ',I,':'), studyData$Findings[[paste0('Finding',I)]]$Finding))
+              #rightnow
+                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings, selected = studyData$Findings[[paste0('Finding',I)]]$Finding, options = list(create = TRUE)))
             
               
           } else if (i %% numerator == 2) {
@@ -813,7 +856,10 @@ server <- function(input,output,session) {
   plotData$Findings <- tolower(plotData$Findings)
   plotData$Findings <- str_to_title(plotData$Findings)
   plotData$Rev <- gsub("\\[|\\]", "", plotData$Reversibility)
+  print(plotData$Findings)
+  
   plotData$finding_rev <- paste0(plotData$Findings,"_", plotData$Rev)
+  print(plotData$finding_rev)
   plotData$find_rev_b <- paste0(plotData$Findings, plotData$Reversibility)
   # plotData$Study <- str_to_lower(plotData$Study)
   # plotData$Study <- str_to_title(plotData$Study)
@@ -1367,6 +1413,8 @@ server <- function(input,output,session) {
    
    
    print_plotdata <- reactive({
+     
+     req(input$displayFindings)
      
      plotData <- filtered_plot()
      plotData$Dose <- as.numeric(plotData$Dose)
