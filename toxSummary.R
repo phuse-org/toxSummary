@@ -1,4 +1,7 @@
-library(shiny) #test
+
+# libraries
+
+library(shiny)
 library(ggplot2)
 library(stringr)
 library(htmltools)
@@ -15,20 +18,23 @@ library(flextable)
 library(magrittr)
 library(ggiraph)
 library(patchwork)
+
+
 # Bugs ####
 
 
 # notes from 07/13/2020
 
 # nonclinical 
-# group findings, rearranging like study option and put right side of Study (giving warning for missing values)
+# group findings, rearranging like study option and put right side of Study (add remove option too)
 # fix finding plot so that dose text readable when there are lot more findings --
 # (text size 4, when more than 6 findings, else textsize 6)
 
-# add autocompletion for adding findings
+##### add autocompletion for adding findings # done
+# make a list for possible findings and provide that list as choices in findings # yousuf
 # warning message for save study while required field empty
 # save automatically for study 
-# double save button not working properly for savestudy # fixed
+##### double save button not working properly for savestudy # fixed
 # male/female (sex) severity filtered in plot
 
 #clinical
@@ -648,8 +654,8 @@ server <- function(input,output,session) {
             find_fact <- as.factor(data$Findings)
             findings <- unique(find_fact)
             
-            print(data)
-            print(findings)
+            #(data)
+            #print(findings)
             
             if (is.null(findings)) {
               
@@ -1585,8 +1591,12 @@ server <- function(input,output,session) {
   ## figure -----
   
   output$figure <- renderGirafe({
-    # req(input$clinDosing)
-    # input$selectData
+    
+    req(input$clinDosing)
+    
+    #req(input$clinDosing)
+    input$selectData
+    
    
     plotData <- filtered_plot()
     plotData$Dose <- as.numeric(plotData$Dose)
@@ -1606,6 +1616,16 @@ server <- function(input,output,session) {
         q_col_width <- 0.9
       }
       # q_col_width <- 0.9
+      
+      
+      
+      # text size of finding plot
+      
+      if (finding_count < 6) {
+        q_text_size <- 6
+      } else {
+        q_text_size <- 4
+      }
       
     ## plotdata for p plot (changed) ----
     plotData_p <- plotData
@@ -1697,7 +1717,7 @@ server <- function(input,output,session) {
                  color = 'transparent',
                  width = q_col_width)+
         geom_text_interactive(aes(x = Findings, y = Value, label = Dose, group = Dose,  tooltip = Findings),
-                  size = 6,
+                  size = q_text_size,
                   color = 'white',
                   fontface = 'bold',
                   position = position_stack(vjust = 0.5, reverse = TRUE))+
@@ -1779,7 +1799,7 @@ server <- function(input,output,session) {
                              conditionalPanel('input.selectData=="blankData.rds"',
                                               textInput('newApplication','Enter Application Number:')
                              ),
-                             actionButton('deleteData','Delete Application',icon=icon('minus-circle')),
+                             actionButton('deleteData','Delete',icon=icon('minus-circle')),
                              br()
                     ),
                     hr(),
@@ -1800,13 +1820,13 @@ server <- function(input,output,session) {
                                
                                h4('Start Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('StartDoseMgKg','*Start Dose (mg/kg/day):',value=NULL)
+                                                numericInput('StartDoseMgKg','*Start Dose (mg/kg/day):',value=NULL,min=0)
                                ),
                                conditionalPanel(condition='input.MgKg==false',
-                                                numericInput('StartDose','*Start Dose (mg/day):',value = NULL)
+                                                numericInput('StartDose','*Start Dose (mg/day):',value = NULL, min=0)
                                ),
-                               numericInput('StartDoseCmax','Start Dose Cmax (ng/mL):',value=NULL),
-                               numericInput('StartDoseAUC','Start Dose AUC (ng*h/mL):',value=NULL)
+                               numericInput('StartDoseCmax','Start Dose Cmax (ng/mL):',value=NULL, min=0),
+                               numericInput('StartDoseAUC','Start Dose AUC (ng*h/mL):',value=NULL, min=0)
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("MRHD")',
@@ -1815,13 +1835,13 @@ server <- function(input,output,session) {
                                
                                h4('MRHD Information:'),
                                conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('MRHDMgKG','*MRHD (mg/kg):',value=NULL)
+                                                numericInput('MRHDMgKG','*MRHD (mg/kg):',value=NULL, min=0)
                                ),
                                conditionalPanel(condition='input.MgKg==false',
-                                                numericInput('MRHD','*MRHD (mg):',value = NULL)
+                                                numericInput('MRHD','*MRHD (mg):',value = NULL, min=0)
                                ),
-                               numericInput('MRHDCmax','MRHD Cmax (ng/mL):',value=NULL),
-                               numericInput('MRHDAUC','MRHD AUC (ng*h/mL):',value=NULL)
+                               numericInput('MRHDCmax','MRHD Cmax (ng/mL):',value=NULL, min=0),
+                               numericInput('MRHDAUC','MRHD AUC (ng*h/mL):',value=NULL, min=0)
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("Custom Dose")',
@@ -1832,13 +1852,13 @@ server <- function(input,output,session) {
                                
                                h4('Custom Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('CustomDoseMgKG','*Custom Dose (mg/kg):',value=NULL)
+                                                numericInput('CustomDoseMgKG','*Custom Dose (mg/kg):',value=NULL, min=0)
                                ),
                                conditionalPanel(condition='input.MgKg==false',
-                                                numericInput('CustomDose','*Custom Dose (mg):',value = NULL)
+                                                numericInput('CustomDose','*Custom Dose (mg):',value = NULL, min=0)
                                ),
-                               numericInput('CustomDoseCmax','Custom Dose Cmax (ng/mL):',value=NULL),
-                               numericInput('CustomDoseAUC','Custom Dose AUC (ng*h/mL):',value=NULL)
+                               numericInput('CustomDoseCmax','Custom Dose Cmax (ng/mL):',value=NULL, min=0),
+                               numericInput('CustomDoseAUC','Custom Dose AUC (ng*h/mL):',value=NULL, min=0)
                              ),
                              actionButton('saveClinicalInfo','Save Clinical Information',icon=icon('plus-circle')),
                              br()
@@ -1936,15 +1956,15 @@ ui <- dashboardPage(
                selectInput('SMbasis','Base Safety Margin on:',c('HED','Cmax','AUC'))
              )
       ),
-      column(3,
+      column(4,
              uiOutput('displayStudies')
       ),
       
-      column(5, 
+      column(4, 
              uiOutput('displayFindings'))
     ),
     conditionalPanel(
-      condition='input.selectData!="blankData.rds"',
+      condition='input.selectData!="blankData.rds" && input.clinDosing != null && input.clinDosing != ""',
       tabsetPanel(
         
         
