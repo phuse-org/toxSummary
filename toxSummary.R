@@ -26,9 +26,9 @@ library(patchwork)
 # notes from 07/13/2020
 
 # nonclinical 
-# group findings, rearranging like study option and put right side of Study (add remove option too)
-# fix finding plot so that dose text readable when there are lot more findings --
-# (text size 4, when more than 6 findings, else textsize 6)
+#### group findings, rearranging like study option and put right side of Study # done
+##### fix finding plot so that dose text readable when there are lot more findings --
+##### (text size 4, when more than 6 findings, else textsize 6)
 
 ##### add autocompletion for adding findings # done
 # make a list for possible findings and provide that list as choices in findings # yousuf
@@ -652,7 +652,11 @@ server <- function(input,output,session) {
             
             data <- calculateSM()
             find_fact <- as.factor(data$Findings)
+            
             findings <- unique(find_fact)
+            #print(paste0("findings _______", findings))
+          
+            
             
             #(data)
             #print(findings)
@@ -665,13 +669,16 @@ server <- function(input,output,session) {
                 hr(style = "border-top: 1px dashed skyblue"),
                 
                 #rightnow
-                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings, options = list(create = TRUE)))
+                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
+                               options = list(create = TRUE, onInitialize = I('function() { this.setValue(""); }'))))
  
             } else { div(
               hr(style = "border-top: 1px dashed skyblue"),
               
               #rightnow
-              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings, options = list(create = TRUE)))
+              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
+                             options = list(create = TRUE, 
+                                            onInitialize = I('function() { this.setValue(""); }'))))
               
             }
             
@@ -862,10 +869,10 @@ server <- function(input,output,session) {
   plotData$Findings <- tolower(plotData$Findings)
   plotData$Findings <- str_to_title(plotData$Findings)
   plotData$Rev <- gsub("\\[|\\]", "", plotData$Reversibility)
-  print(plotData$Findings)
+  #print(plotData$Findings)
   
   plotData$finding_rev <- paste0(plotData$Findings,"_", plotData$Rev)
-  print(plotData$finding_rev)
+  #print(plotData$finding_rev)
   plotData$find_rev_b <- paste0(plotData$Findings, plotData$Reversibility)
   # plotData$Study <- str_to_lower(plotData$Study)
   # plotData$Study <- str_to_title(plotData$Study)
@@ -1416,198 +1423,21 @@ server <- function(input,output,session) {
   
    
    
-   
-   
-   print_plotdata <- reactive({
-     
-     req(input$displayFindings)
-     
-     plotData <- filtered_plot()
-     plotData$Dose <- as.numeric(plotData$Dose)
-     
-     axis_limit <- calculateSM()
-     suppressWarnings(SM_max <- max(axis_limit$SM))
-     
-     suppressWarnings(y_max <- as.numeric(max(axis_limit$Value_order)) +1)
-     suppressWarnings(q_y_max <- as.numeric(max(axis_limit$Value_order)))
-     
-     finding_count <- length(unique(plotData$Findings))
-     plotData$Findings <- as.factor(plotData$Findings)
-     
-     
-     if (finding_count < 4) {
-       q_col_width <- 0.2* finding_count
-     } else {
-       q_col_width <- 0.9
-     }
-     # q_col_width <- 0.9
-     
-     ## plotdata for p plot (changed) ----
-     plotData_p <- plotData
-     
-     plotData_p <- plotData_p %>% 
-       select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order) %>% 
-       #group_by(Study, Dose, SM) %>% 
-       unique()
-     plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
-     plotData_p$SM <- as.numeric(plotData_p$SM)
-     
-     
-     if (nrow(plotData)>0) {
-       plotData$Study <- factor(plotData$Study,levels= input$displayStudies)
-       plotData_p$Study <- factor(plotData_p$Study,levels= input$displayStudies)
-       plotData$Findings <- factor(plotData$Findings, levels = input$displayFindings)
-       plotData$DoseLabel <- factor(paste(plotData$Dose,'mg/kg/day'),levels=unique(paste(plotData$Dose,'mg/kg/day'))[order(unique(as.numeric(plotData$Dose),decreasing=F))])
-       maxFindings <- 1
-       for (doseFinding in plotData$doseFindings) {
-         nFindings <- str_count(doseFinding,'\n')
-         if (nFindings > maxFindings) {
-           maxFindings <- nFindings
-         }
-       }
-       maxFindings <- maxFindings + 1
-       
-       #plotData$Findings <- as.factor(plotData$Findings)
-       plotData$Severity <- as.factor(plotData$Severity)
-       
-       
-       # make severity ordered factor
-       plotData$Severity <- factor(plotData$Severity, 
-                                   levels= c('Absent','Present','Minimal', 'Mild',
-                                             'Moderate', 'Marked', 'Severe'), ordered = TRUE)
-       
-       #color_manual <- c('transparent','grey','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#b10026')
-       color_manual <- c('Absent' = 'transparent',
-                         'Present' = 'grey',
-                         'Minimal' = '#feb24c',
-                         'Mild' = '#fd8d3c',
-                         'Moderate' = '#fc4e2a',
-                         'Marked' = '#e31a1c',
-                         'Severe' = '#b10026')
-       
-       # # safety margin plot ----
-       color_NOAEL <- c("TRUE" = "#239B56", "FALSE" = "black")
-       
-       tooltip_css <- "background-color:#3DE3D8;color:black;padding:2px;border-radius:5px;"
-       
-       
-       # p <- ggplot(plotData_p)+
-       #   # suppressWarnings(geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
-       #   #             color = "transparent", width = p_tile_width(), height = p_tile_height))+
-       #   
-       #   
-       #   geom_label_interactive(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), tooltip =paste0("SM: ", SM)), #DoseLabel changed
-       #                          color = "white",
-       #                          fontface = "bold",
-       #                          size = 6,
-       #                          fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
-       #                          label.padding = unit(0.6, "lines")
-       #   )+
-       #   scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
-       #   #scale_fill_manual(values = color_NOAEL)+
-       #   ylim(0,y_max)+
-       #   facet_grid( Study ~ .)+
-       #   labs( title = "      Summary of Toxicology Studies", x = "Safety Margin")+
-       #   theme_bw(base_size=12)+
-       #   theme(
-       #     axis.title.y = element_blank(),
-       #     axis.ticks.y= element_blank(),
-       #     axis.text.y = element_blank(),
-       #     
-       #     panel.grid.major = element_blank(),
-       #     panel.grid.minor = element_blank(),
-       #     plot.title = element_text(size= 20, hjust = 1),
-       #     
-       #     axis.title.x = element_text(size = 18, vjust = -0.9),
-       #     axis.text.x = element_text(size = 16),
-       #     legend.position = "none",
-       #     strip.text.y = element_text(size=14, color="black"),
-       #     strip.background = element_rect( fill = "white"))
-       # 
-       # # findings plot ----
-       # 
-       # q <- ggplot(plotData)+
-       #   geom_col_interactive(aes(x= Findings, y = Value, fill = Severity, group = Dose,  tooltip = Findings),
-       #                        position = position_stack(reverse = TRUE),
-       #                        color = 'transparent',
-       #                        width = q_col_width)+
-       #   geom_text_interactive(aes(x = Findings, y = Value, label = Dose, group = Dose,  tooltip = Findings),
-       #                         size = 6,
-       #                         color = 'white',
-       #                         fontface = 'bold',
-       #                         position = position_stack(vjust = 0.5, reverse = TRUE))+
-       #   #scale_y_discrete(position = 'right')+
-       #   ylim(0, q_y_max)+
-       #   scale_fill_manual(values = color_manual)+
-       #   facet_grid(Study ~ ., scales = 'free')+
-       #   theme_bw(base_size=12)+
-       #   theme(axis.title.y = element_blank(),
-       #         strip.text.y = element_blank(),
-       #         axis.ticks.y = element_blank(),
-       #         axis.text.y  = element_blank(),
-       #         axis.title.x = element_blank(),
-       #         axis.text.x  = element_text(size= 16, angle = 90), #need to work
-       #         #plot.title = element_text(size=20,hjust = 0.5),
-       #         panel.grid.major.y = element_blank(),
-       #         panel.grid.minor.y = element_blank(),
-       #         panel.grid.major.x = element_line(),
-       #         panel.grid.minor.x = element_blank(),
-       #         legend.text  = element_text(size = 14),
-       #         legend.title = element_text(size = 16),
-       #         legend.justification = "top")+
-       #   #labs(title = '' )+
-       #   guides(fill = guide_legend(override.aes = aes(label = "")))
-       # 
-       # girafe(code = print(p+q+plot_layout(ncol = 2, widths = c(3,1))),
-       #        options = list(opts_tooltip(css = tooltip_css)),
-       #        fonts = list(sans= "Roboto"),
-       #        width_svg = 18, height_svg = plotHeight())
-       # 
-       # #q <- girafe(ggobj = q)
-       # # p + q + plot_layout(ncol=2,widths=c(3,1))
-       # 
-       # #ggplotly(p, tooltip = "x")
-       # 
-       # # p <- ggplotly(p, tooltip = c("text","text"), height = plotHeight()) %>% 
-       # #   plotly::style(showlegend = FALSE)
-       # # q <- ggplotly(q, tooltip = "text",  height = plotHeight()) #show warning though
-       # # 
-       # # subplot(p, q, nrows = 1, widths = c(0.7, 0.3), titleX = TRUE, titleY = TRUE) %>% 
-       # #   layout(title= "Summary of Toxicology Studies",
-       # #          xaxis = list(title = "Safety Margin"), 
-       # #          xaxis2 = list(title = ""))
-       
-     }
-     
-     plotData
-     
-     
-     
-   })
-   
-   
-   observeEvent(print_plotdata(), {print(print_plotdata())})
-  
   ## figure -----
   
   output$figure <- renderGirafe({
     
     req(input$clinDosing)
-    
-    #req(input$clinDosing)
     input$selectData
     
-   
     plotData <- filtered_plot()
+    plotData <- plotData[which(plotData$Findings %in% input$displayFindings),]
     plotData$Dose <- as.numeric(plotData$Dose)
-    
     axis_limit <- calculateSM()
     suppressWarnings(SM_max <- max(axis_limit$SM))
-    
     suppressWarnings(y_max <- as.numeric(max(axis_limit$Value_order)) +1)
     suppressWarnings(q_y_max <- as.numeric(max(axis_limit$Value_order)))
-      
-      finding_count <- length(unique(plotData$Findings))
+    finding_count <- length(unique(plotData$Findings))
       
       
       if (finding_count < 4) {
