@@ -729,7 +729,9 @@ server <- function(input,output,session) {
               hr(style = "border-top: 1px dashed skyblue"),
               
               #rightnow
-                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings, selected = studyData$Findings[[paste0('Finding',I)]]$Finding, options = list(create = TRUE)))
+                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
+                               selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
+                               options = list(create = TRUE)))
             
               
           } else if (i %% numerator == 2) {
@@ -1601,6 +1603,41 @@ server <- function(input,output,session) {
   })
   
   
+  ## download rds file
+
+  
+  output$download_rds <- renderUI({
+    
+    datasets <- c(grep('.rds',list.files('Applications',full.names = T),value=T))
+    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
+    
+    
+    selectInput("downloadRDS", "Download Application", choices = datasets, selected = NULL)
+    
+    
+  })
+  
+  
+ 
+
+  
+  # observeEvent(input$downloadRDS, {print(input$downloadRDS)})
+  
+  
+  output$down_btn <- downloadHandler(
+    filename = function() {
+      
+      app_name <- unlist(strsplit(input$downloadRDS, "/"))[2]
+      app_name
+    },
+    content = function(file) {
+    
+      
+      file.copy(input$downloadRDS, file)
+      
+      
+    }
+  )
   
   
   # output$menu function -----
@@ -1838,8 +1875,18 @@ ui <- dashboardPage(
                
       ),
       
+    
+      
       tabPanel("Table_All",
-               downloadButton("down_all", "Docx file download"))
+               downloadButton("down_all", "Docx file download")),
+      
+      tabPanel("Download_Application",
+               br(),
+               
+               uiOutput("download_rds"),
+               downloadButton("down_btn", "Download Application")
+               
+      )
   ))))
 
 
