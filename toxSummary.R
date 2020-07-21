@@ -1610,18 +1610,12 @@ server <- function(input,output,session) {
     
     datasets <- c(grep('.rds',list.files('Applications',full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    
-    
     selectInput("downloadRDS", "Download Application", choices = datasets, selected = NULL)
-    
     
   })
   
-  
- 
 
-  
-  # observeEvent(input$downloadRDS, {print(input$downloadRDS)})
+  #observeEvent(input$downloadRDS, {print(input$upload_rds$datapath)})
   
   
   output$down_btn <- downloadHandler(
@@ -1631,13 +1625,22 @@ server <- function(input,output,session) {
       app_name
     },
     content = function(file) {
-    
-      
       file.copy(input$downloadRDS, file)
-      
-      
     }
   )
+  
+  ## upload file rds
+  
+  observe({
+    if (is.null(input$upload_rds)) return()
+    file.copy(input$upload_rds$datapath,   paste0("Applications/", input$upload_rds$name))
+    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
+    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
+    selectInput('selectData','Select Application:',datasets)
+    updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
+  })
+  
   
   
   # output$menu function -----
@@ -1884,7 +1887,12 @@ ui <- dashboardPage(
                br(),
                
                uiOutput("download_rds"),
-               downloadButton("down_btn", "Download Application")
+               downloadButton("down_btn", "Download Application"),
+               br(),
+               
+               h4("Upload Application in RDS format"),
+               fileInput("upload_rds", "Upload", multiple = F)
+
                
       )
   ))))
