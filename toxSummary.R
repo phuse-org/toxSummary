@@ -1851,7 +1851,7 @@ ui <- dashboardPage(
                          selectInput("NOAEL_choices", "Filter NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
                  column(3, 
-                        sliderInput("plotheight", "Adjust Plot Height", min = 2, max = 20, value = 6))),
+                        sliderInput("plotheight", "Adjust Plot Height", min = 1, max = 15, value = 6))),
                  br(),
                  withSpinner(girafeOutput('figure'))),
         
