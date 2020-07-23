@@ -258,7 +258,8 @@ server <- function(input,output,session) {
     req(input$selectData)
     if (input$selectData!='blankData.rds') {
       HTML(paste(
-        p(HTML(paste0('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Study</u></h4><h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+        p(HTML(paste0('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
+                      <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                       (basename(unlist(strsplit(input$selectData,'.rds')))),'</h4>')
         ))
       ))
@@ -584,7 +585,7 @@ server <- function(input,output,session) {
     find_fact <- as.factor(data$Findings)
     findings <- unique(find_fact)
     
-    addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display', choice= findings, selected = findings,
+    addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display:', choice= findings, selected = findings,
                             multiple = TRUE, width = "100%", options=list(plugins=list('drag_drop','remove_button' ))))
     
   })
