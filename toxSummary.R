@@ -259,7 +259,7 @@ server <- function(input,output,session) {
     if (input$selectData!='blankData.rds') {
       HTML(paste(
         p(HTML(paste0('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
-                      <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                      <h4 style= "color:skyblue"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                       (basename(unlist(strsplit(input$selectData,'.rds')))),'</h4>')
         ))
       ))
