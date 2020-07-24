@@ -212,8 +212,13 @@ values$selectData <- NULL
 
 # Species Conversion ----
 
-speciesConversion <- c(6.2,1.8,3.1,3.1)
-names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit')
+speciesConversion <- c(6.2,1.8,3.1,3.1
+                       ,12.3,1.1,4.6,7.4)
+names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit',
+                              'Mouse', 'Mini-pig', 'Guinea pig', 'Hamster')
+
+# speciesConversion <- c(6.2,1.8,3.1,3.1)
+# names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit')
 
 clinDosingOptions <- c('Start Dose','MRHD','Custom Dose')
 
@@ -869,8 +874,8 @@ server <- function(input,output,session) {
     }
   }
   
-  plotData$Findings <- tolower(plotData$Findings)
-  plotData$Findings <- str_to_title(plotData$Findings)
+  #plotData$Findings <- tolower(plotData$Findings)
+  #plotData$Findings <- str_to_title(plotData$Findings)
   plotData$Rev <- gsub("\\[|\\]", "", plotData$Reversibility)
   #print(plotData$Findings)
   
