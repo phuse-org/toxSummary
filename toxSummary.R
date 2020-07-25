@@ -657,15 +657,12 @@ server <- function(input,output,session) {
           if (i %% numerator == 1) {
             
             data <- calculateSM()
+            
             find_fact <- as.factor(data$Findings)
             
             findings <- unique(find_fact)
             #print(paste0("findings _______", findings))
           
-            
-            
-            #(data)
-            #print(findings)
             
             if (is.null(findings)) {
               
@@ -831,10 +828,11 @@ server <- function(input,output,session) {
   
  getPlotData <- reactive({
   Data <- getData()
-  plotData <- data.frame(matrix(ncol = 18 ))
+  plotData <- data.frame(matrix(ncol = 20 ))
   column_names <- c("Study", "Species", "Months", "Dose_num", "Dose", 
                     "NOAEL", "Cmax", "AUC", "Findings",
-                    "Reversibility", "Severity", "Value", "Value_order", "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value")
+                    "Reversibility", "Severity", "Value", "Value_order", 
+                    "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value", "Severity_max", "Severity_num")
   colnames(plotData) <- column_names
   
   
@@ -865,6 +863,9 @@ server <- function(input,output,session) {
           plotData[count, "SM_start_dose"] <- NA
           plotData[count, "SM_MRHD"] <- NA
           plotData[count, "noael_value"] <- NA
+          plotData[count, "Severity_max"] <- NA
+          plotData[count, "Severity_num"] <- NA
+          
           
           count <- count+1
           
@@ -895,6 +896,12 @@ server <- function(input,output,session) {
   plotData$Rev[plotData$Rev == "PR"] <- "Partially Reversible"
   
   plotData <- plotData[which(plotData$Study %in% input$displayStudies),]
+  
+  plotData$Severity <- factor(plotData$Severity, 
+                              levels= c('Absent','Present','Minimal', 'Mild',
+                                        'Moderate', 'Marked', 'Severe'), ordered = TRUE)
+  
+  plotData$Severity_num <- as.numeric(plotData$Severity)
 
   return(plotData)
   
@@ -936,6 +943,7 @@ server <- function(input,output,session) {
       
       ind <- which(df_plot$Study == i)
       study <- df_plot[ind,]
+      max_severe <- max(study$Severity)
       row_num <- nrow(study)
       
       
@@ -945,12 +953,14 @@ server <- function(input,output,session) {
           dose <- unique(dose)
           k <- count+j
           df_plot[k, "noael_value"] <- as.numeric(dose)
+          df_plot[k, "Severity_max"] <- max_severe
           
         } else {
           dose <- min(study$Dose)
           dose <- as.numeric(dose) - 1
           k <- count + j
           df_plot[k, "noael_value"] <- as.numeric(dose)
+          df_plot[k, "Severity_max"] <- max_severe
           
         }
         
@@ -1131,8 +1141,9 @@ server <- function(input,output,session) {
       flextable() %>%
       merge_v(j = ~ Findings + Reversibility + Study) %>%
 
-      flextable::autofit() %>%
+      #flextable::autofit() %>%
       add_header_row(values = c("Nonclinical Findings of Potential Clinical Relevance"), colwidths = c(5)) %>%
+      flextable::autofit() %>% 
       theme_box()
     #fontsize(size = 18, part = "all") %>%
     plotData_tab
@@ -1159,20 +1170,44 @@ server <- function(input,output,session) {
   #### table 02
   
   dt_02 <- reactive({
-    
+ 
     plotData_tab <- calculateSM()
     plotData_tab <- plotData_tab %>% 
-      dplyr::select(Study, Dose, NOAEL, Cmax, AUC, SM, Findings, Severity) %>% 
-      mutate(Findings = as.factor(Findings),
-             Study = as.factor(Study)) %>% 
+      dplyr::select(Study, Dose, NOAEL, Cmax, AUC, SM) %>% 
+      mutate(Study = as.factor(Study)) %>% 
              filter(NOAEL == TRUE) %>% 
              #filter(Severity != "Absent") %>% 
              dplyr::select(-NOAEL) %>%
           #group_by(Findings, Rev, Study) %>%
              dplyr::arrange(Study, Dose)
+    
+    
+    plotdata_finding <- calculateSM()
+    
+    greater_than_noeal <- plotdata_finding[which(plotdata_finding$Dose>plotdata_finding$noael_value),]
+    greater_than_noeal <- greater_than_noeal %>% 
+      filter(Severity_max==Severity_num) %>% 
+      select(Study, Findings) %>% 
+      distinct() %>% 
+      mutate(Study = as.factor(Study))
+    
+   
+    
+    
+    plotData_tab <- full_join(plotData_tab, greater_than_noeal, by="Study") %>% 
+      arrange(Study,Dose,Cmax,AUC,SM,Findings) %>% 
+      rename(
+        "NOAEL (mg/kg/day)" = Dose,
+        "Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
+        "Safety Margin" = SM,
+        "Maximum Findings at Greater than NOAEL for the Study" = Findings
+      )
+    
     plotData_tab
     
   })
+  
+ observeEvent(dt_02(), {print(dt_02())})
   
 # make column name same as flextable (add unit in DT table)
   output$table_02 <- renderDT({
@@ -1193,7 +1228,7 @@ server <- function(input,output,session) {
                                   "function(settings, json) {",
                                   "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
                                   "}"),
-                                rowsGroup = list(0,1,2,3,4))) %>%
+                                rowsGroup = list(0,1,2,3,4,5))) %>%
       formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
     path <- "DT_extension" # folder containing dataTables.rowsGroup.js
@@ -1216,14 +1251,23 @@ server <- function(input,output,session) {
   
   dt_to_flex_02 <- reactive({
     plotData_tab <- filtered_tab_02()
+    plotData_tab <- plotData_tab %>% 
+      rename(
+         "Dose" ="NOAEL (mg/kg/day)",
+         "Cmax" = "Cmax (ng/ml)",
+         "AUC" = "AUC (ng*h/ml)", 
+         "SM"= "Safety Margin",
+         "Findings" = "Maximum Findings at Greater than NOAEL for the Study"
+      )
     plotData_tab <- plotData_tab %>%
       flextable() %>% 
-          merge_v(j = ~ Study + Dose + Cmax+ AUC +SM) %>%
+          merge_v(j = ~ Study + Dose + Cmax+ AUC +SM+Findings) %>%
           flextable::autofit() %>% 
       
-          set_header_labels("Dose" = "Dose (mg/kg/day)",
+          set_header_labels("Dose" = "NOAEL (mg/kg/day)",
                         "Cmax" = "Cmax (ng/ml)",
                         "AUC" = "AUC (ng*h/ml)",
+                        "Findings" = "Maximum Findings at Greater than NOAEL for the Study",
                         "SM" = "Safety Margin") %>% 
           theme_box()
     plotData_tab
