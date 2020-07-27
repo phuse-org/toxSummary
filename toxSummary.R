@@ -249,7 +249,7 @@ roundSigfigs <- function(x,N=2) {
 server <- function(input,output,session) {
 
   output$selectData <- renderUI({
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     if (is.null(values$selectData)) {
@@ -283,7 +283,7 @@ server <- function(input,output,session) {
   observe({
     req(input$selectData)
     if (input$selectData == 'blankData.rds') {
-      values$Application <- paste0('Applications/',input$newApplication,'.rds')
+      values$Application <- paste0(user(), "/",input$newApplication,'.rds')
     } else {
       values$Application <- input$selectData
     }
@@ -292,7 +292,7 @@ server <- function(input,output,session) {
   observeEvent(input$saveData,{
     Data <- getData()
     saveRDS(Data,values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
@@ -300,7 +300,7 @@ server <- function(input,output,session) {
   })
   
   
-  
+  #observeEvent(input$saveData, {print(list.files(user(), full.names = T))})
   
   # observeEvent(input$deleteData,{
   #   file.remove(values$Application)
@@ -326,7 +326,7 @@ server <- function(input,output,session) {
   observeEvent(input$confirmDelete, {
 
     file.remove(values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
@@ -1681,7 +1681,7 @@ server <- function(input,output,session) {
   
   output$download_rds <- renderUI({
     
-    datasets <- c(grep('.rds',list.files('Applications',full.names = T),value=T))
+    datasets <- c(grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     selectInput("downloadRDS", "Download Application", choices = datasets, selected = NULL)
     
@@ -1706,8 +1706,8 @@ server <- function(input,output,session) {
   
   observe({
     if (is.null(input$upload_rds)) return()
-    file.copy(input$upload_rds$datapath,   paste0("Applications/", input$upload_rds$name))
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    file.copy(input$upload_rds$datapath,   paste0(user(), "/",  input$upload_rds$name))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
