@@ -1090,6 +1090,27 @@ server <- function(input,output,session) {
 
 
   
+  #### user folder 
+  
+  user <- reactive({
+    #url_search <- session$clientData$url_search
+    #username <- unlist(strsplit(url_search,'user='))[2]
+    username <- c("md.ali")
+    return(username)
+  })
+  
+  observeEvent(user(), {
+    
+    dir_list <- list.dirs(full.names = F, recursive = F)
+    if (!user() %in% dir_list) {
+      dir.create(user())
+      
+    }
+    
+    })
+  
+  
+  
   output$table_01 <- renderDT({
     plotData_tab <- dt_01()
   
@@ -1154,7 +1175,7 @@ server <- function(input,output,session) {
 
 
 
-  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = "table_01.docx")})
+  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = paste0(user(), "/table_01.docx"))})
 
 
 
@@ -1163,7 +1184,7 @@ server <- function(input,output,session) {
       paste("table_01", ".docx")
     },
     content = function(file) {
-      file.copy("table_01.docx", file)
+      file.copy(paste0(user(),"/table_01.docx"), file)
 
 
     }
@@ -1278,7 +1299,7 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = "table_02.docx")})
+  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = paste0(user(), "/table_02.docx"))})
   
   
   
@@ -1287,7 +1308,7 @@ server <- function(input,output,session) {
       paste("table_02", ".docx")
     },
     content = function(file) {
-      file.copy("table_02.docx", file)
+      file.copy(paste0(user(), "/table_02.docx"), file)
       
       
     }
@@ -1374,7 +1395,7 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = "table_03.docx")})
+  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = paste0(user(), "/table_03.docx") )})
 
   
   output$down_03_doc <- downloadHandler(
@@ -1382,7 +1403,7 @@ server <- function(input,output,session) {
       paste("table_03", ".docx")
     },
     content = function(file) {
-      file.copy("table_03.docx", file)
+      file.copy(paste0(user(), "/table_03.docx"), file)
       
       
     }
@@ -1408,7 +1429,7 @@ server <- function(input,output,session) {
      doc_02
    })
 
-  observeEvent(download_all(), {print(download_all() , target = "table_all.docx")})
+  observeEvent(download_all(), {print(download_all() , target = paste0(user(), "/table_all.docx"))})
 
 
 
@@ -1417,7 +1438,7 @@ server <- function(input,output,session) {
        paste("table_all", ".docx")
      },
      content = function(file) {
-       file.copy("table_all.docx", file)
+       file.copy(paste0(user(), "/table_all.docx"), file)
 
 
      }
