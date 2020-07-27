@@ -643,6 +643,8 @@ server <- function(input,output,session) {
   
   # findings with severity -----
 
+
+  
   output$Findings <- renderUI({
     req(input$selectStudy)
  
@@ -1207,7 +1209,7 @@ server <- function(input,output,session) {
     
   })
   
- observeEvent(dt_02(), {print(dt_02())})
+ #observeEvent(dt_02(), {print(dt_02())})
   
 # make column name same as flextable (add unit in DT table)
   output$table_02 <- renderDT({
