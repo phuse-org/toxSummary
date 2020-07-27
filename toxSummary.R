@@ -1188,7 +1188,7 @@ server <- function(input,output,session) {
     
     greater_than_noeal <- plotdata_finding[which(plotdata_finding$Dose>plotdata_finding$noael_value),]
     greater_than_noeal <- greater_than_noeal %>% 
-      filter(Severity_max==Severity_num) %>% 
+      #filter(Severity_max==Severity_num) %>% 
       select(Study, Findings) %>% 
       distinct() %>% 
       mutate(Study = as.factor(Study))
@@ -1202,7 +1202,7 @@ server <- function(input,output,session) {
         "NOAEL (mg/kg/day)" = Dose,
         "Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
         "Safety Margin" = SM,
-        "Maximum Findings at Greater than NOAEL for the Study" = Findings
+        "Findings at Greater than NOAEL for the Study" = Findings
       )
     
     plotData_tab
@@ -1259,7 +1259,7 @@ server <- function(input,output,session) {
          "Cmax" = "Cmax (ng/ml)",
          "AUC" = "AUC (ng*h/ml)", 
          "SM"= "Safety Margin",
-         "Findings" = "Maximum Findings at Greater than NOAEL for the Study"
+         "Findings" = "Findings at Greater than NOAEL for the Study"
       )
     plotData_tab <- plotData_tab %>%
       flextable() %>% 
@@ -1269,7 +1269,7 @@ server <- function(input,output,session) {
           set_header_labels("Dose" = "NOAEL (mg/kg/day)",
                         "Cmax" = "Cmax (ng/ml)",
                         "AUC" = "AUC (ng*h/ml)",
-                        "Findings" = "Maximum Findings at Greater than NOAEL for the Study",
+                        "Findings" = "Findings at Greater than NOAEL for the Study",
                         "SM" = "Safety Margin") %>% 
           theme_box()
     plotData_tab
