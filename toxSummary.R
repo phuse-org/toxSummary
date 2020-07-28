@@ -247,6 +247,47 @@ roundSigfigs <- function(x,N=2) {
 # Server function started here (selectData) ----
 
 server <- function(input,output,session) {
+  
+  
+  
+  user_name <- modalDialog(
+    title = "Welcome to toxSummary App",
+    textInput("user", "Insert FDA Email:"),
+    easyClose = F,
+    footer = tagList(
+      actionButton("run", "Enter")
+    )
+  )
+  
+  showModal(user_name)
+  
+  observeEvent(input$run, {
+    
+    req(input$user)
+    
+    fda_domain <- unlist(str_split(input$user, '@'))[2]
+    name <- unlist(str_split(input$user, '@'))[1]
+    #print(k)
+    
+    if ("fda.hhs.gov" %in% fda_domain & name != "")
+    {
+      removeModal()
+    }
+    
+    #print(input$user)
+  })
+  
+  get_name <- reactive({
+    req(input$run)
+    
+    name <- isolate(unlist(str_split(input$user, '@'))[1])
+    name
+  })
+  
+  # observeEvent(get_name(), {
+  #   print(get_name())
+  # })
+  
 
   output$selectData <- renderUI({
     datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
