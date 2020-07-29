@@ -1022,26 +1022,59 @@ server <- function(input,output,session) {
         if (input$SMbasis=='HED') {
           humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
           HED <- Dose/speciesConversion[[Species]]
-          SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])
-          SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
           
+          if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])){
+            SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])
+          } else {SM_start <- NA}
+          
+          if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])) {
+            SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
+          } else {SM_MRHD <- NA}
+
           if (input$MgKg==F) {
             HED <- HED*Data[['Clinical Information']][['HumanWeight']]
-            SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])
-            SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHD"]])
+            if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])) {
+              SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])
+            } else {SM_start <- NA}
+            
+            if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHD"]])) {
+              SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHD"]])
+              
+            } else {SM_MRHD <- NA}
             
           }
+          
         } else if (input$SMbasis=='Cmax') {
+          
+          
           humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
           HED <- Dose
-          SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseCmax"]])
-          SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDCmax"]])
+          
+          if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseCmax"]])) {
+            SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseCmax"]])
+          } else {SM_start <- NA}
+          
+          if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHDCmax"]])) {
+            SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDCmax"]])
+          } else (SM_MRHD <- NA)
+          
+          
           
         } else {
+          
+          
           humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
           HED <- Dose
-          SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseAUC"]])
-          SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDAUC"]])
+ 
+          
+          if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseAUC"]])) {
+            SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseAUC"]])
+          } else (SM_start <- NA)
+          
+          if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHDAUC"]])) {
+            SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDAUC"]])
+          } else {SM_MRHD <- NA}
+           
           
         }
         
@@ -1059,7 +1092,7 @@ server <- function(input,output,session) {
 
   
   
-  #observeEvent(calculateSM(), {print(str(calculateSM()))})
+  observeEvent(calculateSM(), {print(str(calculateSM()))})
   ### output table ----
   
 
