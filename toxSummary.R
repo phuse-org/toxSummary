@@ -1341,11 +1341,19 @@ server <- function(input,output,session) {
       unique() %>% 
       filter(NOAEL == TRUE) %>% 
       select(-NOAEL) %>% 
-      dplyr::rename( HED = HED_value, "NOAEL (mg/kg/day)" = Dose,
+      dplyr::rename("NOAEL (mg/kg/day)" = Dose,
                      "Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
                      "Safety Margin" = SM,
                      "Safety Margin at Starting Dose" = SM_start_dose,
                      "Safety Margin at MRHD" = SM_MRHD)
+    
+    if (input$MgKg==F) {
+      plotData_03 <- plotData_03 %>% 
+        rename("HED (mg/day)" = HED_value)
+    } else {plotData_03 <- plotData_03 %>% 
+      rename("HED (mg/kg/day)" = HED_value)
+    }
+    
       #dplyr::mutate('Starting Dose' = NA, MRHD = NA) # have to change
     plotData_03
     
