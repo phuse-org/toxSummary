@@ -434,6 +434,7 @@ server <- function(input,output,session) {
     )
     
     saveRDS(Data,values$Application)
+    showNotification("Saved", duration = 3)
     
     studyList <- names(Data[['Nonclinical Information']])
     updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
@@ -490,12 +491,12 @@ server <- function(input,output,session) {
     )
     
     saveRDS(Data,values$Application)
+    showNotification("Saved", duration = 3)
     
     studyList <- names(Data[['Nonclinical Information']])
     updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
     input$refreshPlot
   })
-  
   
 
   observeEvent(input$saveClinicalInfo, {
@@ -521,6 +522,7 @@ server <- function(input,output,session) {
     }
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
+    showNotification("saved", duration = 3)
   })
   
   # 
@@ -1020,7 +1022,13 @@ server <- function(input,output,session) {
         humanDoseName <- gsub(' ','',input$humanDosing)
         # humanDose <- input[[humanDoseName]]
         if (input$SMbasis=='HED') {
-          humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
+          
+          if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]])) {
+            humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
+          } else {humanDose <- NA}
+          
+          
+          
           HED <- Dose/speciesConversion[[Species]]
           
           if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])){
@@ -1031,6 +1039,8 @@ server <- function(input,output,session) {
             SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
           } else {SM_MRHD <- NA}
 
+          
+          
           if (input$MgKg==F) {
             HED <- HED*Data[['Clinical Information']][['HumanWeight']]
             if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])) {
@@ -1046,8 +1056,12 @@ server <- function(input,output,session) {
           
         } else if (input$SMbasis=='Cmax') {
           
+          if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]])) {
+            humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
+          } else {humanDose <- NA}
           
-          humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
+          
+          
           HED <- Dose
           
           if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseCmax"]])) {
@@ -1062,8 +1076,10 @@ server <- function(input,output,session) {
           
         } else {
           
+          if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]])) {
+            humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
+          }
           
-          humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
           HED <- Dose
  
           
@@ -1092,7 +1108,7 @@ server <- function(input,output,session) {
 
   
   
-  observeEvent(calculateSM(), {print(str(calculateSM()))})
+  #observeEvent(calculateSM(), {print(str(calculateSM()))})
   ### output table ----
   
 
