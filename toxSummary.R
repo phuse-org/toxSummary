@@ -351,14 +351,21 @@ server <- function(input,output,session) {
     clinData <- Data[['Clinical Information']]
     if (clinData$MgKg==F) {
       updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
-    }
+    } else { updateCheckboxInput(session, "MgKg", value = T)}
+    
+    
     clinDosing <- NULL
     for (dose in clinDosingOptions) {
-      if (!is.null(clinData[[dose]][[gsub(' ','',dose)]])) {
+      clin_dose <- clinData[[dose]][[gsub(' ','',dose)]]
+      clin_dose_mgkg <- clinData[[dose]][[paste0(gsub(' ','',dose), 'MgKg')]]
+      if ((!is.null(clin_dose)) | (!is.null(clin_dose_mgkg))) {
         clinDosing <- c(clinDosing,dose)
       }
     }
     updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
+    
+    
+    
     for (dose in clinDosing) {
       doseName <- gsub(' ','',dose)
       if (clinData$MgKg==F) {
@@ -913,7 +920,7 @@ server <- function(input,output,session) {
  
  
     
-
+## human dose ----
   
   output$humanDosing <- renderUI({
     req(input$clinDosing)
@@ -924,10 +931,10 @@ server <- function(input,output,session) {
       for (clinDose in input$clinDosing) {
         if (Data[['Clinical Information']][['MgKg']]==F) {
           names(clinDosingNames)[which(clinDosingNames==clinDose)] <- paste0(clinDose,
-                                                                             ': (',Data[['Clinical Information']][[clinDose]][[paste0(unlist(strsplit(clinDose,' ')),
+                                                                             ': (', Data[['Clinical Information']][[clinDose]][[paste0(unlist(strsplit(clinDose,' ')),
                                                                                                                                       collapse='')]],' mg)')
         } else {
-          names(clinDosingNames)[which(clinDosingNames==clinDose)] <- paste0(clinDose,': (',Data[['Clinical Information']][[clinDose]][[paste0(unlist(strsplit(clinDose,' ')),'MgKg',collapse='')]],' mg/kg)')
+          names(clinDosingNames)[which(clinDosingNames==clinDose)] <- paste0(clinDose,': (', Data[['Clinical Information']][[clinDose]][[paste0(gsub(' ', '', clinDose), 'MgKg')]],' mg/kg)')
         }
       }
     }
@@ -1575,7 +1582,7 @@ server <- function(input,output,session) {
       select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order) %>% 
       #group_by(Study, Dose, SM) %>% 
       unique()
-    plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
+    #plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
     plotData_p$SM <- as.numeric(plotData_p$SM)
       
     
@@ -1814,7 +1821,7 @@ server <- function(input,output,session) {
                                
                                h4('MRHD Information:'),
                                conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('MRHDMgKG','*MRHD (mg/kg):',value=NULL, min=0)
+                                                numericInput('MRHDMgKg','*MRHD (mg/kg):',value=NULL, min=0)
                                ),
                                conditionalPanel(condition='input.MgKg==false',
                                                 numericInput('MRHD','*MRHD (mg):',value = NULL, min=0)
@@ -1831,7 +1838,7 @@ server <- function(input,output,session) {
                                
                                h4('Custom Dose Information:'),
                                conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('CustomDoseMgKG','*Custom Dose (mg/kg):',value=NULL, min=0)
+                                                numericInput('CustomDoseMgKg','*Custom Dose (mg/kg):',value=NULL, min=0)
                                ),
                                conditionalPanel(condition='input.MgKg==false',
                                                 numericInput('CustomDose','*Custom Dose (mg):',value = NULL, min=0)
