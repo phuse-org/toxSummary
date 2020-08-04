@@ -294,10 +294,10 @@ server <- function(input,output,session) {
   #### user folder 
   
   user <- reactive({
-    url_search <- session$clientData$url_search
-    username <- unlist(strsplit(url_search,'user='))[2]
-    username <- str_to_lower(username)
-    #username <- c("Applications")
+    # url_search <- session$clientData$url_search
+    # username <- unlist(strsplit(url_search,'user='))[2]
+    # username <- str_to_lower(username)
+    username <- c("Applications")
     return(username)
   })
   
@@ -1224,6 +1224,10 @@ server <- function(input,output,session) {
                               filter = list(position = 'top'),
                               extensions = list("Buttons" = NULL,
                                                 "ColReorder" = NULL),
+                              caption = htmltools::tags$caption(
+                                style = "caption-side: top; text-align: center; font-size: 20px; color: black",
+                                "Table :", htmltools::strong("Nonclinical Findings of Potential Clinical Relevance")
+                              ),
 
                               options = list(
                                 dom = "lfrtipB",
@@ -1345,6 +1349,10 @@ server <- function(input,output,session) {
     plotData_tab <- datatable(plotData_tab, rownames = FALSE, class = "cell-border stripe",
                               filter = list(position = 'top'),
                               extensions = list("Buttons" = NULL),
+                              caption = htmltools::tags$caption(
+                                style = "caption-side: top; text-align: center; font-size: 20px; color: black",
+                                "Table :", htmltools::strong("Key Study Findings")
+                              ),
                             
                               
                               options = list(
@@ -1399,6 +1407,7 @@ server <- function(input,output,session) {
                         "AUC" = "AUC (ng*h/ml)",
                         "Findings" = "Findings at Greater than NOAEL for the Study",
                         "SM" = "Safety Margin") %>% 
+      add_header_row(values = c("Key Study Findings"), colwidths = c(6)) %>%
           theme_box()
     plotData_tab
     
@@ -2102,22 +2111,22 @@ ui <- dashboardPage(
                    column(2,
                           actionButton('refreshPlot','Refresh Plot')),
                   column(2, 
-                         selectInput("NOAEL_choices", "Filter NOAEL", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
+                         selectInput("NOAEL_choices", "Filter NOAEL:", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
                  column(3, 
-                        sliderInput("plotheight", "Adjust Plot Height", min = 1, max = 15, value = 6))),
+                        sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
                  br(),
                  withSpinner(girafeOutput('figure'))),
         
         
   
         
-      tabPanel("Table_01",
+      tabPanel("Clinical Relevance Table",
                DT::dataTableOutput('table_01'),
                h4("For Downloading in docx file click link below"),
                downloadButton("down_01_doc", "Docx file download")
       ),
-      tabPanel("Table_02",
+      tabPanel("Key Findings Table",
                DT::dataTableOutput('table_02'),
                h4("For Downloading in docx file click link below"),
                downloadButton("down_02_doc", "Docx file download")
@@ -2125,7 +2134,7 @@ ui <- dashboardPage(
                
       ),
       
-      tabPanel("Table_03",
+      tabPanel("Safety Margin Table",
                DT::dataTableOutput('table_03'),
                h4("For Downloading in docx file click link below"),
                downloadButton("down_03_doc", "Docx file download")
@@ -2134,10 +2143,10 @@ ui <- dashboardPage(
       
     
       
-      tabPanel("Table_All",
+      tabPanel("All Table",
                downloadButton("down_all", "Docx file download")),
       
-      tabPanel("Download_Application",
+      tabPanel("Download Application",
                br(),
                
                uiOutput("download_rds"),
