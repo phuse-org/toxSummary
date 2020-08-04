@@ -294,9 +294,9 @@ server <- function(input,output,session) {
   #### user folder 
   
   user <- reactive({
-    #url_search <- session$clientData$url_search
-    #username <- unlist(strsplit(url_search,'user='))[2]
-    username <- c("Applications")
+    url_search <- session$clientData$url_search
+    username <- unlist(strsplit(url_search,'user='))[2]
+    #username <- c("Applications")
     return(username)
   })
   
