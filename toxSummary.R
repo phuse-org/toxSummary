@@ -247,9 +247,50 @@ roundSigfigs <- function(x,N=2) {
 # Server function started here (selectData) ----
 
 server <- function(input,output,session) {
+  
+  
+  
+  user_name <- modalDialog(
+    title = "Welcome to toxSummary App",
+    textInput("user", "Insert FDA Email:"),
+    easyClose = F,
+    footer = tagList(
+      actionButton("run", "Enter")
+    )
+  )
+  
+  showModal(user_name)
+  
+  observeEvent(input$run, {
+    
+    req(input$user)
+    
+    fda_domain <- unlist(str_split(input$user, '@'))[2]
+    name <- unlist(str_split(input$user, '@'))[1]
+    #print(k)
+    
+    if ("fda.hhs.gov" %in% fda_domain & name != "")
+    {
+      removeModal()
+    }
+    
+    #print(input$user)
+  })
+  
+  get_name <- reactive({
+    req(input$run)
+    
+    name <- isolate(unlist(str_split(input$user, '@'))[1])
+    name
+  })
+  
+  # observeEvent(get_name(), {
+  #   print(get_name())
+  # })
+  
 
   output$selectData <- renderUI({
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     if (is.null(values$selectData)) {
@@ -283,7 +324,7 @@ server <- function(input,output,session) {
   observe({
     req(input$selectData)
     if (input$selectData == 'blankData.rds') {
-      values$Application <- paste0('Applications/',input$newApplication,'.rds')
+      values$Application <- paste0(user(), "/",input$newApplication,'.rds')
     } else {
       values$Application <- input$selectData
     }
@@ -292,7 +333,7 @@ server <- function(input,output,session) {
   observeEvent(input$saveData,{
     Data <- getData()
     saveRDS(Data,values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
@@ -300,7 +341,7 @@ server <- function(input,output,session) {
   })
   
   
-  
+  #observeEvent(input$saveData, {print(list.files(user(), full.names = T))})
   
   # observeEvent(input$deleteData,{
   #   file.remove(values$Application)
@@ -326,7 +367,7 @@ server <- function(input,output,session) {
   observeEvent(input$confirmDelete, {
 
     file.remove(values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
@@ -1146,6 +1187,27 @@ server <- function(input,output,session) {
 
 
   
+  #### user folder 
+  
+  user <- reactive({
+    #url_search <- session$clientData$url_search
+    #username <- unlist(strsplit(url_search,'user='))[2]
+    username <- c("md.ali")
+    return(username)
+  })
+  
+  observeEvent(user(), {
+    
+    dir_list <- list.dirs(full.names = F, recursive = F)
+    if (!user() %in% dir_list) {
+      dir.create(user())
+      
+    }
+    
+    })
+  
+  
+  
   output$table_01 <- renderDT({
     plotData_tab <- dt_01()
   
@@ -1210,7 +1272,7 @@ server <- function(input,output,session) {
 
 
 
-  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = "table_01.docx")})
+  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = paste0(user(), "/table_01.docx"))})
 
 
 
@@ -1219,7 +1281,7 @@ server <- function(input,output,session) {
       paste("table_01", ".docx")
     },
     content = function(file) {
-      file.copy("table_01.docx", file)
+      file.copy(paste0(user(),"/table_01.docx"), file)
 
 
     }
@@ -1334,7 +1396,7 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = "table_02.docx")})
+  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = paste0(user(), "/table_02.docx"))})
   
   
   
@@ -1343,7 +1405,7 @@ server <- function(input,output,session) {
       paste("table_02", ".docx")
     },
     content = function(file) {
-      file.copy("table_02.docx", file)
+      file.copy(paste0(user(), "/table_02.docx"), file)
       
       
     }
@@ -1438,7 +1500,7 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = "table_03.docx")})
+  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = paste0(user(), "/table_03.docx") )})
 
   
   output$down_03_doc <- downloadHandler(
@@ -1446,7 +1508,7 @@ server <- function(input,output,session) {
       paste("table_03", ".docx")
     },
     content = function(file) {
-      file.copy("table_03.docx", file)
+      file.copy(paste0(user(), "/table_03.docx"), file)
       
       
     }
@@ -1472,7 +1534,7 @@ server <- function(input,output,session) {
      doc_02
    })
 
-  observeEvent(download_all(), {print(download_all() , target = "table_all.docx")})
+  observeEvent(download_all(), {print(download_all() , target = paste0(user(), "/table_all.docx"))})
 
 
 
@@ -1481,7 +1543,7 @@ server <- function(input,output,session) {
        paste("table_all", ".docx")
      },
      content = function(file) {
-       file.copy("table_all.docx", file)
+       file.copy(paste0(user(), "/table_all.docx"), file)
 
 
      }
@@ -1724,7 +1786,7 @@ server <- function(input,output,session) {
   
   output$download_rds <- renderUI({
     
-    datasets <- c(grep('.rds',list.files('Applications',full.names = T),value=T))
+    datasets <- c(grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     selectInput("downloadRDS", "Download Application", choices = datasets, selected = NULL)
     
@@ -1749,8 +1811,8 @@ server <- function(input,output,session) {
   
   observe({
     if (is.null(input$upload_rds)) return()
-    file.copy(input$upload_rds$datapath,   paste0("Applications/", input$upload_rds$name))
-    datasets <- c('blankData.rds',grep('.rds',list.files('Applications/',full.names = T),value=T))
+    file.copy(input$upload_rds$datapath,   paste0(user(), "/",  input$upload_rds$name))
+    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
     selectInput('selectData','Select Application:',datasets)
