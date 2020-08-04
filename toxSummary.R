@@ -249,45 +249,63 @@ roundSigfigs <- function(x,N=2) {
 server <- function(input,output,session) {
   
   
+  # pop up box for fda email ---- 
   
-  user_name <- modalDialog(
-    title = "Welcome to toxSummary App",
-    textInput("user", "Insert FDA Email:"),
-    easyClose = F,
-    footer = tagList(
-      actionButton("run", "Enter")
-    )
-  )
-  
-  showModal(user_name)
-  
-  observeEvent(input$run, {
-    
-    req(input$user)
-    
-    fda_domain <- unlist(str_split(input$user, '@'))[2]
-    name <- unlist(str_split(input$user, '@'))[1]
-    #print(k)
-    
-    if ("fda.hhs.gov" %in% fda_domain & name != "")
-    {
-      removeModal()
-    }
-    
-    #print(input$user)
-  })
-  
-  get_name <- reactive({
-    req(input$run)
-    
-    name <- isolate(unlist(str_split(input$user, '@'))[1])
-    name
-  })
-  
-  # observeEvent(get_name(), {
-  #   print(get_name())
+  # user_name <- modalDialog(
+  #   title = "Welcome to toxSummary App",
+  #   textInput("user", "Insert FDA Email:"),
+  #   easyClose = F,
+  #   footer = tagList(
+  #     actionButton("run", "Enter")
+  #   )
+  # )
+  # 
+  # showModal(user_name)
+  # 
+  # observeEvent(input$run, {
+  #   
+  #   req(input$user)
+  #   
+  #   fda_domain <- unlist(str_split(input$user, '@'))[2]
+  #   name <- unlist(str_split(input$user, '@'))[1]
+  #  
+  #   
+  #   if ("fda.hhs.gov" %in% fda_domain & name != "")
+  #   {
+  #     removeModal()
+  #   }
+  #   
+  #  
+  # })
+  # 
+  # get_name <- reactive({
+  #   req(input$run)
+  #   
+  #   name <- isolate(unlist(str_split(input$user, '@'))[1])
+  #   name
   # })
   
+  
+  
+  
+  #### user folder 
+  
+  user <- reactive({
+    #url_search <- session$clientData$url_search
+    #username <- unlist(strsplit(url_search,'user='))[2]
+    username <- c("Applications")
+    return(username)
+  })
+  
+  observeEvent(user(), {
+    
+    dir_list <- list.dirs(full.names = F, recursive = F)
+    if (!user() %in% dir_list) {
+      dir.create(user())
+      
+    }
+    
+  })
 
   output$selectData <- renderUI({
     datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
@@ -1187,24 +1205,7 @@ server <- function(input,output,session) {
 
 
   
-  #### user folder 
-  
-  user <- reactive({
-    #url_search <- session$clientData$url_search
-    #username <- unlist(strsplit(url_search,'user='))[2]
-    username <- c("md.ali")
-    return(username)
-  })
-  
-  observeEvent(user(), {
-    
-    dir_list <- list.dirs(full.names = F, recursive = F)
-    if (!user() %in% dir_list) {
-      dir.create(user())
-      
-    }
-    
-    })
+
   
   
   
