@@ -1032,7 +1032,7 @@ server <- function(input,output,session) {
           
           if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]])) {
             humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
-          } else {humanDose <- NA}
+          } else {humanDose <- NaN}
           
           
           
@@ -1582,7 +1582,7 @@ server <- function(input,output,session) {
       select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order) %>% 
       #group_by(Study, Dose, SM) %>% 
       unique()
-    #plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
+    plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
     plotData_p$SM <- as.numeric(plotData_p$SM)
       
     
