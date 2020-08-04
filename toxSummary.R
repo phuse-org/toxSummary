@@ -294,17 +294,18 @@ server <- function(input,output,session) {
   #### user folder 
   
   user <- reactive({
-    # url_search <- session$clientData$url_search
-    # username <- unlist(strsplit(url_search,'user='))[2]
-    # username <- str_to_lower(username)
-    username <- c("Applications")
+    url_search <- session$clientData$url_search
+    username <- unlist(strsplit(url_search,'user='))[2]
+    username <- str_to_lower(username)
+    #username <- "kevin.snyder@fda.hhs.gov"
+    username <- paste0("Applications/", username)
     return(username)
   })
   
   observeEvent(user(), {
     
-    dir_list <- list.dirs(full.names = F, recursive = F)
-    if (!user() %in% dir_list) {
+    dir_list <- list.dirs("Applications", full.names = F, recursive = F)
+    if (!basename(user()) %in% dir_list) {
       dir.create(user())
       
     }
@@ -1807,7 +1808,7 @@ server <- function(input,output,session) {
     
     datasets <- c(grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    selectInput("downloadRDS", "Download Application", choices = datasets, selected = NULL)
+    selectInput("downloadRDS", "Select to Download an Application:", choices = datasets, selected = NULL)
     
   })
   
@@ -1896,7 +1897,7 @@ server <- function(input,output,session) {
       "all_file.tar"
     },
     content = function(file) {
-      all_file <- tar("all_file.tar")
+      all_file <- tar("all_file.tar", files = "Applications")
       file.copy("all_file.tar", file)
     }
   )
@@ -2159,13 +2160,17 @@ ui <- dashboardPage(
       
       tabPanel("Download Application",
                br(),
+               h4("Download Application in RDS format:"),
+               br(),
+               p("Application can be downloaded in RDS format to share with others"),
                
                uiOutput("download_rds"),
                downloadButton("down_btn", "Download Application"),
                br(),
+               hr(style = "border-top: 1px dashed black"),
                
-               h4("Upload Application in RDS format"),
-               fileInput("upload_rds", "Upload", multiple = F)),
+               h4("Upload Application in RDS format:"),
+               fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
       tabPanel("Admin",
                br(),
                downloadButton("tar_file", "Download all file"))
