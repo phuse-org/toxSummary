@@ -1295,7 +1295,7 @@ server <- function(input,output,session) {
     plotData_tab <- calculateSM()
     plotData_tab <- plotData_tab %>% 
       dplyr::select(Study, Dose, NOAEL, Cmax, AUC, SM) %>% 
-      mutate(Study = as.factor(Study)) %>% 
+      #mutate(Study = as.factor(Study)) %>% 
              filter(NOAEL == TRUE) %>% 
              #filter(Severity != "Absent") %>% 
              dplyr::select(-NOAEL) %>%
@@ -1309,8 +1309,8 @@ server <- function(input,output,session) {
     greater_than_noeal <- greater_than_noeal %>% 
       #filter(Severity_max==Severity_num) %>% 
       select(Study, Findings) %>% 
-      distinct() %>% 
-      mutate(Study = as.factor(Study))
+      distinct() 
+      #mutate(Study = as.factor(Study))
     
    
     
@@ -1322,7 +1322,9 @@ server <- function(input,output,session) {
         "Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
         "Safety Margin" = SM,
         "Findings at Greater than NOAEL for the Study" = Findings
-      )
+      ) %>% 
+      mutate(Study = as.factor(Study))
+      
     
     plotData_tab
     
