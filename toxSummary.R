@@ -296,6 +296,7 @@ server <- function(input,output,session) {
   user <- reactive({
     url_search <- session$clientData$url_search
     username <- unlist(strsplit(url_search,'user='))[2]
+    username <- str_to_lower(username)
     #username <- c("Applications")
     return(username)
   })
