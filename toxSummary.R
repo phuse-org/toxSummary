@@ -278,7 +278,10 @@ server <- function(input,output,session) {
   #  
   # })
   # 
-  # get_name <- reactive({
+  
+  ## user for pop up box ----
+  
+  # user <- reactive({
   #   req(input$run)
   #   
   #   name <- isolate(unlist(str_split(input$user, '@'))[1])
@@ -602,6 +605,9 @@ server <- function(input,output,session) {
   #   studyList <- names(Data[['Nonclinical Information']])
   #   updateSelectInput(session,'selectStudy',choices=studyList,selected='New Study')
   # })
+  
+  
+  ## delete study ---- 
   
   observeEvent(input$deleteStudy, {
     showModal(modalDialog(
@@ -1823,6 +1829,72 @@ server <- function(input,output,session) {
   })
   
   
+  # download tar file ----
+
+
+
+  # user_name <- modalDialog(
+  #   title = "Welcome to toxSummary App",
+  #   textInput("user", "Insert FDA Email:"),
+  #   easyClose = F,
+  #   footer = tagList(
+  #     actionButton("run", "Enter")
+  #   )
+  # )
+  # 
+  # showModal(user_name)
+  # 
+  # observeEvent(input$run, {
+  # 
+  #   req(input$user)
+  # 
+  #   fda_domain <- unlist(str_split(input$user, '@'))[2]
+  #   name <- unlist(str_split(input$user, '@'))[1]
+  # 
+  # 
+  #   if ("fda.hhs.gov" %in% fda_domain & name != "")
+  #   {
+  #     removeModal()
+  #   }
+  # })
+  # 
+  # get_name <- reactive({
+  #   req(input$run)
+  # 
+  #   name <- isolate(unlist(str_split(input$user, '@'))[1])
+  #   name
+  # })
+  
+  # observeEvent(input$deleteData, {
+  #   showModal(modalDialog(
+  #     title="Delete Application?",
+  #     footer = tagList(modalButton("Cancel"),
+  #                      actionButton("confirmDelete", "Delete")
+  #                      
+  #     )
+  #   ))
+  # })
+  
+  
+  
+  
+  
+  
+  
+  output$tar_file <- downloadHandler(
+    filename = function() {
+      "all_file.tar"
+    },
+    content = function(file) {
+      all_file <- tar("all_file.tar")
+      file.copy("all_file.tar", file)
+    }
+  )
+   
+  
+  
+  
+  
   
   # output$menu function -----
   
@@ -2072,10 +2144,10 @@ ui <- dashboardPage(
                br(),
                
                h4("Upload Application in RDS format"),
-               fileInput("upload_rds", "Upload", multiple = F)
-
-               
-      )
+               fileInput("upload_rds", "Upload", multiple = F)),
+      tabPanel("Admin",
+               br(),
+               downloadButton("tar_file", "Download all file"))
   ))))
 
 
