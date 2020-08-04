@@ -1273,9 +1273,9 @@ server <- function(input,output,session) {
       flextable() %>%
       merge_v(j = ~ Findings + Reversibility + Study) %>%
 
-      #flextable::autofit() %>%
+      flextable::autofit() %>%
       add_header_row(values = c("Nonclinical Findings of Potential Clinical Relevance"), colwidths = c(5)) %>%
-      flextable::autofit() %>% 
+      #flextable::autofit() %>% 
       theme_box()
     #fontsize(size = 18, part = "all") %>%
     plotData_tab
@@ -1284,16 +1284,16 @@ server <- function(input,output,session) {
 
 
 
-  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = paste0(user(), "/table_01.docx"))})
+  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))})
 
 
 
   output$down_01_doc <- downloadHandler(
     filename = function() {
-      paste("table_01", ".docx")
+      paste0("clinical_relevance", ".docx")
     },
     content = function(file) {
-      file.copy(paste0(user(),"/table_01.docx"), file)
+      file.copy(paste0(user(),"/clinical_relevance.docx"), file)
 
 
     }
@@ -1415,16 +1415,16 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = paste0(user(), "/table_02.docx"))})
+  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))})
   
   
   
   output$down_02_doc <- downloadHandler(
     filename = function() {
-      paste("table_02", ".docx")
+      paste0("key_findings", ".docx")
     },
     content = function(file) {
-      file.copy(paste0(user(), "/table_02.docx"), file)
+      file.copy(paste0(user(), "/key_findings.docx"), file)
       
       
     }
@@ -1519,15 +1519,15 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = paste0(user(), "/table_03.docx") )})
+  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )})
 
   
   output$down_03_doc <- downloadHandler(
     filename = function() {
-      paste("table_03", ".docx")
+      paste0("safety_margin", ".docx")
     },
     content = function(file) {
-      file.copy(paste0(user(), "/table_03.docx"), file)
+      file.copy(paste0(user(), "/safety_margin.docx"), file)
       
       
     }
@@ -1559,7 +1559,7 @@ server <- function(input,output,session) {
 
    output$down_all <- downloadHandler(
      filename = function() {
-       paste("table_all", ".docx")
+       paste0("table_all", ".docx")
      },
      content = function(file) {
        file.copy(paste0(user(), "/table_all.docx"), file)
@@ -2123,27 +2123,38 @@ ui <- dashboardPage(
         
       tabPanel("Clinical Relevance Table",
                DT::dataTableOutput('table_01'),
-               h4("For Downloading in docx file click link below"),
-               downloadButton("down_01_doc", "Docx file download")
+               br(),
+               hr(style = "border-top: 1px dashed black"),
+               h4("Click on button below to export the table in a docx file"),
+               downloadButton("down_01_doc", "Docx file download"),
+               br()
       ),
       tabPanel("Key Findings Table",
                DT::dataTableOutput('table_02'),
-               h4("For Downloading in docx file click link below"),
-               downloadButton("down_02_doc", "Docx file download")
+               br(),
+               hr(style = "border-top: 1px dashed black"),
+               h4("Click on button below to export the table in a docx file"),
+               downloadButton("down_02_doc", "Docx file download"),
+               br()
                
                
       ),
       
       tabPanel("Safety Margin Table",
                DT::dataTableOutput('table_03'),
-               h4("For Downloading in docx file click link below"),
-               downloadButton("down_03_doc", "Docx file download")
+               br(),
+               hr(style = "border-top: 1px dashed black"),
+               h4("Click on button below to export the table in a docx file"),
+               downloadButton("down_03_doc", "Docx file download"),
+               br()
                
       ),
       
     
       
-      tabPanel("All Table",
+      tabPanel("All Table", 
+               br(),
+               p("All three table can be downloaded in single docx file. Click button below to download."),
                downloadButton("down_all", "Docx file download")),
       
       tabPanel("Download Application",
