@@ -1202,10 +1202,14 @@ server <- function(input,output,session) {
       select( Findings,Rev, Study, Dose, SM, Severity) %>%
       filter(Severity != "Absent") %>% 
       select(-Severity) %>% 
-      arrange(Findings, Rev) %>% 
+      #arrange(Findings, Rev) %>% 
       rename(Reversibility = Rev,
              "Clinical Safety Margin" = SM,
              "Dose (mg/kg/day)" = Dose)
+    
+    plotData_tab$Findings <- factor(plotData_tab$Findings,levels= input$displayFindings)
+    plotData_tab <- plotData_tab %>%
+      arrange(Findings)
     plotData_tab
  
   })
@@ -1463,6 +1467,9 @@ server <- function(input,output,session) {
       rename("HED (mg/kg/day)" = HED_value)
     }
     
+    plotData_03$Study <- factor(plotData_03$Study,levels= input$displayStudies)
+    plotData_03 <- plotData_03 %>%
+      arrange(Study)
       #dplyr::mutate('Starting Dose' = NA, MRHD = NA) # have to change
     plotData_03
     
