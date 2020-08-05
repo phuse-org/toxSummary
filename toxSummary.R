@@ -662,7 +662,7 @@ server <- function(input,output,session) {
     req(input$clinDosing)
     input$selectData
     input$selectStudy
-    data <- calculateSM()
+    data <- getPlotData()
     find_fact <- as.factor(data$Findings)
     findings <- unique(find_fact)
     
