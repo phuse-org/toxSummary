@@ -1908,6 +1908,17 @@ server <- function(input,output,session) {
    
   
   
+  output$Admin_toggle <- renderUI({
+    if (basename(user()) == "md.ali@fda.hhs.gov") {
+"Admin"
+
+  
+    }
+    
+    
+  })
+  
+  
   output$download_tar_file <- renderMenu({
     
     if (input$pass_admin == "HeLLo_aDMiN_PT") {
@@ -2184,13 +2195,19 @@ ui <- dashboardPage(
                
                h4("Upload Application in RDS format:"),
                fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
-      
-      
-      tabPanel("Admin",
+      tabPanel(uiOutput("Admin_toggle"),
                br(),
                passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
                
-              uiOutput("download_tar_file"))
+               uiOutput("download_tar_file"))
+      
+      
+      
+      # tabPanel("Admin",
+      #          br(),
+      #          passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
+      #          
+      #         uiOutput("download_tar_file"))
   ))))
 
 
