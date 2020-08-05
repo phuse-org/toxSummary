@@ -1904,6 +1904,15 @@ server <- function(input,output,session) {
    
   
   
+  output$download_tar_file <- renderMenu({
+    
+    if (input$pass_admin == "HeLLo_aDMiN_PT") {
+      downloadButton("tar_file", "Download all file")
+    }
+    
+    
+  })
+  
   
   
   
@@ -2171,9 +2180,13 @@ ui <- dashboardPage(
                
                h4("Upload Application in RDS format:"),
                fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
+      
+      
       tabPanel("Admin",
                br(),
-               downloadButton("tar_file", "Download all file"))
+               passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
+               
+              uiOutput("download_tar_file"))
   ))))
 
 
