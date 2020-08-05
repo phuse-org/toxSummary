@@ -1336,6 +1336,10 @@ server <- function(input,output,session) {
         "Findings at Greater than NOAEL for the Study" = Findings
       ) %>% 
       mutate(Study = as.factor(Study))
+    
+    # plotData_tab$Study <- factor(plotData_tab$Study,levels= input$displayStudies)
+    # plotData_tab <- plotData_tab %>% 
+    #   arrange(Study)
       
     
     plotData_tab
@@ -1358,7 +1362,7 @@ server <- function(input,output,session) {
                               
                               options = list(
                                 scrollY = TRUE,
-                                pageLength = 25,
+                                pageLength = 100,
                                 dom = "lfrtipB",
                                 buttons = c("csv", "excel", "copy", "print"),
                                 
@@ -1819,7 +1823,7 @@ server <- function(input,output,session) {
   output$down_btn <- downloadHandler(
     filename = function() {
       
-      app_name <- unlist(strsplit(input$downloadRDS, "/"))[2]
+      app_name <- basename(input$downloadRDS)
       app_name
     },
     content = function(file) {
