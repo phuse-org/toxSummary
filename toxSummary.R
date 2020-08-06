@@ -651,6 +651,7 @@ server <- function(input,output,session) {
     isolate(Data <- getData())
     studyList <- names(Data[['Nonclinical Information']])
     studyList <- studyList[-which(studyList=='New Study')]
+    studyList <- str_sort(studyList, numeric = T)
     addUIDep(selectizeInput('displayStudies',label='Select and Order Studies to Display:',choices=studyList,
                             selected=studyList,
                             multiple=TRUE,width='100%',options=list(plugins=list('drag_drop','remove_button'))))
@@ -665,6 +666,7 @@ server <- function(input,output,session) {
     data <- getPlotData()
     find_fact <- as.factor(data$Findings)
     findings <- unique(find_fact)
+    findings <- str_sort(findings, numeric = T)
     
     addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display:', choice= findings, selected = findings,
                             multiple = TRUE, width = "100%", options=list(plugins=list('drag_drop','remove_button' ))))
