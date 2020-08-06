@@ -237,11 +237,15 @@ sigfigs <- function(x){
 }
 
 roundSigfigs <- function(x,N=2) {
-  roundNumber <- round(x,digits=0)
-  if (sigfigs(roundNumber)<=N) {
-    roundNumber <- signif(x,digits=N)
-  }
-  return(roundNumber)
+  if (is.na(x)) {
+    return(x)} else {
+      roundNumber <- round(x,digits=0)
+      if (sigfigs(roundNumber)<=N) {
+        roundNumber <- signif(x,digits=N)
+      }
+      return(roundNumber)
+      
+    }
 }
 
 # Server function started here (selectData) ----
