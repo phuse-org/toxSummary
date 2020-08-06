@@ -1099,26 +1099,13 @@ server <- function(input,output,session) {
         # humanDose <- input[[humanDoseName]]
         if (input$SMbasis=='HED') {
           
-          if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]])) {
-            humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
-          } else {humanDose <- NaN}
-          
-          
-          
           HED <- Dose/speciesConversion[[Species]]
-          
-          if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])){
-            SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])
-          } else {SM_start <- NA}
-          
-          if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])) {
-            SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
-          } else {SM_MRHD <- NA}
-
           
           
           if (input$MgKg==F) {
+            humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
             HED <- HED*Data[['Clinical Information']][['HumanWeight']]
+                     
             if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])) {
               SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])
             } else {SM_start <- NA}
@@ -1128,7 +1115,57 @@ server <- function(input,output,session) {
               
             } else {SM_MRHD <- NA}
             
+            # input$MgKg==T
+          }  else {
+            
+            humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName, "MgKg")]]
+
+             if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])){
+               SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])
+             } else {SM_start <- NA}
+            
+             if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])) {
+               SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
+             } else {SM_MRHD <- NA}
+            
           }
+          
+          
+          
+          
+          
+          
+          
+          # if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]])) {
+          #   humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
+          # } else {humanDose <- NaN}
+          # 
+          # 
+          # 
+          # HED <- Dose/speciesConversion[[Species]]
+          # 
+          # if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])){
+          #   SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDoseMgKg"]])
+          # } else {SM_start <- NA}
+          # 
+          # if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])) {
+          #   SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
+          # } else {SM_MRHD <- NA}
+          # 
+          # 
+          # 
+          # if (input$MgKg==F) {
+          #   HED <- HED*Data[['Clinical Information']][['HumanWeight']]
+          #   if (!is.null(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])) {
+          #     SM_start <- HED/(Data[["Clinical Information"]][["Start Dose"]][["StartDose"]])
+          #   } else {SM_start <- NA}
+          # 
+          #   if (!is.null(Data[["Clinical Information"]][["MRHD"]][["MRHD"]])) {
+          #     SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHD"]])
+          # 
+          #   } else {SM_MRHD <- NA}
+          # 
+          # }
           
         } else if (input$SMbasis=='Cmax') {
           
@@ -1154,7 +1191,7 @@ server <- function(input,output,session) {
           
           if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]])) {
             humanDose <- Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]]
-          }
+          } else {humanDose <- NA}
           
           HED <- Dose
  
