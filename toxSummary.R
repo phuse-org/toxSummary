@@ -298,10 +298,10 @@ server <- function(input,output,session) {
   #### user folder 
   
   user <- reactive({
-    # url_search <- session$clientData$url_search
-    # username <- unlist(strsplit(url_search,'user='))[2]
-    # username <- str_to_lower(username)
-    username <- "md.ali@fda.hhs.gov"
+    url_search <- session$clientData$url_search
+    username <- unlist(strsplit(url_search,'user='))[2]
+    username <- str_to_lower(username)
+    #username <- "md.ali@fda.hhs.gov"
     username <- paste0("Applications/", username)
     return(username)
   })
@@ -311,6 +311,8 @@ server <- function(input,output,session) {
     dir_list <- list.dirs("Applications", full.names = F, recursive = F)
     if (!basename(user()) %in% dir_list) {
       dir.create(user())
+      file.copy("Application_Demo.rds", user())
+      
       
     }
     
