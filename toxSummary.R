@@ -295,7 +295,7 @@ server <- function(input,output,session) {
   
   
   
-  #### user folder 
+  #### user folder  ----
   
   user <- reactive({
     url_search <- session$clientData$url_search
@@ -2096,7 +2096,7 @@ server <- function(input,output,session) {
                              hr(),
                              #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
-                             numericInput('nFindings','Number of Findings:',value=0,step=1,min=0),
+                             numericInput('nFindings','Number of Findings:',value=1,step=1,min=1),
                             
                              uiOutput('Findings'),
                              br(),
