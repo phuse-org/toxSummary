@@ -457,6 +457,9 @@ server <- function(input,output,session) {
     updateTextInput(session,'Duration',value=studyData$Duration)
     updateNumericInput(session,'nDoses',value=studyData$nDoses)
     updateNumericInput(session,'nFindings',value=studyData$nFindings)
+    updateCheckboxInput(session, "notes", value = studyData$check_note)
+    #updateTextAreaInput(session, "study_note", value = studyData$Notes)
+    #print(studyData$Notes)
     
   })
   
@@ -504,10 +507,13 @@ server <- function(input,output,session) {
     Data[['Nonclinical Information']][[studyName]] <- list(
       Species = input$Species,
       Duration = input$Duration,
+      Notes = input$note_text,
+      check_note = input$notes,
       nDoses = input$nDoses,
       Doses = doseList,
       nFindings = input$nFindings,
       Findings = findingList
+      
     )
     
     saveRDS(Data,values$Application)
@@ -561,6 +567,8 @@ server <- function(input,output,session) {
     Data[['Nonclinical Information']][[studyName]] <- list(
       Species = input$Species,
       Duration = input$Duration,
+      Notes = input$note_text,
+      check_note = input$notes,
       nDoses = input$nDoses,
       Doses = doseList,
       nFindings = input$nFindings,
@@ -909,7 +917,7 @@ server <- function(input,output,session) {
   
   ### add note for study?
   
-  output$note_details <- renderUI({
+  output$study_note <- renderUI({
     if (input$notes ==T) {
       textAreaInput("note_text", "Notes:", placeholder = "Enter Notes here for this Study", height = "100px")
     }
@@ -923,11 +931,11 @@ server <- function(input,output,session) {
   
  getPlotData <- reactive({
   Data <- getData()
-  plotData <- data.frame(matrix(ncol = 20 ))
+  plotData <- data.frame(matrix(ncol = 21 ))
   column_names <- c("Study", "Species", "Months", "Dose_num", "Dose", 
                     "NOAEL", "Cmax", "AUC", "Findings",
                     "Reversibility", "Severity", "Value", "Value_order", 
-                    "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value", "Severity_max", "Severity_num")
+                    "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value", "Severity_max", "Severity_num", "Study_note")
   colnames(plotData) <- column_names
   
   
@@ -960,6 +968,12 @@ server <- function(input,output,session) {
           plotData[count, "noael_value"] <- NA
           plotData[count, "Severity_max"] <- NA
           plotData[count, "Severity_num"] <- NA
+          #plotData[count, "Study_note"] <- NA
+          
+          if (!is.null(studyData[["Notes"]])) {
+            plotData[count, "Study_note"] <- studyData[["Notes"]]
+            } else {plotData[count, "Study_note"] <- NA}
+          
           
           
           count <- count+1
@@ -1232,6 +1246,7 @@ server <- function(input,output,session) {
     
     #plotData <- cbind(plotData,SM, HED_value)
     return(plotData)
+    
   })
 
   
@@ -1497,7 +1512,7 @@ server <- function(input,output,session) {
   
   
   
-  ## table 04 ----
+  ## table 03 ----
   
   dt_03 <- reactive({
     
@@ -1635,6 +1650,21 @@ server <- function(input,output,session) {
    )
   
   
+   all_study_notes <- reactive({
+     plotData_tab <- calculateSM()
+     plotData_tab <- plotData_tab %>% 
+       dplyr::select(Study, Study_note) %>% 
+       dplyr::arrange(Study, Study_note)
+     
+     plotData_tab
+   })
+   
+   output$table_note <- renderDT({
+     note_tab <- all_study_notes()
+     note_tab <- datatable(note_tab, rownames = F)
+     note_tab
+   })
+   
  
  #### plotheight ----
 
@@ -2188,7 +2218,7 @@ server <- function(input,output,session) {
                              uiOutput('Findings'),
                              #br(),
                              checkboxInput("notes", "Notes for Study?", value = FALSE),
-                             uiOutput("note_details"),
+                             uiOutput("study_note"),
                              actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'))
                     ),
                     hr(),
@@ -2282,7 +2312,10 @@ ui <- dashboardPage(
                  column(3, 
                         sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
                  br(),
-                 withSpinner(girafeOutput('figure'))),
+                 withSpinner(girafeOutput('figure')),
+                 br(),
+                 hr(),
+                 DT::dataTableOutput("table_note")),
         
         
   
