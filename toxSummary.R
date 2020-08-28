@@ -1373,7 +1373,7 @@ server <- function(input,output,session) {
     }
   )
 
-  #### table 02
+  #### table 02 ----
   
   dt_02 <- reactive({
  
@@ -1649,21 +1649,30 @@ server <- function(input,output,session) {
      }
    )
   
-  
+  # craete notes table ----
+   
    all_study_notes <- reactive({
      plotData_tab <- calculateSM()
      plotData_tab <- plotData_tab %>% 
-       dplyr::select(Study, Study_note) %>% 
-       dplyr::arrange(Study, Study_note)
+       dplyr::select(Study_note, Study) %>% 
+       dplyr::rename(Notes = Study_note)
+     plotData_tab$Study <- factor(plotData_tab$Study,levels= input$displayStudies)
+     plotData_tab <- plotData_tab %>% 
+       distinct() %>% 
+       arrange(Study)
+     
      
      plotData_tab
    })
    
-   output$table_note <- renderDT({
-     note_tab <- all_study_notes()
-     note_tab <- datatable(note_tab, rownames = F)
-     note_tab
-   })
+ 
+   # output table for notes  ----
+   
+   output$table_note <- renderTable({all_study_notes()},  
+                             bordered = TRUE,
+                             striped = TRUE,
+                             spacing = 'xs',  
+                             width = '100%', align = 'lr')
    
  
  #### plotheight ----
@@ -2314,8 +2323,10 @@ ui <- dashboardPage(
                  br(),
                  withSpinner(girafeOutput('figure')),
                  br(),
-                 hr(),
-                 DT::dataTableOutput("table_note")),
+                 hr(style = "border-top: 1px dashed black"),
+                 fluidRow(
+                   column(9,
+                          tableOutput("table_note")))),
         
         
   
