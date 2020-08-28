@@ -915,7 +915,7 @@ server <- function(input,output,session) {
   # })
   
   
-  ### add note for study?
+  ### add note for study ----
   
   output$study_note <- renderUI({
     if (input$notes ==T) {
@@ -1810,18 +1810,35 @@ server <- function(input,output,session) {
       tooltip_css <- "background-color:#3DE3D8;color:black;padding:2px;border-radius:5px;"
       
       
-      p <- ggplot(plotData_p)+
-      # suppressWarnings(geom_tile(aes (x = SM, y = Value_order, fill = NOAEL, text =paste("SM: ", SM)), 
-      #             color = "transparent", width = p_tile_width(), height = p_tile_height))+
+      if (input$dose_sm==1) {
         
-        
-       geom_label_interactive(aes(x = SM, y = Value_order, label = paste(Dose, " mg/kg/day"), tooltip =paste0("SM: ", SM)), #DoseLabel changed
-                  color = "white",
-                  fontface = "bold",
-                  size = 6,
-                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
-                  label.padding = unit(0.6, "lines")
-                  )+
+          plot_p_label <- ggplot(plotData_p)+
+          geom_label_interactive(aes(x = SM, y = Value_order,
+                                     label = paste0(Dose, " mg/kg/day"),
+                                     
+                                     tooltip =paste0("SM: ", SM, "x")), #DoseLabel changed
+                                 color = "white",
+                                 fontface = "bold",
+                                 size = 6,
+                                 fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
+                                 label.padding = unit(0.6, "lines")
+          )
+          
+      } else {
+        plot_p_label <- ggplot(plotData_p)+
+          geom_label_interactive(aes(x = SM, y = Value_order,
+                                     label = paste0(Dose, " mg/kg/day", "\n", SM, "x"),
+                                     #label= ifelse(input$dose_sm==1, paste0(Dose, " mg/kg/day"), paste0(Dose, " mg/kg/day", "_", SM, "x")),
+                                     tooltip =paste0("SM: ", SM, "x")), #DoseLabel changed
+                                 color = "white",
+                                 fontface = "bold",
+                                 size = 6,
+                                 fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
+                                 label.padding = unit(0.6, "lines")
+          )
+      }
+      
+      p <- plot_p_label +
         scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
         #scale_fill_manual(values = color_NOAEL)+
         ylim(0,y_max)+
@@ -2315,9 +2332,12 @@ ui <- dashboardPage(
                    
                    column(2,
                           actionButton('refreshPlot','Refresh Plot')),
-                  column(2, 
+                  column(3, 
                          selectInput("NOAEL_choices", "Filter NOAEL:", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
+                  column(3, 
+                         radioButtons("dose_sm", "Display Units:", choices = list("Show Dose Only"=1,
+                                                                           "Show Dose with SM"= 2))),
                  column(3, 
                         sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
                  br(),
