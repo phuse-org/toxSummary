@@ -418,6 +418,10 @@ server <- function(input,output,session) {
   
   observeEvent(input$selectData,ignoreNULL = T,{
     Data <- getData()
+    #update units for Cmax/AUC
+    updateTextInput(session, "cmax_unit", value=Data[["CmaxUnit"]])
+    updateTextInput(session, "auc_unit", value=Data[["AUCUnit"]])
+    # update clinical information
     clinData <- Data[['Clinical Information']]
     if (clinData$MgKg==F) {
       updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
@@ -584,6 +588,10 @@ server <- function(input,output,session) {
   })
   
 
+  
+
+## save clinical information ---- 
+  
   observeEvent(input$saveClinicalInfo, {
     Data <- getData()
     clinData <- Data[['Clinical Information']]
@@ -691,6 +699,8 @@ server <- function(input,output,session) {
   
   output$Doses <- renderUI({
     req(input$selectStudy)
+    cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")")
+    auc_unit <- paste0(" AUC (", input$auc_unit, ")")
     if (input$selectStudy=='New Study') {
       lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
@@ -700,11 +710,12 @@ server <- function(input,output,session) {
           numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL))
         } else if (i %% 4 == 2) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
+              #numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
+              numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min = 0, NULL))
         }
         else if (i %% 4 == 3) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),min = 0, NULL))
+              numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),min = 0, NULL))
         } else {
           div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F))
         }
@@ -720,11 +731,11 @@ server <- function(input,output,session) {
           textInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']]))
         } else if (i %% 4 == 2) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'),studyData$Doses[[doseName]][['Cmax']]))
+              numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit),studyData$Doses[[doseName]][['Cmax']]))
         }
         else if (i %% 4 == 3) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('AUC',I),paste0('Dose ',I,' AUC (ng*h/mL):'),studyData$Doses[[doseName]][['AUC']]))
+              numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),studyData$Doses[[doseName]][['AUC']]))
           
         } else {
          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
@@ -825,7 +836,7 @@ server <- function(input,output,session) {
             div(
               hr(style = "border-top: 1px dashed skyblue"),
               
-              #rightnow
+             
                 selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
                                selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
                                options = list(create = TRUE)))
@@ -1397,18 +1408,22 @@ server <- function(input,output,session) {
       distinct() 
       #mutate(Study = as.factor(Study))
     
-   
+    cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
+    auc_unit <- paste0("AUC (", input$auc_unit, ")")
     
     
     plotData_tab <- full_join(plotData_tab, greater_than_noeal, by="Study") %>% 
       arrange(Study,Dose,Cmax,AUC,SM,Findings) %>% 
       rename(
         "NOAEL (mg/kg/day)" = Dose,
-        "Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
+        #"Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
         "Safety Margin" = SM,
         "Findings at Greater than NOAEL for the Study" = Findings
       ) %>% 
       mutate(Study = as.factor(Study))
+    
+    names(plotData_tab)[names(plotData_tab)=="Cmax"] <- cmax_unit
+    names(plotData_tab)[names(plotData_tab)=="AUC"] <- auc_unit
     
     plotData_tab$Study <- factor(plotData_tab$Study,levels= input$displayStudies)
     plotData_tab <- plotData_tab %>%
@@ -1466,23 +1481,31 @@ server <- function(input,output,session) {
   
   
   dt_to_flex_02 <- reactive({
+    
+    cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
+    auc_unit <- paste0("AUC (", input$auc_unit, ")")
+    
     plotData_tab <- filtered_tab_02()
     plotData_tab <- plotData_tab %>% 
       rename(
          "Dose" ="NOAEL (mg/kg/day)",
-         "Cmax" = "Cmax (ng/ml)",
-         "AUC" = "AUC (ng*h/ml)", 
+         #"Cmax" = "Cmax (ng/ml)",
+         #"AUC" = "AUC (ng*h/ml)", 
          "SM"= "Safety Margin",
          "Findings" = "Findings at Greater than NOAEL for the Study"
       )
+    
+    colnames(plotData_tab)[3] <- "Cmax"
+    colnames(plotData_tab)[4] <- "AUC"
+    
     plotData_tab <- plotData_tab %>%
       flextable() %>% 
           merge_v(j = ~ Study + Dose + Cmax+ AUC +SM+Findings) %>%
           flextable::autofit() %>% 
       
           set_header_labels("Dose" = "NOAEL (mg/kg/day)",
-                        "Cmax" = "Cmax (ng/ml)",
-                        "AUC" = "AUC (ng*h/ml)",
+                        "Cmax" = cmax_unit,
+                        "AUC" = auc_unit,
                         "Findings" = "Findings at Greater than NOAEL for the Study",
                         "SM" = "Safety Margin") %>% 
       add_header_row(values = c("Key Study Findings"), colwidths = c(6)) %>%
@@ -1516,6 +1539,8 @@ server <- function(input,output,session) {
   
   dt_03 <- reactive({
     
+    cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
+    auc_unit <- paste0("AUC (", input$auc_unit, ")")
     plotData_03 <- calculateSM()
     plotData_03 <- plotData_03 %>% 
       select( Study,NOAEL, Dose, SM , HED_value, Cmax, AUC , SM_start_dose, SM_MRHD) %>% 
@@ -1524,10 +1549,16 @@ server <- function(input,output,session) {
       filter(NOAEL == TRUE) %>% 
       select(-NOAEL) %>% 
       dplyr::rename("NOAEL (mg/kg/day)" = Dose,
-                     "Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
+                     #"Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
+                     #cmax_unit = Cmax, auc_unit = AUC,
+                    
                      "Safety Margin" = SM,
                      "Safety Margin at Starting Dose" = SM_start_dose,
                      "Safety Margin at MRHD" = SM_MRHD)
+  
+    names(plotData_03)[names(plotData_03)=="Cmax"] <- cmax_unit
+    names(plotData_03)[names(plotData_03)=="AUC"] <- auc_unit
+    
     
     if (input$MgKg==F) {
       plotData_03 <- plotData_03 %>% 
@@ -2123,12 +2154,68 @@ server <- function(input,output,session) {
   })
   
   
+  ## save units for Cmax and AUC ----
+  
+  # get_unit_cmax <- reactive({
+  #   input$save_units
+  #  
+  #   Data <- getData()
+  #   cmax <- Data[["CmaxUnit"]]
+  #   cmax
+  #   
+  # })
+  
+  observeEvent(input$save_units, {
+    Data <- getData()
+    Data[["CmaxUnit"]] <- input$cmax_unit
+    Data[["AUCUnit"]] <- input$auc_unit
+    saveRDS(Data,values$Application)
+    showNotification("saved", duration = 3)
+  })
+  
+  five_space <- paste0(HTML('&nbsp;'), HTML('&nbsp;'), HTML('&nbsp;'),
+                       HTML('&nbsp;'), HTML('&nbsp;'))
+  ## start dose cmax and auc untis
+  output$start_cmax <- renderUI({
+    cmax <- paste0("Start Dose Cmax ", "(", input$cmax_unit, "):")
+    HTML(paste0(five_space, strong(cmax)))
+  })
+  
+  output$start_auc <- renderUI({
+    auc <- paste0("Start Dose AUC ", "(", input$auc_unit, "):")
+    HTML(paste0(five_space, strong(auc)))
+  })
+  
+ ## MRHD dose cmax and auc unit
+  output$MRHD_cmax <- renderUI({
+    cmax <- paste0("MRHD Dose Cmax ", "(", input$cmax_unit, "):")
+    HTML(paste0(five_space, strong(cmax)))
+  })
+  
+  output$MRHD_auc <- renderUI({
+    auc <- paste0("MRHD Dose AUC ", "(", input$auc_unit, "):")
+    HTML(paste0(five_space, strong(auc)))
+  })
+  
+  ## custom dose 
+  output$custom_cmax <- renderUI({
+    cmax <- paste0("Custom Dose Cmax ", "(", input$cmax_unit, "):")
+    HTML(paste0(five_space, strong(cmax)))
+  })
+  
+  output$custom_auc <- renderUI({
+    auc <- paste0("Custom Dose AUC ", "(", input$auc_unit, "):")
+    HTML(paste0(five_space, strong(auc)))
+  })
   
   
   
+  
+   
   # output$menu function -----
   
   output$menu <- renderMenu({
+
     if (!is.null(input$selectData)) {
       if (input$selectData=='blankData.rds') {
         sidebarMenu(id='menu',
@@ -2146,6 +2233,9 @@ server <- function(input,output,session) {
                     br()
         )
       } else {
+        # Data <- getData()
+        # cmax <- Data[["CmaxUnit"]]
+        
         sidebarMenu(id='menu',
                     menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                              uiOutput('selectData'),
@@ -2158,6 +2248,13 @@ server <- function(input,output,session) {
                     hr(),
                     uiOutput('studyName'),
                     hr(),
+                    menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
+                             textInput("cmax_unit", "Insert Unit for Cmax:", value = "ng/mL"),
+                             textInput("auc_unit", "Insert Unit for AUC:", value = "ng*h/mL"),
+                             actionButton('save_units','Save Units',icon=icon('plus-circle')),
+                             br()),
+                    
+                    
                     menuItem('Clinical Data',icon=icon('user'),
                              checkboxGroupInput('clinDosing','Clinical Dosing:',clinDosingOptions),
                              conditionalPanel('condition=input.MgKg==false',
@@ -2178,8 +2275,11 @@ server <- function(input,output,session) {
                                conditionalPanel(condition='input.MgKg==false',
                                                 numericInput('StartDose','*Start Dose (mg/day):',value = NULL, min=0)
                                ),
-                               numericInput('StartDoseCmax','Start Dose Cmax (ng/mL):',value=NULL, min=0),
-                               numericInput('StartDoseAUC','Start Dose AUC (ng*h/mL):',value=NULL, min=0)
+                               uiOutput("start_cmax"),
+                               numericInput('StartDoseCmax',NULL,value=NULL, min=0),
+                               #numericInput('StartDoseCmax',paste0('Start Dose Cmax ', input$cmax_unit),value=NULL, min=0),
+                               uiOutput("start_auc"),
+                               numericInput('StartDoseAUC',NULL,value=NULL, min=0)
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("MRHD")',
@@ -2193,8 +2293,10 @@ server <- function(input,output,session) {
                                conditionalPanel(condition='input.MgKg==false',
                                                 numericInput('MRHD','*MRHD (mg):',value = NULL, min=0)
                                ),
-                               numericInput('MRHDCmax','MRHD Cmax (ng/mL):',value=NULL, min=0),
-                               numericInput('MRHDAUC','MRHD AUC (ng*h/mL):',value=NULL, min=0)
+                               uiOutput("MRHD_cmax"),
+                               numericInput('MRHDCmax',NULL,value=NULL, min=0),
+                               uiOutput("MRHD_auc"),
+                               numericInput('MRHDAUC',NULL,value=NULL, min=0)
                              ),
                              conditionalPanel(
                                condition='input.clinDosing.includes("Custom Dose")',
@@ -2210,8 +2312,10 @@ server <- function(input,output,session) {
                                conditionalPanel(condition='input.MgKg==false',
                                                 numericInput('CustomDose','*Custom Dose (mg):',value = NULL, min=0)
                                ),
-                               numericInput('CustomDoseCmax','Custom Dose Cmax (ng/mL):',value=NULL, min=0),
-                               numericInput('CustomDoseAUC','Custom Dose AUC (ng*h/mL):',value=NULL, min=0)
+                               uiOutput("custom_cmax"),
+                               numericInput('CustomDoseCmax',NULL,value=NULL, min=0),
+                               uiOutput("custom_auc"),
+                               numericInput('CustomDoseAUC',NULL,value=NULL, min=0)
                              ),
                              actionButton('saveClinicalInfo','Save Clinical Information',icon=icon('plus-circle')),
                              br()
