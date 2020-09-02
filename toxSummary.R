@@ -461,7 +461,10 @@ server <- function(input,output,session) {
     updateTextInput(session,'Duration',value=studyData$Duration)
     updateNumericInput(session,'nDoses',value=studyData$nDoses)
     updateNumericInput(session,'nFindings',value=studyData$nFindings)
-    updateCheckboxInput(session, "notes", value = studyData$check_note)
+    updateCheckboxInput(session, "notes", value = studyData$check_note) 
+    # if (studyData$check_note==T) {
+    #   updateTextAreaInput(session, "note_text", value = studyData$Notes)
+    # }
     #updateTextAreaInput(session, "study_note", value = studyData$Notes)
     #print(studyData$Notes)
     
@@ -929,9 +932,25 @@ server <- function(input,output,session) {
   ### add note for study ----
   
   output$study_note <- renderUI({
-    if (input$notes ==T) {
-      textAreaInput("note_text", "Notes:", placeholder = "Enter Notes here for this Study", height = "100px")
-    }
+    req(input$selectStudy)
+    Data <- getData()
+    studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+    
+    if (input$selectStudy=='New Study') {
+      if (input$notes ==T) {
+        textAreaInput("note_text", "Notes:", placeholder = "Enter Note here for this Study", height = "100px")
+      }
+    } else{
+        if (input$notes==T) {
+          textAreaInput("note_text", "Notes:", value = studyData$Notes, height = "100px")
+        }
+      }
+      
+    
+    
+    # if (input$notes ==T) {
+    #   textAreaInput("note_text", "Notes:", placeholder = "Enter Note here for this Study", height = "100px")
+    # }
   })
   
   
