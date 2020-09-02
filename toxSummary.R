@@ -1725,6 +1725,36 @@ server <- function(input,output,session) {
                              width = '100%', align = 'lr')
    
  
+   ## download notes table
+   table_note_to_flex <- reactive({
+     note_table <- all_study_notes() %>% 
+       flextable() %>%
+       add_header_row(values = c("Note for Studies"), colwidths = c(2)) %>%
+       theme_box()
+     
+     note_table
+     
+     
+   })
+   
+   
+   
+   observeEvent(table_note_to_flex(), {save_as_docx(table_note_to_flex(), path = paste0(user(), "/note_table.docx") )})
+   
+   
+   output$down_notes <- downloadHandler(
+     filename = function() {
+       paste0("note_table", ".docx")
+     },
+     content = function(file) {
+       file.copy(paste0(user(), "/note_table.docx"), file)
+       
+       
+     }
+   )
+   
+   
+   
  #### plotheight ----
 
   # plotHeight <- function() {
@@ -2469,7 +2499,9 @@ ui <- dashboardPage(
                  hr(style = "border-top: 1px dashed black"),
                  fluidRow(
                    column(9,
-                          tableOutput("table_note")))),
+                          tableOutput("table_note"),
+                          h4("Click on button below to export the table in a docx file"),
+                          downloadButton("down_notes", "Docx file download")))),
         
         
   
