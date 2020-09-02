@@ -1845,11 +1845,17 @@ server <- function(input,output,session) {
     plotData_p <- plotData
   
     plotData_p <- plotData_p %>% 
-      select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order) %>% 
+      select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
       #group_by(Study, Dose, SM) %>% 
       unique()
     plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
     plotData_p$SM <- as.numeric(plotData_p$SM)
+    
+    #note 
+    plotData_note <- plotData_p %>% 
+      select(Study, Study_note, SM, Value_order) %>% 
+      filter(Value_order==1) %>% 
+      unique()
       
     
     if (nrow(plotData)>0) {
@@ -1904,18 +1910,34 @@ server <- function(input,output,session) {
                                  label.padding = unit(0.6, "lines")
           )
           
+      } else if (input$dose_sm==2) {
+        plot_p_label <- ggplot(plotData_p)+
+          geom_label_interactive(aes(x = SM, y = Value_order,
+                                     label = paste0(Dose, " mg/kg/day", "\n", SM, "x"),
+                                     #label= ifelse(input$dose_sm==1, paste0(Dose, " mg/kg/day"), paste0(Dose, " mg/kg/day", "_", SM, "x")),
+                                     tooltip =paste0(Study_note)), #DoseLabel changed
+                                 color = "white",
+                                 fontface = "bold",
+                                 size = 6,
+                                 fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
+                                 label.padding = unit(0.6, "lines"))
+        
       } else {
         plot_p_label <- ggplot(plotData_p)+
           geom_label_interactive(aes(x = SM, y = Value_order,
                                      label = paste0(Dose, " mg/kg/day", "\n", SM, "x"),
                                      #label= ifelse(input$dose_sm==1, paste0(Dose, " mg/kg/day"), paste0(Dose, " mg/kg/day", "_", SM, "x")),
-                                     tooltip =paste0("SM: ", SM, "x")), #DoseLabel changed
+                                     tooltip =paste0(Study_note)), #DoseLabel changed
                                  color = "white",
                                  fontface = "bold",
                                  size = 6,
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
                                  label.padding = unit(0.6, "lines")
-          )
+          )+
+        
+          geom_text(data=plotData_note ,aes(x = 0.5*(SM_max), y=0.3 , label= Study_note),
+                    color = "black",
+                    size= 6)
       }
       
       p <- plot_p_label +
@@ -2490,7 +2512,8 @@ ui <- dashboardPage(
                              selected = "ALL")),
                   column(3, 
                          radioButtons("dose_sm", "Display Units:", choices = list("Show Dose Only"=1,
-                                                                           "Show Dose with SM"= 2))),
+                                                                           "Show Dose with SM"= 2,
+                                                                           "Notes" =3))),
                  column(3, 
                         sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
                  br(),
