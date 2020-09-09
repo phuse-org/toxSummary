@@ -1388,15 +1388,19 @@ server <- function(input,output,session) {
 
 
 
-  observeEvent(dt_to_flex_01(), {save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))})
+  #observeEvent(input$down_01_doc, {save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))})
 
 
 
   output$down_01_doc <- downloadHandler(
+   
     filename = function() {
+      Sys.sleep(2)
       paste0("clinical_relevance", ".docx")
     },
     content = function(file) {
+      save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))
+    
       file.copy(paste0(user(),"/clinical_relevance.docx"), file)
 
 
@@ -1535,7 +1539,7 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))})
+  #observeEvent(dt_to_flex_02(), {save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))})
   
   
   
@@ -1544,6 +1548,7 @@ server <- function(input,output,session) {
       paste0("key_findings", ".docx")
     },
     content = function(file) {
+      save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))
       file.copy(paste0(user(), "/key_findings.docx"), file)
       
       
@@ -1650,7 +1655,7 @@ server <- function(input,output,session) {
   
   
   
-  observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )})
+  #observeEvent(dt_to_flex_03(), {save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )})
 
   
   output$down_03_doc <- downloadHandler(
@@ -1658,6 +1663,7 @@ server <- function(input,output,session) {
       paste0("safety_margin", ".docx")
     },
     content = function(file) {
+      save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )
       file.copy(paste0(user(), "/safety_margin.docx"), file)
       
       
@@ -1684,7 +1690,7 @@ server <- function(input,output,session) {
      doc_02
    })
 
-  observeEvent(download_all(), {print(download_all() , target = paste0(user(), "/table_all.docx"))})
+ #observeEvent(download_all(), {print(download_all() , target = paste0(user(), "/table_all.docx"))})
 
 
 
@@ -1693,6 +1699,7 @@ server <- function(input,output,session) {
        paste0("table_all", ".docx")
      },
      content = function(file) {
+       print(download_all() , target = paste0(user(), "/table_all.docx"))
        file.copy(paste0(user(), "/table_all.docx"), file)
 
 
@@ -1739,7 +1746,7 @@ server <- function(input,output,session) {
    
    
    
-   observeEvent(table_note_to_flex(), {save_as_docx(table_note_to_flex(), path = paste0(user(), "/note_table.docx") )})
+   #observeEvent(table_note_to_flex(), {save_as_docx(table_note_to_flex(), path = paste0(user(), "/note_table.docx") )})
    
    
    output$down_notes <- downloadHandler(
@@ -1747,6 +1754,7 @@ server <- function(input,output,session) {
        paste0("note_table", ".docx")
      },
      content = function(file) {
+       save_as_docx(table_note_to_flex(), path = paste0(user(), "/note_table.docx"))
        file.copy(paste0(user(), "/note_table.docx"), file)
        
        
