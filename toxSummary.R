@@ -961,11 +961,16 @@ server <- function(input,output,session) {
   
  getPlotData <- reactive({
   Data <- getData()
-  plotData <- data.frame(matrix(ncol = 21 ))
-  column_names <- c("Study", "Species", "Months", "Dose_num", "Dose", 
+  plotData <- data.frame(matrix(ncol = 17 ))
+  column_names <- c("Study", "Dose", 
                     "NOAEL", "Cmax", "AUC", "Findings",
-                    "Reversibility", "Severity", "Value", "Value_order", 
+                    "Reversibility", "Severity",  "Value_order", 
                     "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value", "Severity_max", "Severity_num", "Study_note")
+  # plotData <- data.frame(matrix(ncol = 21 ))
+  # column_names <- c("Study", "Species", "Months", "Dose_num", "Dose", 
+  #                   "NOAEL", "Cmax", "AUC", "Findings",
+  #                   "Reversibility", "Severity", "Value", "Value_order", 
+  #                   "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value", "Severity_max", "Severity_num", "Study_note")
   colnames(plotData) <- column_names
   
   
@@ -979,9 +984,9 @@ server <- function(input,output,session) {
         for (j in seq(studyData$nDoses)){
           
           plotData[count, "Study"] <- Study
-          plotData[count, "Species"] <- studyData[["Species"]]
-          plotData[count, "Months"] <- studyData[["Duration"]]
-          plotData[count, "Dose_num"] <- names(studyData[["Doses"]][j])
+          #plotData[count, "Species"] <- studyData[["Species"]]
+          #plotData[count, "Months"] <- studyData[["Duration"]]
+          #plotData[count, "Dose_num"] <- names(studyData[["Doses"]][j])
           plotData[count, "Dose"] <- studyData[["Doses"]][[paste0("Dose", j)]][["Dose"]]
           plotData[count, "NOAEL"] <- studyData[["Doses"]][[paste0("Dose",j)]][["NOAEL"]]
           plotData[count, "Cmax"] <- studyData[["Doses"]][[paste0("Dose", j)]][["Cmax"]]
@@ -989,7 +994,7 @@ server <- function(input,output,session) {
           plotData[count, "Findings"] <- studyData[["Findings"]][[paste0("Finding", i)]][["Finding"]]
           plotData[count, "Reversibility"] <- studyData[["Findings"]][[paste0("Finding", i)]][["Reversibility"]]
           plotData[count, "Severity"] <- studyData[["Findings"]][[paste0("Finding", i)]][["Severity"]][[paste0("Dose", j)]]
-          plotData[count, "Value"] <- 1
+          #plotData[count, "Value"] <- 1
           plotData[count, "Value_order"] <- j
           plotData[count, "SM"] <- NA
           plotData[count, "HED_value"] <- NA
@@ -1019,14 +1024,15 @@ server <- function(input,output,session) {
   plotData$Rev <- gsub("\\[|\\]", "", plotData$Reversibility)
   #print(plotData$Findings)
   
-  plotData$finding_rev <- paste0(plotData$Findings,"_", plotData$Rev)
+  #plotData$finding_rev <- paste0(plotData$Findings,"_", plotData$Rev)
   #print(plotData$finding_rev)
-  plotData$find_rev_b <- paste0(plotData$Findings, plotData$Reversibility)
+  #plotData$find_rev_b <- paste0(plotData$Findings, plotData$Reversibility)
   # plotData$Study <- str_to_lower(plotData$Study)
   # plotData$Study <- str_to_title(plotData$Study)
 
   #plotData$Findings <- factor(plotData$Findings)
   plotData$Dose <- as.numeric(plotData$Dose)
+  plotData$Value <- 1
   
   
   plotData$Rev[plotData$Rev == ""] <- "Not Assessed"
@@ -1041,8 +1047,11 @@ server <- function(input,output,session) {
                                         'Moderate', 'Marked', 'Severe'), ordered = TRUE)
   
   plotData$Severity_num <- as.numeric(plotData$Severity)
+  
+  
 
   return(plotData)
+  
   
 })
  
@@ -1853,7 +1862,7 @@ server <- function(input,output,session) {
     plotData_p <- plotData
   
     plotData_p <- plotData_p %>% 
-      select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
+      select(Study, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
       #group_by(Study, Dose, SM) %>% 
       unique()
     plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
