@@ -392,10 +392,7 @@ server <- function(input,output,session) {
   
 ############## Auto-Save ######################
   
-  # Issues to Resolve:
-  # - Clinical data must be entered before nonclincial data or throws an error
-  # - figure loads every time you change the nonclinical study selection
-  
+  # read data from disk into values$tmpData upon study selection
   observeEvent(input$selectStudy,ignoreNULL=T,{
     values$changeStudyFlag <- F
     Data <- getData()
@@ -406,6 +403,7 @@ server <- function(input,output,session) {
     }
   })
   
+  # Flip changeStudyFlag after "New Study" has loaded
   observe({
     if (is.null(input$dose1)) {
       values$changeStudyFlag <- T
@@ -414,6 +412,7 @@ server <- function(input,output,session) {
     }
   })
   
+  # Flip changeStudyFlag after study has loaded and update tmpData to match UI
   observe({
     req(input$nDoses)
     req(input$dose1)
