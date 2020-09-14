@@ -122,7 +122,8 @@ library(patchwork)
 # # Save configuration of blankData.rds below for later: ####
 
 # Data <- list(
-#   INDnumber = NULL,
+#   CmaxUnit = 'ng/mL',
+#   AUCUnit = 'ng*h/mL',
 #   'Clinical Information'= list(
 #     HumanWeight = 60,
 #     MgKg = F,
@@ -149,42 +150,15 @@ library(patchwork)
 #     'New Study' = list(
 #       Species = NULL,
 #       Duration = NULL,
-#       Doses = list(
-#         Dose = NULL,
+#       Notes = NULL,
+#       check_note = NULL,
+#       nDoses = 3,
+#       Doses = list(Dose1=list(
+#         Dose = '',
 #         NOAEL = F,
-#         Cmax = NULL,
-#         AUC = NULL
-#       ),
-#       Findings = list(
-#         Finding = NULL,
-#         Reversibility = F,
-#         FindingDoses = NULL
-#       )
-#     ),
-#     'Rat Study' = list(
-  #       Species = NULL,
-  #       Duration = NULL,
-  #       Doses = list(
-  #         Dose = NULL,
-  #         NOAEL = F,
-  #         Cmax = NULL,
-  #         AUC = NULL
-  #       ),
-  #       Findings = list(
-  #         Finding = NULL,
-  #         Reversibility = F,
-  #         FindingDoses = NULL
-  #       )
-  #     )
-#     'Dog Study' = list(
-#       Species = NULL,
-#       Duration = NULL,
-#       Doses = list(
-#         Dose = NULL,
-#         NOAEL = F,
-#         Cmax = NULL,
-#         AUC = NULL
-#       ),
+#         Cmax = '',
+#         AUC = ''
+#       )),
 #       Findings = list(
 #         Finding = NULL,
 #         Reversibility = F,
@@ -209,6 +183,8 @@ values <- reactiveValues()
 values$Application <- NULL
 values$SM <- NULL
 values$selectData <- NULL
+values$tmpData <- NULL
+values$changeStudyFlag <- F
 
 # Species Conversion ----
 
@@ -413,6 +389,59 @@ server <- function(input,output,session) {
     studyList <- names(Data[['Nonclinical Information']])
     selectInput('selectStudy','Select Study:',choices=studyList)
   })
+  
+############## Auto-Save ######################
+  
+  # Issues to Resolve:
+  # - Clinical data must be entered before nonclincial data or throws an error
+  # - it's not autosaving changes properly right now
+  # - figure loads every time you change the nonclinical study selection
+  
+  observeEvent(input$selectStudy,ignoreNULL=T,{
+    values$changeStudyFlag <- F
+    Data <- getData()
+    values$tmpData <- Data[['Nonclinical Information']][[input$selectStudy]]
+  })
+  
+  observe({
+    print(values$changeStudyFlag)
+  })
+  
+  observe({
+    if (!is.null(input$dose1)) {
+      if (!is.na(input$dose1)) {
+        req(input$nDoses)
+        print(values$tmpData$Doses$Dose1$Dose)
+        print(input$dose1)
+        if (values$tmpData$Doses$Dose1$Dose == input$dose1) {
+          values$changeStudyFlag <- T
+        }
+        if ((values$changeStudyFlag==T)|(input$selectStudy == 'New Study')) {
+          for (i in seq(input$nDoses)) {
+            if (!is.null(input[[paste0('dose',i)]])) {
+              newList <- list(
+                Dose = input[[paste0('dose',i)]],
+                NOAEL = input[[paste0('NOAEL',i)]],
+                Cmax = input[[paste0('Cmax',i)]],
+                AUC = input[[paste0('AUC',i)]]
+              )
+              values$tmpData[['Doses']][[paste0('Dose',i)]] <- newList
+            } else {
+              values$tmpdata$Doses[[paste0('Dose',i)]] <- list(
+                Dose = '',
+                NOAEL = F,
+                Cmax = '',
+                AUC = ''
+              )
+            }
+          }
+        }
+      }
+    }
+  })
+  
+  
+###############################################
   
   # Clinical information -----
   
@@ -704,34 +733,36 @@ server <- function(input,output,session) {
     req(input$selectStudy)
     cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0(" AUC (", input$auc_unit, ")")
-    if (input$selectStudy=='New Study') {
-      lapply(1:(4*input$nDoses), function(i) {
-        I <- ceiling(i/4)
-        if (i %% 4 == 1) {
-          div(
-            hr(style = "border-top: 1px dashed skyblue"),
-          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL))
-        } else if (i %% 4 == 2) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              #numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
-              numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min = 0, NULL))
-        }
-        else if (i %% 4 == 3) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),min = 0, NULL))
-        } else {
-          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F))
-        }
-      })
-    } else {
-      Data <- getData()
-      studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+    # if (input$selectStudy=='New Study') {
+    #   lapply(1:(4*input$nDoses), function(i) {
+    #     I <- ceiling(i/4)
+    #     if (i %% 4 == 1) {
+    #       div(
+    #         hr(style = "border-top: 1px dashed skyblue"),
+    #       numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL))
+    #     } else if (i %% 4 == 2) {
+    #       div(style="display: inline-block;vertical-align:top; width: 115px;",
+    #           #numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
+    #           numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min = 0, NULL))
+    #     }
+    #     else if (i %% 4 == 3) {
+    #       div(style="display: inline-block;vertical-align:top; width: 115px;",
+    #           numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),min = 0, NULL))
+    #     } else {
+    #       div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F))
+    #     }
+    #   })
+    # } else {
+      # Data <- getData()
+      # studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+      studyData <- values$tmpData
+      # print(studyData)
       lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
         doseName <- names(studyData$Doses)[I]
         if (i %% 4 == 1) {
           div(hr(style = "border-top: 1px dashed skyblue"),
-          textInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']]))
+          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']]))
         } else if (i %% 4 == 2) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
               numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit),studyData$Doses[[doseName]][['Cmax']]))
@@ -744,7 +775,7 @@ server <- function(input,output,session) {
          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
         }
       })
-    }
+    # }
   })
   
   # findings with severity -----
