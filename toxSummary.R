@@ -390,7 +390,7 @@ server <- function(input,output,session) {
     selectInput('selectStudy','Select Study:',choices=studyList)
   })
   
-############## Auto-Save ######################
+############## Auto-Save Dose ######################
   
   # read data from disk into values$tmpData upon study selection
   observeEvent(input$selectStudy,ignoreNULL=T,{
@@ -445,6 +445,16 @@ server <- function(input,output,session) {
   
   
 ###############################################
+  
+
+  ########### Auto-save findings ###############
+  
+  
+  
+  
+  
+  
+#############################################
   
   # Clinical information -----
   
@@ -742,14 +752,14 @@ server <- function(input,output,session) {
       doseName <- names(studyData$Doses)[I]
       if (i %% 4 == 1) {
         div(hr(style = "border-top: 1px dashed skyblue"),
-            numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']]))
+            numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min=0, value =studyData$Doses[[doseName]][['Dose']]))
       } else if (i %% 4 == 2) {
         div(style="display: inline-block;vertical-align:top; width: 115px;",
-            numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit),studyData$Doses[[doseName]][['Cmax']]))
+            numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min=0, value=studyData$Doses[[doseName]][['Cmax']]))
       }
       else if (i %% 4 == 3) {
         div(style="display: inline-block;vertical-align:top; width: 115px;",
-            numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),studyData$Doses[[doseName]][['AUC']]))
+            numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit), min=0, value=studyData$Doses[[doseName]][['AUC']]))
         
       } else {
         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
@@ -757,7 +767,7 @@ server <- function(input,output,session) {
     })
   })
   
-  # findings with severity -----
+  # findings with severity output$Findings -----
 
 
   
@@ -1853,6 +1863,8 @@ server <- function(input,output,session) {
       
     ## plotdata for p plot (changed) ----
     plotData_p <- plotData
+    # plotData_p <- filtered_plot()
+    # plotData_p$Dose <- as.numeric(plotData_p$Dose)
   
     plotData_p <- plotData_p %>% 
       select(Study, Species, Months, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
@@ -2339,7 +2351,7 @@ server <- function(input,output,session) {
                     menuItem('Clinical Data',icon=icon('user'),
                              checkboxGroupInput('clinDosing','Clinical Dosing:',clinDosingOptions),
                              conditionalPanel('condition=input.MgKg==false',
-                                              numericInput('HumanWeight','*Human Weight (kg):',value=60)
+                                              numericInput('HumanWeight','*Human Weight (kg):',value=60, min=0)
                              ),
                              checkboxInput('MgKg','Dosing in mg/kg?',value=F),
                              conditionalPanel(
@@ -2417,7 +2429,7 @@ server <- function(input,output,session) {
                              hr(),
                              #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
-                             numericInput('nDoses','Number of Dose Levels:',value=3,step=1,min=1),
+                             numericInput('nDoses','Number of Dose Levels:',value=1,step=1,min=1),
                             
                              uiOutput('Doses'),
                              
