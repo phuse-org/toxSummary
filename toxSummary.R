@@ -159,11 +159,13 @@ Data <- list(
         Cmax = '',
         AUC = ''
       )),
-      Findings = list(
-        Finding = NULL,
-        Reversibility = F,
-        FindingDoses = NULL
-      )
+      nFindings=1,
+      Findings = list(Finding1=list(
+        Finding = '',
+        Reversibility = '[Rev]',
+        Severity = list(
+          Dose1='Absent')
+      ))
     )
   )
 )
@@ -179,12 +181,14 @@ addUIDep <- function(x) {
 }
 
 
+
 values <- reactiveValues()
 values$Application <- NULL
 values$SM <- NULL
 values$selectData <- NULL
 values$tmpData <- NULL
 values$changeStudyFlag <- F
+values$Findings <- NULL
 
 # Species Conversion ----
 
@@ -223,6 +227,10 @@ roundSigfigs <- function(x,N=2) {
       
     }
 }
+
+
+
+
 
 # Server function started here (selectData) ----
 
@@ -432,7 +440,7 @@ server <- function(input,output,session) {
           )
           values$tmpData[['Doses']][[paste0('Dose',i)]] <- newList
         } else {
-          values$tmpdata$Doses[[paste0('Dose',i)]] <- list(
+          values$tmpData$Doses[[paste0('Dose',i)]] <- list(
             Dose = '',
             NOAEL = F,
             Cmax = '',
@@ -445,13 +453,85 @@ server <- function(input,output,session) {
   
   
 ###############################################
-  
+ 
+ 
+          
+  observeEvent(input$selectData,ignoreNULL = T,{
+    Data <- getData()
+    
+    for (Study in names(Data[['Nonclinical Information']])) {
+      if (Study != "New Study") {
+        studyData <- Data[['Nonclinical Information']][[Study]]
+        
+        for ( i in seq(studyData$nFindings)) {
+          Finding <- studyData[['Findings']][[paste0('Finding', i)]][['Finding']]
+          values$Findings <- c(values$Findings, Finding)
+ 
+        }
+      }
+    }
+    
+
+
+
+  })
 
   ########### Auto-save findings ###############
+  # 
+  # if (Finding %ni% values$Findings) {
+  #   values$Findings <- c(values$Findings, Finding)
+  # }
+  
+  observe({
+    req(input$nFindings)
+    req(input$Finding1)
+    #print(input$Finding1)
+    if (values$changeStudyFlag==T) {
+      for (i in seq(input$nFindings)) {
+        if (!is.null(input[[paste0('Finding',i)]])) {
+          #print(input$Finding1)
+          Finding= input[[paste0('Finding',i)]]
+          if (Finding %ni% values$Findings) {
+            values$Findings <- c(values$Findings, Finding)
+          }
+          #print(values$Findings)
+          newList <- list(
+            Finding = input[[paste0('Finding',i)]],
+            Reversibility = input[[paste0('Reversibility',i)]],
+            for (j in seq(input$nDoses))
+            {
+              Severity = input[[paste0('Severity',i, "_", j)]]
+              
+              
+            }
+            
+         
+          )
+          #print(Severity)
+        
+          values$tmpData[['Findings']][[paste0('Finding',i)]] <- newList
+          # print("newList")
+          # print(str(newList))
+          # print('-----------------')
+          #print(values$tmpData$Findings)
+        } else {
+          values$tmpData$Findings[[paste0('Finding',i)]] <- list(
+            Finding = '',
+            Reversibility = '[Rev]',
+            Severity = list(
+              Dose1='Absent')
+          )
+        }
+        
+      }
+    }
+  })
   
   
+  ##
+
   
-  
+  ##
   
   
 #############################################
@@ -768,103 +848,37 @@ server <- function(input,output,session) {
   })
   
   # findings with severity output$Findings -----
-
-
   
   output$Findings <- renderUI({
     req(input$selectStudy)
- 
     
-    if (input$selectStudy=='New Study') {
-      if (input$nFindings>0) {
-        numerator <- 2 + input$nDoses
-        lapply(1:(numerator*input$nFindings), function(i) {
-          
-          
-          I <- ceiling(i/numerator)
-          if (i %% numerator == 1) {
-            
-            data <- calculateSM()
-            
-            find_fact <- as.factor(data$Findings)
-            
-            findings <- unique(find_fact)
-            #print(paste0("findings _______", findings))
-          
-            
-            if (is.null(findings)) {
-              
-              
-            
-              div(
-                hr(style = "border-top: 1px dashed skyblue"),
-                
-                #rightnow
-                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
-                               options = list(create = TRUE, onInitialize = I('function() { this.setValue(""); }'))))
- 
-            } else { div(
-              hr(style = "border-top: 1px dashed skyblue"),
-              
-              #rightnow
-              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
-                             options = list(create = TRUE, 
-                                            onInitialize = I('function() { this.setValue(""); }'))))
-              
-            }
-            
-            
-            # div(
-            #   hr(style = "border-top: 1px dashed skyblue"),
-            #   
-            #   #rightnow
-            # selectizeInput(paste0('Finding',I),paste0('Finding ',I,':')), choices = , options = list(create = TRUE))
-            # 
-          
-            
-            
-            
-            
-            } else if (i %% numerator == 2) {
-            radioButtons(paste0('Reversibility',I),'Reversibility:',
-                         choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
-                                       'Partially Reversible [PR]','Not Assessed'),
-                         choiceValues=c('[Rev]','[NR]','[PR]',''))
-          } else {
-            lapply(1:input$nDoses, function(j) {
-              if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
-                            choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
-                
-              }
-            })
-          }
-        })
-      }
-    } else {
-      Data <- getData()
-      studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-      #print(studyData)
+  
+      #Data <- getData()
+      #studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+      studyData <- values$tmpData
+      
+      #print(str(studyData$Findings))
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
         lapply(1:(numerator*input$nFindings), function(i) {
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
             
-            data <- calculateSM()
-            find_fact <- as.factor(data$Findings)
-            findings <- unique(find_fact)
-          
+            # data <- calculateSM()
+            # find_fact <- as.factor(data$Findings)
+            # findings <- unique(find_fact)
+            findings <- values$Findings
+            
             
             div(
               hr(style = "border-top: 1px dashed skyblue"),
               
-             
-                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
-                               selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
-                               options = list(create = TRUE)))
-            
               
+              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
+                             selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
+                             options = list(create = TRUE)))
+            
+            
           } else if (i %% numerator == 2) {
             radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -888,23 +902,72 @@ server <- function(input,output,session) {
             })
           }
           
-        
+          
         })
       }
-    }
+    
     
   })
+
+  
+  ##################################
+
   
   # output$Findings <- renderUI({
   #   req(input$selectStudy)
+  # 
+  #   
   #   if (input$selectStudy=='New Study') {
   #     if (input$nFindings>0) {
   #       numerator <- 2 + input$nDoses
   #       lapply(1:(numerator*input$nFindings), function(i) {
+  #         
+  #         
   #         I <- ceiling(i/numerator)
   #         if (i %% numerator == 1) {
-  #           textInput(paste0('Finding',I),paste0('Finding ',I,':'))
-  #         } else if (i %% numerator == 2) {
+  #           
+  #           data <- calculateSM()
+  #           
+  #           find_fact <- as.factor(data$Findings)
+  #           
+  #           findings <- unique(find_fact)
+  #           #print(paste0("findings _______", findings))
+  #         
+  #           
+  #           if (is.null(findings)) {
+  #             
+  #             
+  #           
+  #             div(
+  #               hr(style = "border-top: 1px dashed skyblue"),
+  #               
+  #               #rightnow
+  #               selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
+  #                              options = list(create = TRUE, onInitialize = I('function() { this.setValue(""); }'))))
+  # 
+  #           } else { div(
+  #             hr(style = "border-top: 1px dashed skyblue"),
+  #             
+  #             #rightnow
+  #             selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
+  #                            options = list(create = TRUE, 
+  #                                           onInitialize = I('function() { this.setValue(""); }'))))
+  #             
+  #           }
+  #           
+  #           
+  #           # div(
+  #           #   hr(style = "border-top: 1px dashed skyblue"),
+  #           #   
+  #           #   #rightnow
+  #           # selectizeInput(paste0('Finding',I),paste0('Finding ',I,':')), choices = , options = list(create = TRUE))
+  #           # 
+  #         
+  #           
+  #           
+  #           
+  #           
+  #           } else if (i %% numerator == 2) {
   #           radioButtons(paste0('Reversibility',I),'Reversibility:',
   #                        choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
   #                                      'Partially Reversible [PR]','Not Assessed'),
@@ -912,8 +975,9 @@ server <- function(input,output,session) {
   #         } else {
   #           lapply(1:input$nDoses, function(j) {
   #             if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-  #               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
+  #              selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
   #                           choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
+  #               
   #             }
   #           })
   #         }
@@ -922,13 +986,27 @@ server <- function(input,output,session) {
   #   } else {
   #     Data <- getData()
   #     studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+  #     #print(studyData)
   #     if (input$nFindings>0) {
   #       numerator <- 2 + input$nDoses
-  #       lapply(1:(3*input$nFindings), function(i) {
+  #       lapply(1:(numerator*input$nFindings), function(i) {
   #         I <- ceiling(i/numerator)
   #         if (i %% numerator == 1) {
-  #           textInput(paste0('Finding',I),paste0('Finding ',I,':'),
-  #                     studyData$Findings[[paste0('Finding',I)]]$Finding)
+  #           
+  #           data <- calculateSM()
+  #           find_fact <- as.factor(data$Findings)
+  #           findings <- unique(find_fact)
+  #         
+  #           
+  #           div(
+  #             hr(style = "border-top: 1px dashed skyblue"),
+  #             
+  #            
+  #               selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
+  #                              selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
+  #                              options = list(create = TRUE)))
+  #           
+  #             
   #         } else if (i %% numerator == 2) {
   #           radioButtons(paste0('Reversibility',I),'Reversibility:',
   #                        choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -936,18 +1014,30 @@ server <- function(input,output,session) {
   #                        choiceValues=c('[Rev]','[NR]','[PR]',''),
   #                        selected=studyData$Findings[[paste0('Finding',I)]]$Reversibility)
   #         } else {
+  #           
   #           lapply(1:input$nDoses, function(j) {
   #             if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
+  #               
   #               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
-  #                           choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
+  #                           choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'),
+  #                           selected=studyData$Findings[[paste0('Finding',I)]]$Severity[[paste0('Dose',j)]])
+  #               
+  #               
   #             }
+  #             
+  #             
+  #             
   #           })
   #         }
+  #         
+  #       
   #       })
   #     }
   #   }
+  #   
   # })
   
+
   
   ### add note for study ----
   
