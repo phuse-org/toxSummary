@@ -496,17 +496,16 @@ server <- function(input,output,session) {
           }
           #print(values$Findings)
           newList <- list(
-            Finding = input[[paste0('Finding',i)]],
-            Reversibility = input[[paste0('Reversibility',i)]],
-            for (j in seq(input$nDoses))
-            {
-              Severity = input[[paste0('Severity',i, "_", j)]]
-              
-              
-            }
-            
-         
-          )
+            Finding= input[[paste0('Finding',i)]],
+            Reversibility = input[[paste0('Reversibility',i)]])
+          sev_list <- list()
+          for (j in seq(input$nDoses)) {
+            finding_seq <- input[[paste0('Severity', i, '_', j)]]
+            names(finding_seq) <- paste0("Dose", j)
+            sev_list <- c(sev_list, finding_seq)
+          }
+          newList <- c(newList, list(Severity= sev_list))
+          
           #print(Severity)
         
           values$tmpData[['Findings']][[paste0('Finding',i)]] <- newList
@@ -867,7 +866,8 @@ server <- function(input,output,session) {
             # data <- calculateSM()
             # find_fact <- as.factor(data$Findings)
             # findings <- unique(find_fact)
-            findings <- values$Findings
+            findings <- str_sort(values$Findings)
+            
             
             
             div(
