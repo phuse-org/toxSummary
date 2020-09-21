@@ -491,7 +491,7 @@ server <- function(input,output,session) {
       for (i in seq(input$nFindings)) {
         if (!is.null(input[[paste0('Finding',i)]])) {
           #print
-          print(input$Finding1)
+          #print(input$Finding1)
           
           Finding_list= input[[paste0('Finding',i)]]
           if (Finding_list %ni% values$Findings) {
