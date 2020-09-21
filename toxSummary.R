@@ -408,6 +408,7 @@ server <- function(input,output,session) {
     if (input$selectStudy=='New Study') {
       blankData <- readRDS('blankData.rds')
       values$tmpData <- blankData[['Nonclinical Information']][[input$selectStudy]]
+      #values$tmpData <- Data[['Nonclinical Information']][['New Study']]
     }
   })
   
@@ -489,10 +490,12 @@ server <- function(input,output,session) {
     if (values$changeStudyFlag==T) {
       for (i in seq(input$nFindings)) {
         if (!is.null(input[[paste0('Finding',i)]])) {
-          #print(input$Finding1)
-          Finding= input[[paste0('Finding',i)]]
-          if (Finding %ni% values$Findings) {
-            values$Findings <- c(values$Findings, Finding)
+          #print
+          print(input$Finding1)
+          
+          Finding_list= input[[paste0('Finding',i)]]
+          if (Finding_list %ni% values$Findings) {
+            values$Findings <- c(values$Findings, Finding_list)
           }
           #print(values$Findings)
           newList <- list(
@@ -500,15 +503,22 @@ server <- function(input,output,session) {
             Reversibility = input[[paste0('Reversibility',i)]])
           sev_list <- list()
           for (j in seq(input$nDoses)) {
-            finding_seq <- input[[paste0('Severity', i, '_', j)]]
+            finding_seq <- input[[paste0('Severity', i, '_', j)]] # NULL
+            #print(str(finding_seq))
+            #print(finding_seq)
+            if (!is.null(finding_seq)) {
             names(finding_seq) <- paste0("Dose", j)
+            }
             sev_list <- c(sev_list, finding_seq)
+            
           }
+          
           newList <- c(newList, list(Severity= sev_list))
           
-          #print(Severity)
+          #print(str(newList))
         
           values$tmpData[['Findings']][[paste0('Finding',i)]] <- newList
+          #print(str(values$tmpData))
           # print("newList")
           # print(str(newList))
           # print('-----------------')
@@ -520,6 +530,7 @@ server <- function(input,output,session) {
             Severity = list(
               Dose1='Absent')
           )
+          
         }
         
       }
@@ -856,7 +867,11 @@ server <- function(input,output,session) {
       #studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
       studyData <- values$tmpData
       
-      #print(str(studyData$Findings))
+      #print(str(studyData))
+      
+     
+       
+      
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
         lapply(1:(numerator*input$nFindings), function(i) {
@@ -867,6 +882,11 @@ server <- function(input,output,session) {
             # find_fact <- as.factor(data$Findings)
             # findings <- unique(find_fact)
             findings <- str_sort(values$Findings)
+            # print("__________")
+            # print(studyData$Findings[[paste0('Finding',I)]]$Finding)
+            # print("**************")
+            # 
+            
             
             
             
