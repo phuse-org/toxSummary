@@ -121,80 +121,56 @@ library(patchwork)
 
 # # Save configuration of blankData.rds below for later: ####
 
-# Data <- list(
-#   INDnumber = NULL,
-#   'Clinical Information'= list(
-#     HumanWeight = 60,
-#     MgKg = F,
-#     'Start Dose' = list(
-#       StartDose = NULL,
-#       StartDoseMgKg = NULL,
-#       StartDoseCmax = NULL,
-#       StartDoseAUC = NULL
-#     ),
-#     'MRHD' = list(
-#       MRHDDose = NULL,
-#       MRHDDoseMgKg = NULL,
-#       MRHDCmax = NULL,
-#       MRHDAUC = NULL
-#     ),
-#     'Custom Dose' = list(
-#       CustomDose = NULL,
-#       CustomDoseMgKg = NULL,
-#       CustomDoseCmax = NULL,
-#       CustomDoseAUC = NULL
-#     )
-#   ),
-#   'Nonclinical Information' = list(
-#     'New Study' = list(
-#       Species = NULL,
-#       Duration = NULL,
-#       Doses = list(
-#         Dose = NULL,
-#         NOAEL = F,
-#         Cmax = NULL,
-#         AUC = NULL
-#       ),
-#       Findings = list(
-#         Finding = NULL,
-#         Reversibility = F,
-#         FindingDoses = NULL
-#       )
-#     ),
-#     'Rat Study' = list(
-  #       Species = NULL,
-  #       Duration = NULL,
-  #       Doses = list(
-  #         Dose = NULL,
-  #         NOAEL = F,
-  #         Cmax = NULL,
-  #         AUC = NULL
-  #       ),
-  #       Findings = list(
-  #         Finding = NULL,
-  #         Reversibility = F,
-  #         FindingDoses = NULL
-  #       )
-  #     )
-#     'Dog Study' = list(
-#       Species = NULL,
-#       Duration = NULL,
-#       Doses = list(
-#         Dose = NULL,
-#         NOAEL = F,
-#         Cmax = NULL,
-#         AUC = NULL
-#       ),
-#       Findings = list(
-#         Finding = NULL,
-#         Reversibility = F,
-#         FindingDoses = NULL
-#       )
-#     )
-#   )
-# )
-# 
-# saveRDS(Data,'blankData.rds')
+Data <- list(
+  CmaxUnit = 'ng/mL',
+  AUCUnit = 'ng*h/mL',
+  'Clinical Information'= list(
+    HumanWeight = 60,
+    MgKg = F,
+    'Start Dose' = list(
+      StartDose = NULL,
+      StartDoseMgKg = NULL,
+      StartDoseCmax = NULL,
+      StartDoseAUC = NULL
+    ),
+    'MRHD' = list(
+      MRHDDose = NULL,
+      MRHDDoseMgKg = NULL,
+      MRHDCmax = NULL,
+      MRHDAUC = NULL
+    ),
+    'Custom Dose' = list(
+      CustomDose = NULL,
+      CustomDoseMgKg = NULL,
+      CustomDoseCmax = NULL,
+      CustomDoseAUC = NULL
+    )
+  ),
+  'Nonclinical Information' = list(
+    'New Study' = list(
+      Species = NULL,
+      Duration = NULL,
+      Notes = NULL,
+      check_note = NULL,
+      nDoses = 1,
+      Doses = list(Dose1=list(
+        Dose = '',
+        NOAEL = F,
+        Cmax = '',
+        AUC = ''
+      )),
+      nFindings=1,
+      Findings = list(Finding1=list(
+        Finding = '',
+        Reversibility = '[Rev]',
+        Severity = list(
+          Dose1='Absent')
+      ))
+    )
+  )
+)
+
+saveRDS(Data,'blankData.rds')
 
 addUIDep <- function(x) {
   jqueryUIDep <- htmlDependency("jqueryui", "1.10.4", c(href="shared/jqueryui/1.10.4"),
@@ -205,10 +181,14 @@ addUIDep <- function(x) {
 }
 
 
+
 values <- reactiveValues()
 values$Application <- NULL
 values$SM <- NULL
 values$selectData <- NULL
+values$tmpData <- NULL
+values$changeStudyFlag <- F
+values$Findings <- NULL
 
 # Species Conversion ----
 
@@ -247,6 +227,10 @@ roundSigfigs <- function(x,N=2) {
       
     }
 }
+
+
+
+
 
 # Server function started here (selectData) ----
 
@@ -298,10 +282,10 @@ server <- function(input,output,session) {
   #### user folder  ----
   
   user <- reactive({
-    # url_search <- session$clientData$url_search
-    # username <- unlist(strsplit(url_search,'user='))[2]
-    # username <- str_to_lower(username)
-    username <- "md.ali@fda.hhs.gov"
+    url_search <- session$clientData$url_search
+    username <- unlist(strsplit(url_search,'user='))[2]
+    username <- str_to_lower(username)
+    #username <- "md.ali@fda.hhs.gov"
     username <- paste0("Applications/", username)
     return(username)
   })
@@ -413,6 +397,155 @@ server <- function(input,output,session) {
     studyList <- names(Data[['Nonclinical Information']])
     selectInput('selectStudy','Select Study:',choices=studyList)
   })
+  
+############## Auto-Save Dose ######################
+  
+  # read data from disk into values$tmpData upon study selection
+  observeEvent(input$selectStudy,ignoreNULL=T,{
+    values$changeStudyFlag <- F
+    Data <- getData()
+    values$tmpData <- Data[['Nonclinical Information']][[input$selectStudy]]
+    if (input$selectStudy=='New Study') {
+      blankData <- readRDS('blankData.rds')
+      values$tmpData <- blankData[['Nonclinical Information']][[input$selectStudy]]
+      #values$tmpData <- Data[['Nonclinical Information']][['New Study']]
+    }
+  })
+  
+  # Flip changeStudyFlag after "New Study" has loaded
+  observe({
+    if (is.null(input$dose1)) {
+      values$changeStudyFlag <- T
+    } else if (is.na(input$dose1)) {
+      values$changeStudyFlag <- T
+    }
+  })
+  
+  # Flip changeStudyFlag after study has loaded and update tmpData to match UI
+  observe({
+    req(input$nDoses)
+    req(input$dose1)
+    if (!is.na(input$dose1)) {
+      if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)) {
+        values$changeStudyFlag <- T
+      }
+    }
+    if (values$changeStudyFlag==T) {
+      for (i in seq(input$nDoses)) {
+        if (!is.null(input[[paste0('dose',i)]])) {
+          newList <- list(
+            Dose = input[[paste0('dose',i)]],
+            NOAEL = input[[paste0('NOAEL',i)]],
+            Cmax = input[[paste0('Cmax',i)]],
+            AUC = input[[paste0('AUC',i)]]
+          )
+          values$tmpData[['Doses']][[paste0('Dose',i)]] <- newList
+        # } else {
+        #   values$tmpData$Doses[[paste0('Dose',i)]] <- list(
+        #     Dose = '',
+        #     NOAEL = F,
+        #     Cmax = '',
+        #     AUC = ''
+        #   )
+        }
+      }
+    }
+  })
+  
+  
+###############################################
+ 
+ 
+          
+  observeEvent(input$selectData,ignoreNULL = T,{
+    Data <- getData()
+    
+    for (Study in names(Data[['Nonclinical Information']])) {
+      if (Study != "New Study") {
+        studyData <- Data[['Nonclinical Information']][[Study]]
+        
+        for ( i in seq(studyData$nFindings)) {
+          Finding <- studyData[['Findings']][[paste0('Finding', i)]][['Finding']]
+          values$Findings <- c(values$Findings, Finding)
+ 
+        }
+      }
+    }
+    
+
+
+
+  })
+
+  ########### Auto-save findings ###############
+  # 
+  # if (Finding %ni% values$Findings) {
+  #   values$Findings <- c(values$Findings, Finding)
+  # }
+  
+  observe({
+    req(input$nFindings)
+    req(input$Finding1)
+    #print(input$Finding1)
+    if (values$changeStudyFlag==T) {
+      for (i in seq(input$nFindings)) {
+        if (!is.null(input[[paste0('Finding',i)]])) {
+          #print
+          #print(input$Finding1)
+          
+          Finding_list= input[[paste0('Finding',i)]]
+          if (Finding_list %ni% values$Findings) {
+            values$Findings <- c(values$Findings, Finding_list)
+          }
+          #print(values$Findings)
+          newList <- list(
+            Finding= input[[paste0('Finding',i)]],
+            Reversibility = input[[paste0('Reversibility',i)]])
+          sev_list <- list()
+          for (j in seq(input$nDoses)) {
+            finding_seq <- input[[paste0('Severity', i, '_', j)]] # NULL
+            #print(str(finding_seq))
+            #print(finding_seq)
+            if (!is.null(finding_seq)) {
+            names(finding_seq) <- paste0("Dose", j)
+            }
+            sev_list <- c(sev_list, finding_seq)
+            
+          }
+          
+          newList <- c(newList, list(Severity= sev_list))
+          
+          #print(str(newList))
+        
+          values$tmpData[['Findings']][[paste0('Finding',i)]] <- newList
+          #print(str(values$tmpData))
+          # print("newList")
+          # print(str(newList))
+          # print('-----------------')
+          #print(values$tmpData$Findings)
+         } 
+        #else {
+        #   values$tmpData$Findings[[paste0('Finding',i)]] <- list(
+        #     Finding = '',
+        #     Reversibility = '[Rev]',
+        #     Severity = list(
+        #       Dose1='Absent')
+        #   )
+        #   
+        # }
+        
+      }
+    }
+  })
+  
+  
+  ##
+
+  
+  ##
+  
+  
+#############################################
   
   # Clinical information -----
   
@@ -619,6 +752,7 @@ server <- function(input,output,session) {
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
     showNotification("saved", duration = 3)
+    
   })
   
   # 
@@ -704,147 +838,69 @@ server <- function(input,output,session) {
     req(input$selectStudy)
     cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0(" AUC (", input$auc_unit, ")")
-    if (input$selectStudy=='New Study') {
-      lapply(1:(4*input$nDoses), function(i) {
-        I <- ceiling(i/4)
-        if (i %% 4 == 1) {
-          div(
-            hr(style = "border-top: 1px dashed skyblue"),
-          numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min = 0,NULL))
-        } else if (i %% 4 == 2) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              #numericInput(paste0('Cmax',I),paste0('Dose ',I,' Cmax (ng/mL):'), min = 0, NULL))
-              numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min = 0, NULL))
-        }
-        else if (i %% 4 == 3) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),min = 0, NULL))
-        } else {
-          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=F))
-        }
-      })
-    } else {
-      Data <- getData()
-      studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-      lapply(1:(4*input$nDoses), function(i) {
-        I <- ceiling(i/4)
-        doseName <- names(studyData$Doses)[I]
-        if (i %% 4 == 1) {
-          div(hr(style = "border-top: 1px dashed skyblue"),
-          textInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'),studyData$Doses[[doseName]][['Dose']]))
-        } else if (i %% 4 == 2) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit),studyData$Doses[[doseName]][['Cmax']]))
-        }
-        else if (i %% 4 == 3) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),studyData$Doses[[doseName]][['AUC']]))
-          
-        } else {
-         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
-        }
-      })
-    }
+    studyData <- values$tmpData
+    lapply(1:(4*input$nDoses), function(i) {
+      I <- ceiling(i/4)
+      doseName <- names(studyData$Doses)[I]
+      if (i %% 4 == 1) {
+        div(hr(style = "border-top: 1px dashed skyblue"),
+            numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min=0, value =studyData$Doses[[doseName]][['Dose']]))
+      } else if (i %% 4 == 2) {
+        div(style="display: inline-block;vertical-align:top; width: 115px;",
+            numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min=0, value=studyData$Doses[[doseName]][['Cmax']]))
+      }
+      else if (i %% 4 == 3) {
+        div(style="display: inline-block;vertical-align:top; width: 115px;",
+            numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit), min=0, value=studyData$Doses[[doseName]][['AUC']]))
+        
+      } else {
+        div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
+      }
+    })
   })
   
-  # findings with severity -----
-
-
+  # findings with severity output$Findings -----
   
   output$Findings <- renderUI({
     req(input$selectStudy)
- 
     
-    if (input$selectStudy=='New Study') {
+  
+      #Data <- getData()
+      #studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+      studyData <- values$tmpData
+      #print(studyData$Findings)
+      
+      #print(str(studyData))
+      
+     
+       
+      
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
         lapply(1:(numerator*input$nFindings), function(i) {
-          
-          
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
             
-            data <- calculateSM()
-            
-            find_fact <- as.factor(data$Findings)
-            
-            findings <- unique(find_fact)
-            #print(paste0("findings _______", findings))
-          
-            
-            if (is.null(findings)) {
-              
-              
-            
-              div(
-                hr(style = "border-top: 1px dashed skyblue"),
-                
-                #rightnow
-                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
-                               options = list(create = TRUE, onInitialize = I('function() { this.setValue(""); }'))))
- 
-            } else { div(
-              hr(style = "border-top: 1px dashed skyblue"),
-              
-              #rightnow
-              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
-                             options = list(create = TRUE, 
-                                            onInitialize = I('function() { this.setValue(""); }'))))
-              
-            }
-            
-            
-            # div(
-            #   hr(style = "border-top: 1px dashed skyblue"),
-            #   
-            #   #rightnow
-            # selectizeInput(paste0('Finding',I),paste0('Finding ',I,':')), choices = , options = list(create = TRUE))
+            # data <- calculateSM()
+            # find_fact <- as.factor(data$Findings)
+            # findings <- unique(find_fact)
+            findings <- str_sort(unique(values$Findings))
+            # print("__________")
+            # print(studyData$Findings[[paste0('Finding',I)]]$Finding)
+            # print("**************")
             # 
-          
             
             
             
-            
-            } else if (i %% numerator == 2) {
-            radioButtons(paste0('Reversibility',I),'Reversibility:',
-                         choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
-                                       'Partially Reversible [PR]','Not Assessed'),
-                         choiceValues=c('[Rev]','[NR]','[PR]',''))
-          } else {
-            lapply(1:input$nDoses, function(j) {
-              if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
-                            choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
-                
-              }
-            })
-          }
-        })
-      }
-    } else {
-      Data <- getData()
-      studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-      #print(studyData)
-      if (input$nFindings>0) {
-        numerator <- 2 + input$nDoses
-        lapply(1:(numerator*input$nFindings), function(i) {
-          I <- ceiling(i/numerator)
-          if (i %% numerator == 1) {
-            
-            data <- calculateSM()
-            find_fact <- as.factor(data$Findings)
-            findings <- unique(find_fact)
-          
-            
+            #print(studyData$Findings[[paste0('Finding',I)]]$Finding)
             div(
               hr(style = "border-top: 1px dashed skyblue"),
               
-             
-                selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
-                               selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
-                               options = list(create = TRUE)))
+              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
+                             selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
+                             options = list(create = TRUE)))
             
-              
+            
           } else if (i %% numerator == 2) {
             radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -868,23 +924,72 @@ server <- function(input,output,session) {
             })
           }
           
-        
+          
         })
       }
-    }
+    
     
   })
+
+  
+  ##################################
+
   
   # output$Findings <- renderUI({
   #   req(input$selectStudy)
+  # 
+  #   
   #   if (input$selectStudy=='New Study') {
   #     if (input$nFindings>0) {
   #       numerator <- 2 + input$nDoses
   #       lapply(1:(numerator*input$nFindings), function(i) {
+  #         
+  #         
   #         I <- ceiling(i/numerator)
   #         if (i %% numerator == 1) {
-  #           textInput(paste0('Finding',I),paste0('Finding ',I,':'))
-  #         } else if (i %% numerator == 2) {
+  #           
+  #           data <- calculateSM()
+  #           
+  #           find_fact <- as.factor(data$Findings)
+  #           
+  #           findings <- unique(find_fact)
+  #           #print(paste0("findings _______", findings))
+  #         
+  #           
+  #           if (is.null(findings)) {
+  #             
+  #             
+  #           
+  #             div(
+  #               hr(style = "border-top: 1px dashed skyblue"),
+  #               
+  #               #rightnow
+  #               selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
+  #                              options = list(create = TRUE, onInitialize = I('function() { this.setValue(""); }'))))
+  # 
+  #           } else { div(
+  #             hr(style = "border-top: 1px dashed skyblue"),
+  #             
+  #             #rightnow
+  #             selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices = findings,
+  #                            options = list(create = TRUE, 
+  #                                           onInitialize = I('function() { this.setValue(""); }'))))
+  #             
+  #           }
+  #           
+  #           
+  #           # div(
+  #           #   hr(style = "border-top: 1px dashed skyblue"),
+  #           #   
+  #           #   #rightnow
+  #           # selectizeInput(paste0('Finding',I),paste0('Finding ',I,':')), choices = , options = list(create = TRUE))
+  #           # 
+  #         
+  #           
+  #           
+  #           
+  #           
+  #           } else if (i %% numerator == 2) {
   #           radioButtons(paste0('Reversibility',I),'Reversibility:',
   #                        choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
   #                                      'Partially Reversible [PR]','Not Assessed'),
@@ -892,8 +997,9 @@ server <- function(input,output,session) {
   #         } else {
   #           lapply(1:input$nDoses, function(j) {
   #             if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-  #               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
+  #              selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
   #                           choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
+  #               
   #             }
   #           })
   #         }
@@ -902,13 +1008,27 @@ server <- function(input,output,session) {
   #   } else {
   #     Data <- getData()
   #     studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+  #     #print(studyData)
   #     if (input$nFindings>0) {
   #       numerator <- 2 + input$nDoses
-  #       lapply(1:(3*input$nFindings), function(i) {
+  #       lapply(1:(numerator*input$nFindings), function(i) {
   #         I <- ceiling(i/numerator)
   #         if (i %% numerator == 1) {
-  #           textInput(paste0('Finding',I),paste0('Finding ',I,':'),
-  #                     studyData$Findings[[paste0('Finding',I)]]$Finding)
+  #           
+  #           data <- calculateSM()
+  #           find_fact <- as.factor(data$Findings)
+  #           findings <- unique(find_fact)
+  #         
+  #           
+  #           div(
+  #             hr(style = "border-top: 1px dashed skyblue"),
+  #             
+  #            
+  #               selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
+  #                              selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
+  #                              options = list(create = TRUE)))
+  #           
+  #             
   #         } else if (i %% numerator == 2) {
   #           radioButtons(paste0('Reversibility',I),'Reversibility:',
   #                        choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -916,18 +1036,30 @@ server <- function(input,output,session) {
   #                        choiceValues=c('[Rev]','[NR]','[PR]',''),
   #                        selected=studyData$Findings[[paste0('Finding',I)]]$Reversibility)
   #         } else {
+  #           
   #           lapply(1:input$nDoses, function(j) {
   #             if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
+  #               
   #               selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
-  #                           choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'))
+  #                           choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'),
+  #                           selected=studyData$Findings[[paste0('Finding',I)]]$Severity[[paste0('Dose',j)]])
+  #               
+  #               
   #             }
+  #             
+  #             
+  #             
   #           })
   #         }
+  #         
+  #       
   #       })
   #     }
   #   }
+  #   
   # })
   
+
   
   ### add note for study ----
   
@@ -1312,7 +1444,7 @@ server <- function(input,output,session) {
       select(-Severity) %>% 
       #arrange(Findings, Rev) %>% 
       rename(Reversibility = Rev,
-             "Clinical Safety Margin" = SM,
+             "Clinical Exposure Margin" = SM,
              "Dose (mg/kg/day)" = Dose)
     
     plotData_tab$Findings <- factor(plotData_tab$Findings,levels= input$displayFindings)
@@ -1653,7 +1785,7 @@ server <- function(input,output,session) {
   dt_to_flex_03 <- reactive({
     plotData_tab <- filtered_tab_03() %>% 
       flextable() %>%
-      add_header_row(values = c("Nonclinical", "Clinical Safety Margins"), colwidths = c(6,2)) %>%
+      add_header_row(values = c("Nonclinical", "Clinical Exposure Margins"), colwidths = c(6,2)) %>%
       add_header_row(values = c("Safety Margins Based on NOAEL from Pivotal Toxicology Studies"), colwidths = c(8)) %>%
       theme_box()
     
@@ -1860,6 +1992,8 @@ server <- function(input,output,session) {
       
     ## plotdata for p plot (changed) ----
     plotData_p <- plotData
+    # plotData_p <- filtered_plot()
+    # plotData_p$Dose <- as.numeric(plotData_p$Dose)
   
     plotData_p <- plotData_p %>% 
       select(Study, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
@@ -1962,7 +2096,7 @@ server <- function(input,output,session) {
         #scale_fill_manual(values = color_NOAEL)+
         ylim(0,y_max)+
         facet_grid( Study ~ .)+
-        labs( title = "      Summary of Toxicology Studies", x = "Safety Margin")+
+        labs( title = "      Summary of Toxicology Studies", x = "Exposure Margin")+
         theme_bw(base_size=12)+
         theme(
           axis.title.y = element_blank(),
@@ -2029,7 +2163,7 @@ server <- function(input,output,session) {
       # 
       # subplot(p, q, nrows = 1, widths = c(0.7, 0.3), titleX = TRUE, titleY = TRUE) %>% 
       #   layout(title= "Summary of Toxicology Studies",
-      #          xaxis = list(title = "Safety Margin"), 
+      #          xaxis = list(title = "Exposure Margin"), 
       #          xaxis2 = list(title = ""))
       
     }
@@ -2310,9 +2444,9 @@ server <- function(input,output,session) {
                     menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                              uiOutput('selectData'),
                              conditionalPanel('input.selectData=="blankData.rds"',
-                                              textInput('newApplication','Enter Application Number:')
+                                              textInput('newApplication','Enter New Application Number:')
                              ),
-                             actionButton('saveData','Open New Application',icon=icon('plus-circle')),
+                             actionButton('saveData','Submit',icon=icon('plus-circle')),
                              br()
                     ),
                     br(),
@@ -2328,7 +2462,7 @@ server <- function(input,output,session) {
                     menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                              uiOutput('selectData'),
                              conditionalPanel('input.selectData=="blankData.rds"',
-                                              textInput('newApplication','Enter Application Number:')
+                                              textInput('newApplication','Enter New Application Number:')
                              ),
                              actionButton('deleteData','Delete',icon=icon('minus-circle')),
                              br()
@@ -2346,7 +2480,7 @@ server <- function(input,output,session) {
                     menuItem('Clinical Data',icon=icon('user'),
                              checkboxGroupInput('clinDosing','Clinical Dosing:',clinDosingOptions),
                              conditionalPanel('condition=input.MgKg==false',
-                                              numericInput('HumanWeight','*Human Weight (kg):',value=60)
+                                              numericInput('HumanWeight','*Human Weight (kg):',value=60, min=0)
                              ),
                              checkboxInput('MgKg','Dosing in mg/kg?',value=F),
                              conditionalPanel(
@@ -2424,7 +2558,7 @@ server <- function(input,output,session) {
                              hr(),
                              #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
-                             numericInput('nDoses','Number of Dose Levels:',value=3,step=1,min=1),
+                             numericInput('nDoses','Number of Dose Levels:',value=1,step=1,min=1),
                             
                              uiOutput('Doses'),
                              
@@ -2449,9 +2583,9 @@ server <- function(input,output,session) {
                   menuItem('Data Selection',icon=icon('database'),startExpanded = T,
                            uiOutput('selectData'),
                            conditionalPanel('input.selectData=="blankData.rds"',
-                                            textInput('newApplication','Enter Application Number:')
+                                            textInput('newApplication','Enter New Application Number:')
                            ),
-                           actionButton('saveData','Open New Application',icon=icon('plus-circle')),
+                           actionButton('saveData','Submit',icon=icon('plus-circle')),
                            br()
                   ),
                   br(),
@@ -2500,7 +2634,7 @@ ui <- dashboardPage(
       column(2,
              conditionalPanel(
                'input.clinDosing != null && input.clinDosing != ""',
-               selectInput('SMbasis','Base Safety Margin on:',c('HED','Cmax','AUC'))
+               selectInput('SMbasis','Base Exposure Margin on:',c('HED','Cmax','AUC'))
              )
       ),
       column(4,
