@@ -491,13 +491,13 @@ server <- function(input,output,session) {
       for (i in seq(input$nFindings)) {
         if (!is.null(input[[paste0('Finding',i)]])) {
           #print
-          print(input$Finding1)
+          #print(input$Finding1)
           
           Finding_list= input[[paste0('Finding',i)]]
           if (Finding_list %ni% values$Findings) {
             values$Findings <- c(values$Findings, Finding_list)
           }
-          print(values$Findings)
+          #print(values$Findings)
           newList <- list(
             Finding= input[[paste0('Finding',i)]],
             Reversibility = input[[paste0('Reversibility',i)]])
@@ -866,7 +866,7 @@ server <- function(input,output,session) {
       #Data <- getData()
       #studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
       studyData <- values$tmpData
-      print(studyData$Findings)
+      #print(studyData$Findings)
       
       #print(str(studyData))
       
@@ -890,7 +890,7 @@ server <- function(input,output,session) {
             
             
             
-            print(studyData$Findings[[paste0('Finding',I)]]$Finding)
+            #print(studyData$Findings[[paste0('Finding',I)]]$Finding)
             div(
               hr(style = "border-top: 1px dashed skyblue"),
               
