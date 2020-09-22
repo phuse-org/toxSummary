@@ -426,7 +426,7 @@ server <- function(input,output,session) {
     req(input$nDoses)
     req(input$dose1)
     if (!is.na(input$dose1)) {
-      if (values$tmpData$Doses$Dose1$Dose == input$dose1) {
+      if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)) {
         values$changeStudyFlag <- T
       }
     }
@@ -440,13 +440,13 @@ server <- function(input,output,session) {
             AUC = input[[paste0('AUC',i)]]
           )
           values$tmpData[['Doses']][[paste0('Dose',i)]] <- newList
-        } else {
-          values$tmpData$Doses[[paste0('Dose',i)]] <- list(
-            Dose = '',
-            NOAEL = F,
-            Cmax = '',
-            AUC = ''
-          )
+        # } else {
+        #   values$tmpData$Doses[[paste0('Dose',i)]] <- list(
+        #     Dose = '',
+        #     NOAEL = F,
+        #     Cmax = '',
+        #     AUC = ''
+        #   )
         }
       }
     }
@@ -491,13 +491,13 @@ server <- function(input,output,session) {
       for (i in seq(input$nFindings)) {
         if (!is.null(input[[paste0('Finding',i)]])) {
           #print
-          #print(input$Finding1)
+          print(input$Finding1)
           
           Finding_list= input[[paste0('Finding',i)]]
           if (Finding_list %ni% values$Findings) {
             values$Findings <- c(values$Findings, Finding_list)
           }
-          #print(values$Findings)
+          print(values$Findings)
           newList <- list(
             Finding= input[[paste0('Finding',i)]],
             Reversibility = input[[paste0('Reversibility',i)]])
@@ -866,6 +866,7 @@ server <- function(input,output,session) {
       #Data <- getData()
       #studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
       studyData <- values$tmpData
+      print(studyData$Findings)
       
       #print(str(studyData))
       
@@ -881,7 +882,7 @@ server <- function(input,output,session) {
             # data <- calculateSM()
             # find_fact <- as.factor(data$Findings)
             # findings <- unique(find_fact)
-            findings <- str_sort(values$Findings)
+            findings <- str_sort(unique(values$Findings))
             # print("__________")
             # print(studyData$Findings[[paste0('Finding',I)]]$Finding)
             # print("**************")
@@ -889,10 +890,9 @@ server <- function(input,output,session) {
             
             
             
-            
+            print(studyData$Findings[[paste0('Finding',I)]]$Finding)
             div(
               hr(style = "border-top: 1px dashed skyblue"),
-              
               
               selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
                              selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
