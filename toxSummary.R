@@ -523,15 +523,16 @@ server <- function(input,output,session) {
           # print(str(newList))
           # print('-----------------')
           #print(values$tmpData$Findings)
-        } else {
-          values$tmpData$Findings[[paste0('Finding',i)]] <- list(
-            Finding = '',
-            Reversibility = '[Rev]',
-            Severity = list(
-              Dose1='Absent')
-          )
-          
-        }
+         } 
+        #else {
+        #   values$tmpData$Findings[[paste0('Finding',i)]] <- list(
+        #     Finding = '',
+        #     Reversibility = '[Rev]',
+        #     Severity = list(
+        #       Dose1='Absent')
+        #   )
+        #   
+        # }
         
       }
     }
@@ -751,6 +752,7 @@ server <- function(input,output,session) {
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
     showNotification("saved", duration = 3)
+    
   })
   
   # 
