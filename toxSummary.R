@@ -2450,10 +2450,12 @@ server <- function(input,output,session) {
                              actionButton('saveData','Submit',icon=icon('plus-circle')),
                              br()
                     ),
-                    br(),
-                    uiOutput('studyName'),
-                    br(),
-                    br()
+                    # br(),
+                    # uiOutput('studyName'),
+                    # br(),
+                    # br()
+                    hr(),
+                    menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       } else {
         # Data <- getData()
@@ -2575,8 +2577,10 @@ server <- function(input,output,session) {
                              actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'))
                     ),
                     hr(),
-                    h6('* Indicates Required Fields')
-                    
+                    h6('* Indicates Required Fields'),
+              hr(),
+              menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+              
         )
       }
     } else {
@@ -2589,10 +2593,13 @@ server <- function(input,output,session) {
                            actionButton('saveData','Submit',icon=icon('plus-circle')),
                            br()
                   ),
-                  br(),
-                  uiOutput('studyName'),
-                  br(),
-                  br()
+                  # br(),
+                  # uiOutput('studyName'),
+                  # br(),
+                  # br()
+                  hr(),
+                  menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+                  # tags$a(href='mailto:kevin.snyder@fda.hhs.gov?','Questions/Feedback')
       )
     }
   })
