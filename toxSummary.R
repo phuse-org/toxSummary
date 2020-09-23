@@ -862,7 +862,7 @@ server <- function(input,output,session) {
       doseName <- names(studyData$Doses)[I]
       if (i %% 4 == 1) {
         div(hr(style = "border-top: 1px dashed skyblue"),
-            numericInput(paste0('dose',I),paste0('Dose ',I,' (mg/kg/day):'), min=0, value =studyData$Doses[[doseName]][['Dose']]))
+            numericInput(paste0('dose',I),paste0('*Dose ',I,' (mg/kg/day):'), min=0, value =studyData$Doses[[doseName]][['Dose']]))
       } else if (i %% 4 == 2) {
         div(style="display: inline-block;vertical-align:top; width: 115px;",
             numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min=0, value=studyData$Doses[[doseName]][['Cmax']]))
@@ -914,7 +914,7 @@ server <- function(input,output,session) {
             div(
               hr(style = "border-top: 1px dashed skyblue"),
               
-              selectizeInput(paste0('Finding',I),paste0('Finding ',I,':'), choices= findings,
+              selectizeInput(paste0('Finding',I),paste0('*Finding ',I,':'), choices= findings,
                              selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
                              options = list(create = TRUE)))
             
@@ -2491,8 +2491,8 @@ server <- function(input,output,session) {
                     uiOutput('studyName'),
                     hr(),
                     menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
-                             textInput("cmax_unit", "Insert Unit for Cmax:", value = "ng/mL"),
-                             textInput("auc_unit", "Insert Unit for AUC:", value = "ng*h/mL"),
+                             textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
+                             textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
                              actionButton('save_units','Save Units',icon=icon('plus-circle')),
                              br()),
                     
@@ -2578,14 +2578,14 @@ server <- function(input,output,session) {
                              hr(),
                              #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
-                             numericInput('nDoses','Number of Dose Levels:',value=1,step=1,min=1),
+                             numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
                             
                              uiOutput('Doses'),
                              
                              hr(),
                              #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
                              
-                             numericInput('nFindings','Number of Findings:',value=1,step=1,min=1),
+                             numericInput('nFindings','*Number of Findings:',value=1,step=1,min=1),
                             
                              uiOutput('Findings'),
                              #br(),
