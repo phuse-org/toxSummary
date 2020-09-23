@@ -188,7 +188,7 @@ values$SM <- NULL
 values$selectData <- NULL
 values$tmpData <- NULL
 values$changeStudyFlag <- F
-values$Findings <- NULL
+values$Findings <- ''
 
 # Species Conversion ----
 
@@ -426,9 +426,15 @@ server <- function(input,output,session) {
     req(input$nDoses)
     req(input$dose1)
     if (!is.na(input$dose1)) {
+      print(values$tmpData$Findings$Finding1$Severity[[paste0('Dose',values$tmpData$nDoses)]])
+      print(input[[paste0('Severity',input$nFindings,'_',input$nDoses)]])
       if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)&
-          (values$tmpData$Findings$Finding1$Finding == input$Finding1)&(values$tmpData$nFindings == input$nFindings)) {
+          (values$tmpData$Findings$Finding1$Finding == input$Finding1)&(values$tmpData$nFindings == input$nFindings)&
+          (values$tmpData$Findings$Finding1$Severity[[paste0('Dose',values$tmpData$nDoses)]] == input[[paste0('Severity',input$nFindings,'_',input$nDoses)]])) {
+        print(input$nDoses)
+        print(values$changeStudyFlag)
         values$changeStudyFlag <- T
+        print(values$changeStudyFlag)
       }
     }
     if (values$changeStudyFlag==T) {
@@ -467,7 +473,9 @@ server <- function(input,output,session) {
         
         for ( i in seq(studyData$nFindings)) {
           Finding <- studyData[['Findings']][[paste0('Finding', i)]][['Finding']]
-          values$Findings <- c(values$Findings, Finding)
+          if (Finding %ni% values$Findings) {
+            values$Findings <- c(values$Findings, Finding)
+          }
  
         }
       }
@@ -489,6 +497,9 @@ server <- function(input,output,session) {
     req(input$Finding1)
     #print(input$Finding1)
     if (values$changeStudyFlag==T) {
+      print(paste('input$nDoses:',input$nDoses))
+      print(input$nFindings)
+      print(values$tmpData$Findings[[paste0('Finding',input$nFindings)]])
       for (i in seq(input$nFindings)) {
         if (!is.null(input[[paste0('Finding',i)]])) {
           #print
@@ -498,11 +509,12 @@ server <- function(input,output,session) {
           if (Finding_list %ni% values$Findings) {
             values$Findings <- c(values$Findings, Finding_list)
           }
-          #print(values$Findings)
+          print(values$Findings)
           newList <- list(
             Finding= input[[paste0('Finding',i)]],
             Reversibility = input[[paste0('Reversibility',i)]])
           sev_list <- list()
+          print(seq(input$nDoses))
           for (j in seq(input$nDoses)) {
             finding_seq <- input[[paste0('Severity', i, '_', j)]] # NULL
             #print(str(finding_seq))
@@ -515,6 +527,7 @@ server <- function(input,output,session) {
           }
           
           newList <- c(newList, list(Severity= sev_list))
+          print(newList)
           
           #print(str(newList))
         
