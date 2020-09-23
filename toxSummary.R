@@ -425,8 +425,12 @@ server <- function(input,output,session) {
   observe({
     req(input$nDoses)
     req(input$dose1)
+    req(input$nFindings)
+    req(input[[paste0('Severity',input$nFindings,'_',input$nDoses)]])
     if (!is.na(input$dose1)) {
       print(values$tmpData$Findings$Finding1$Severity[[paste0('Dose',values$tmpData$nDoses)]])
+      print(input$nFindings)
+      print(input$nDoses)
       print(input[[paste0('Severity',input$nFindings,'_',input$nDoses)]])
       if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)&
           (values$tmpData$Findings$Finding1$Finding == input$Finding1)&(values$tmpData$nFindings == input$nFindings)&
