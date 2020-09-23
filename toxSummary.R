@@ -426,7 +426,8 @@ server <- function(input,output,session) {
     req(input$nDoses)
     req(input$dose1)
     if (!is.na(input$dose1)) {
-      if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)) {
+      if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)&
+          (values$tmpData$Findings$Finding1$Finding == input$Finding1)&(values$tmpData$nFindings == input$nFindings)) {
         values$changeStudyFlag <- T
       }
     }
