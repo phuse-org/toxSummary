@@ -2067,7 +2067,7 @@ server <- function(input,output,session) {
           geom_label_interactive(aes(x = SM, y = Value_order,
                                      label = paste0(Dose, " mg/kg/day"),
                                      
-                                     tooltip =paste0("SM: ", SM, "x")), #DoseLabel changed
+                                     tooltip =paste0(SM, "x")), #DoseLabel changed
                                  color = "white",
                                  fontface = "bold",
                                  size = 6,
@@ -2676,9 +2676,9 @@ ui <- dashboardPage(
                          selectInput("NOAEL_choices", "Filter NOAEL:", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
                   column(3, 
-                         radioButtons("dose_sm", "Display Units:", choices = list("Show Dose Only"=1,
-                                                                           "Show Dose with SM"= 2,
-                                                                           "Notes" =3))),
+                         radioButtons("dose_sm", "Display Dose/Exposure Margin/Notes:", choices = list("Show Dose Only"=1,
+                                                                           "Show Dose with Exposure Margin"= 2,
+                                                                           "Show Notes" =3))),
                  column(3, 
                         sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
                  br(),
