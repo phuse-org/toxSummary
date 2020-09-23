@@ -2054,7 +2054,7 @@ server <- function(input,output,session) {
           geom_label_interactive(aes(x = SM, y = Value_order,
                                      label = paste0(Dose, " mg/kg/day"),
                                      
-                                     tooltip =paste0("SM: ", SM, "x")), #DoseLabel changed
+                                     tooltip =paste0(SM, "x")), #DoseLabel changed
                                  color = "white",
                                  fontface = "bold",
                                  size = 6,
