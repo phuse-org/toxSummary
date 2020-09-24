@@ -1726,7 +1726,7 @@ server <- function(input,output,session) {
     auc_unit <- paste0("AUC (", input$auc_unit, ")")
     plotData_03 <- calculateSM()
     plotData_03 <- plotData_03 %>% 
-      select( Study,NOAEL, Dose, SM , HED_value, Cmax, AUC , SM_start_dose, SM_MRHD) %>% 
+      select( Study,NOAEL, Dose, HED_value, Cmax, AUC , SM_start_dose, SM_MRHD) %>% 
       mutate(Study = as.factor(Study)) %>% 
       unique() %>% 
       filter(NOAEL == TRUE) %>% 
@@ -1735,7 +1735,7 @@ server <- function(input,output,session) {
                      #"Cmax (ng/ml)" = Cmax, "AUC (ng*h/ml)" = AUC, 
                      #cmax_unit = Cmax, auc_unit = AUC,
                     
-                     "Safety Margin" = SM,
+                     # "Safety Margin" = SM,
                      "Safety Margin at Starting Dose" = SM_start_dose,
                      "Safety Margin at MRHD" = SM_MRHD)
   
@@ -1803,8 +1803,8 @@ server <- function(input,output,session) {
   dt_to_flex_03 <- reactive({
     plotData_tab <- filtered_tab_03() %>% 
       flextable() %>%
-      add_header_row(values = c("Nonclinical", "Clinical Exposure Margins"), colwidths = c(6,2)) %>%
-      add_header_row(values = c("Safety Margins Based on NOAEL from Pivotal Toxicology Studies"), colwidths = c(8)) %>%
+      add_header_row(values = c("Nonclinical", "Clinical Exposure Margins"), colwidths = c(5,2)) %>%
+      add_header_row(values = c("Safety Margins Based on NOAEL from Pivotal Toxicology Studies"), colwidths = c(7)) %>%
       theme_box()
     
     plotData_tab
