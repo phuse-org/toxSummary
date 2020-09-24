@@ -134,8 +134,8 @@ Data <- list(
       StartDoseAUC = NULL
     ),
     'MRHD' = list(
-      MRHDDose = NULL,
-      MRHDDoseMgKg = NULL,
+      MRHD = NULL,
+      MRHDMgKg = NULL,
       MRHDCmax = NULL,
       MRHDAUC = NULL
     ),
@@ -229,6 +229,25 @@ roundSigfigs <- function(x,N=2) {
 }
 
 
+clin_data <- function(Data_rds) {
+  
+  Data <- Data_rds[["Clinical Information"]]
+  
+  dose_list <- list(
+    start_dose = Data[["Start Dose"]][["StartDose"]],
+    mrhd = Data[["MRHD"]][["MRHD"]],
+    custom = Data[["Custom Dose"]][["CustomDose"]],
+    start_dose_kg = Data[["Start Dose"]][["StartDoseMgKg"]],
+    mrhd_kg = Data[["MRHD"]][["MRHDMgKg"]],
+    custom_kg = Data[["Custom Dose"]][["CustomDoseMgKg"]]
+    
+  )
+  
+  dose_value <- sum(unlist(dose_list))
+  dose_value
+  
+  
+}
 
 
 
@@ -1480,6 +1499,10 @@ server <- function(input,output,session) {
   
   
   output$table_01 <- renderDT({
+    data <- getData()
+    clin_dose <- clin_data(data)
+    
+    if (clin_dose>0) {
     plotData_tab <- dt_01()
   
     plotData_tab <- datatable(plotData_tab, rownames = FALSE,
@@ -1513,7 +1536,7 @@ server <- function(input,output,session) {
       path, script = "dataTables.rowsGroup.js")
     plotData_tab$dependencies <- c(plotData_tab$dependencies, list(dep))
     plotData_tab
-  })
+  }})
   
   
   filtered_tab_01 <- reactive({
@@ -1620,6 +1643,11 @@ server <- function(input,output,session) {
   
 # make column name same as flextable (add unit in DT table)
   output$table_02 <- renderDT({
+    data <- getData()
+    clin_dose <- clin_data(data)
+    
+    if (clin_dose>0) {
+    
     plotData_tab <- dt_02()
     plotData_tab <- datatable(plotData_tab, rownames = FALSE, class = "cell-border stripe",
                               filter = list(position = 'top'),
@@ -1650,7 +1678,7 @@ server <- function(input,output,session) {
       path, script = "dataTables.rowsGroup.js")
     plotData_tab$dependencies <- c(plotData_tab$dependencies, list(dep))
     plotData_tab
-  })
+  }})
   
   
   
@@ -1759,6 +1787,10 @@ server <- function(input,output,session) {
   })
   
   output$table_03 <- renderDT({
+    data <- getData()
+    clin_dose <- clin_data(data)
+    
+    if (clin_dose>0) {
     plotData_03 <- dt_03()
     plotData_03 <- datatable(plotData_03,rownames = FALSE, 
                              extensions = list("Buttons" = NULL,
@@ -1789,7 +1821,7 @@ server <- function(input,output,session) {
       formatStyle(columns = colnames(plotData_03), `font-size` = "18px")
 
     plotData_03
-  })
+  }})
   
   
   filtered_tab_03 <- reactive({
@@ -1866,41 +1898,45 @@ server <- function(input,output,session) {
    )
   
   # craete notes table ----
-   
    all_study_notes <- reactive({
      plotData_tab <- calculateSM()
-     plotData_tab <- plotData_tab %>% 
-       dplyr::select(Study_note, Study) %>% 
+     plotData_tab <- plotData_tab %>%
+       dplyr::select(Study_note, Study) %>%
        dplyr::rename(Notes = Study_note)
      plotData_tab$Study <- factor(plotData_tab$Study,levels= input$displayStudies)
-     plotData_tab <- plotData_tab %>% 
-       distinct() %>% 
+     plotData_tab <- plotData_tab %>%
+       distinct() %>%
        arrange(Study)
-     
-     
+
+
      plotData_tab
    })
    
  
    # output table for notes  ----
    
-   output$table_note <- renderTable({all_study_notes()},  
+   output$table_note <- renderTable({
+     data <- getData()
+     clin_dose <- clin_data(data)
+     
+     if (clin_dose>0) {
+       all_study_notes()}},
                              bordered = TRUE,
                              striped = TRUE,
-                             spacing = 'xs',  
+                             spacing = 'xs',
                              width = '100%', align = 'lr')
    
  
    ## download notes table
    table_note_to_flex <- reactive({
-     note_table <- all_study_notes() %>% 
+     note_table <- all_study_notes() %>%
        flextable() %>%
        add_header_row(values = c("Note for Studies"), colwidths = c(2)) %>%
        theme_box()
-     
+
      note_table
-     
-     
+
+
    })
    
    
@@ -1915,8 +1951,8 @@ server <- function(input,output,session) {
      content = function(file) {
        save_as_docx(table_note_to_flex(), path = paste0(user(), "/note_table.docx"))
        file.copy(paste0(user(), "/note_table.docx"), file)
-       
-       
+
+
      }
    )
    
@@ -1981,6 +2017,12 @@ server <- function(input,output,session) {
     req(input$clinDosing)
     input$selectData
     
+    data <- getData()
+    clin_dose <- clin_data(data)
+    
+    if (clin_dose>0) {
+      
+
     plotData <- filtered_plot()
     plotData <- plotData[which(plotData$Findings %in% input$displayFindings),]
     plotData$Dose <- as.numeric(plotData$Dose)
@@ -2185,7 +2227,7 @@ server <- function(input,output,session) {
       #          xaxis = list(title = "Exposure Margin"), 
       #          xaxis2 = list(title = ""))
       
-    }
+    }}
   })
 
   observe({
@@ -2699,9 +2741,12 @@ ui <- dashboardPage(
                  hr(style = "border-top: 1px dashed black"),
                  fluidRow(
                    column(9,
+                          
                           tableOutput("table_note"),
                           h4("Click on button below to export the table in a docx file"),
-                          downloadButton("down_notes", "Docx file download")))),
+                          
+                          downloadButton("down_notes", "Docx file download")
+                          ))),
         
         
   
