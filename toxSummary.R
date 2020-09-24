@@ -2021,15 +2021,16 @@ server <- function(input,output,session) {
     plotData_p$SM <- as.numeric(plotData_p$SM)
     
     #note 
-    plotData_note <- plotData_p %>% 
-      select(Study, Study_note, SM, Value_order) %>% 
-      filter(Value_order==1) %>% 
-      unique()
+    # plotData_note <- plotData_p %>% 
+    #   select(Study, Study_note, SM, Value_order) %>% 
+    #   unique()
+ 
       
     
     if (nrow(plotData)>0) {
       plotData$Study <- factor(plotData$Study,levels= input$displayStudies)
       plotData_p$Study <- factor(plotData_p$Study,levels= input$displayStudies)
+      #plotData_note$Study <- factor(plotData_note$Study, levels = input$displayStudies)
       plotData$Findings <- factor(plotData$Findings, levels = input$displayFindings)
       plotData$DoseLabel <- factor(paste(plotData$Dose,'mg/kg/day'),levels=unique(paste(plotData$Dose,'mg/kg/day'))[order(unique(as.numeric(plotData$Dose),decreasing=F))])
       maxFindings <- 1
@@ -2104,7 +2105,7 @@ server <- function(input,output,session) {
                                  label.padding = unit(0.6, "lines")
           )+
         
-          geom_text(data=plotData_note ,aes(x = 0.5*(SM_max), y=0.3 , label= Study_note),
+          geom_text(data=plotData_p ,aes(x = 0.5*(SM_max), y=0.3 , label= Study_note),
                     color = "black",
                     size= 6)
       }
