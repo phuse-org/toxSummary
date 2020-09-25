@@ -517,7 +517,12 @@ server <- function(input,output,session) {
         for (j in seq(input$nDoses)) {
         severity[[paste0("Dose", j)]] <- input[[paste0("Severity", i, "_", j)]]
         }
-        findingList[[i]] <- list(Finding=input[[paste0('Finding',i)]],
+        if ((is.null(input[[paste0('Finding',i)]])) | (input[[paste0('Finding',i)]]=='')) {
+          finding_null <- "No Finding"
+        } else {
+          finding_null <- input[[paste0('Finding',i)]]
+        }
+        findingList[[i]] <- list(Finding=finding_null,
                                  Reversibility = input[[paste0('Reversibility',i)]],
                                  # FindingDoses = input[[paste0('FindingDoses',i)]],
                                  Severity = severity
@@ -568,7 +573,12 @@ server <- function(input,output,session) {
         for (j in seq(input$nDoses)) {
           severity[[paste0("Dose", j)]] <- input[[paste0("Severity", i, "_", j)]]
         }
-        findingList[[i]] <- list(Finding=input[[paste0('Finding',i)]],
+        if ((is.null(input[[paste0('Finding',i)]])) | (input[[paste0('Finding',i)]]=='')) {
+          finding_null <- "No Finding"
+        } else {
+          finding_null <- input[[paste0('Finding',i)]]
+        }
+        findingList[[i]] <- list(Finding=finding_null,
                                  Reversibility = input[[paste0('Reversibility',i)]],
                                  # FindingDoses = input[[paste0('FindingDoses',i)]],
                                  Severity = severity
@@ -577,6 +587,7 @@ server <- function(input,output,session) {
     } else {
       findingList[[1]] <- NULL
     }
+    
     Data <- getData()
     studyName <- paste(input$Species,input$Duration,sep=': ')
     Data[['Nonclinical Information']][[studyName]] <- list(
@@ -588,6 +599,7 @@ server <- function(input,output,session) {
       Doses = doseList,
       nFindings = input$nFindings,
       Findings = findingList
+      
     )
     saveRDS(Data,values$Application)
     showNotification("Saved", duration = 3)
@@ -625,16 +637,12 @@ server <- function(input,output,session) {
     showNotification("saved", duration = 3)
   })
   
-  
-  # click refresh button after save clinical information
-  
+# click refresh button after save clinical information
   observeEvent(input$saveClinicalInfo, {
     click('refreshPlot')
   })
   
-  
   ## delete study ---- 
-  
   observeEvent(input$deleteStudy, {
     showModal(modalDialog(
       title="Delete Study?",
