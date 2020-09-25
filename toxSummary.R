@@ -597,8 +597,6 @@ server <- function(input,output,session) {
   })
   
 
-  
-
 ## save clinical information ---- 
   
   observeEvent(input$saveClinicalInfo, {
@@ -683,9 +681,10 @@ server <- function(input,output,session) {
     find_fact <- as.factor(data$Findings)
     findings <- unique(find_fact)
     findings <- str_sort(findings, numeric = T)
-    addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display:', choice= findings, selected = findings,
-                            multiple = TRUE, width = "100%", options=list(plugins=list('drag_drop','remove_button' ))))
-    
+    addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display:',
+                            choice= findings, selected = findings,
+                            multiple = TRUE, width = "100%",
+                            options=list(plugins=list('drag_drop','remove_button' ))))
   })
   
   ## output$Doses -----
@@ -740,7 +739,8 @@ server <- function(input,output,session) {
           } else {
             lapply(1:input$nDoses, function(j) {
               if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-                selectInput(inputId = paste0('Severity',I,'_',j),label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
+                selectInput(inputId = paste0('Severity',I,'_',j),
+                            label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
                             choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'),
                             selected=studyData$Findings[[paste0('Finding',I)]]$Severity[[paste0('Dose',j)]])
               }
@@ -1148,10 +1148,8 @@ server <- function(input,output,session) {
   
   # flextable 02
   dt_to_flex_02 <- reactive({
-    
     cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0("AUC (", input$auc_unit, ")")
-    
     plotData_tab <- filtered_tab_02()
     plotData_tab <- plotData_tab %>% 
       rename(
@@ -1161,12 +1159,10 @@ server <- function(input,output,session) {
       )
     colnames(plotData_tab)[3] <- "Cmax"
     colnames(plotData_tab)[4] <- "AUC"
-    
     plotData_tab <- plotData_tab %>%
       flextable() %>% 
           merge_v(j = ~ Study + Dose + Cmax+ AUC +SM+Findings) %>%
           flextable::autofit() %>% 
-      
           set_header_labels("Dose" = "NOAEL (mg/kg/day)",
                         "Cmax" = cmax_unit,
                         "AUC" = auc_unit,
@@ -1325,7 +1321,7 @@ server <- function(input,output,session) {
    })
    
  
-   # output table for notes  ----
+# output table for notes  ----
    
    output$table_note <- renderTable({
      data <- getData()
@@ -1337,7 +1333,7 @@ server <- function(input,output,session) {
                              spacing = 'xs',
                              width = '100%', align = 'lr')
  
-   ## download notes table
+## download notes table
    table_note_to_flex <- reactive({
      note_table <- all_study_notes() %>%
        flextable() %>%
@@ -1346,7 +1342,7 @@ server <- function(input,output,session) {
      note_table
    })
    
-   # download notes table
+ # download notes table
    output$down_notes <- downloadHandler(
      filename = function() {
        paste0("note_table", ".docx")
@@ -1357,9 +1353,6 @@ server <- function(input,output,session) {
      }
    )
    
-   
-   
-
 ## filter NOAEL reactive ----
    
   filtered_plot <- reactive({
@@ -1379,9 +1372,7 @@ server <- function(input,output,session) {
     plot_data
   })
 
-   
   # plotheight ----
-   
    plotHeight <- reactive({
      plotData <- calculateSM()
      nStudies <- length(unique(plotData$Study))
@@ -1389,20 +1380,14 @@ server <- function(input,output,session) {
      plot_height
    })
   
-   
-   
-  ## figure -----
+## figure -----
   
   output$figure <- renderGirafe({
-    
     req(input$clinDosing)
     input$selectData
-    
     data <- getData()
     clin_dose <- clin_data(data)
-    
     if (clin_dose>0) {
-      
     plotData <- filtered_plot()
     plotData <- plotData[which(plotData$Findings %in% input$displayFindings),]
     plotData$Dose <- as.numeric(plotData$Dose)
@@ -1411,18 +1396,14 @@ server <- function(input,output,session) {
     suppressWarnings(y_max <- as.numeric(max(axis_limit$Value_order)) +1)
     suppressWarnings(q_y_max <- as.numeric(max(axis_limit$Value_order)))
     finding_count <- length(unique(plotData$Findings))
-      
-      
+# column width   
       if (finding_count < 4) {
         q_col_width <- 0.2* finding_count
       } else {
         q_col_width <- 0.9
       }
-      # q_col_width <- 0.9
       
-      
-      
-      # text size of finding plot
+# text size of finding plot
       
       if (finding_count < 6) {
         q_text_size <- 6
@@ -1430,22 +1411,18 @@ server <- function(input,output,session) {
         q_text_size <- 4
       }
       
-    ## plotdata for p plot (changed) ----
+ ## plotdata for p plot (changed) ----
     plotData_p <- plotData
-  
     plotData_p <- plotData_p %>% 
       select(Study, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
-      #group_by(Study, Dose, SM) %>% 
       unique()
     plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
     plotData_p$SM <- as.numeric(plotData_p$SM)
     
-    #note 
+#note 
     # plotData_note <- plotData_p %>% 
     #   select(Study, Study_note, SM, Value_order) %>% 
     #   unique()
- 
-      
     
     if (nrow(plotData)>0) {
       plotData$Study <- factor(plotData$Study,levels= input$displayStudies)
@@ -1462,11 +1439,8 @@ server <- function(input,output,session) {
         }
       }
       maxFindings <- maxFindings + 1
-
       #plotData$Findings <- as.factor(plotData$Findings)
       plotData$Severity <- as.factor(plotData$Severity)
-      
-      
       # make severity ordered factor
       plotData$Severity <- factor(plotData$Severity, 
                                   levels= c('Absent','Present','Minimal', 'Mild',
@@ -1483,10 +1457,7 @@ server <- function(input,output,session) {
 
 # # safety margin plot ----
       color_NOAEL <- c("TRUE" = "#239B56", "FALSE" = "black")
-      
       tooltip_css <- "background-color:#3DE3D8;color:black;padding:2px;border-radius:5px;"
-      
-      
       if (input$dose_sm==1) {
         
           plot_p_label <- ggplot(plotData_p)+
@@ -1500,7 +1471,6 @@ server <- function(input,output,session) {
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
                                  label.padding = unit(0.6, "lines")
           )
-          
       } else if (input$dose_sm==2) {
         plot_p_label <- ggplot(plotData_p)+
           geom_label_interactive(aes(x = SM, y = Value_order,
@@ -1511,7 +1481,6 @@ server <- function(input,output,session) {
                                  size = 6,
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
                                  label.padding = unit(0.6, "lines"))
-        
       } else {
         plot_p_label <- ggplot(plotData_p)+
           geom_label_interactive(aes(x = SM, y = Value_order,
@@ -1523,7 +1492,6 @@ server <- function(input,output,session) {
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
                                  label.padding = unit(0.6, "lines")
           )+
-        
           geom_text(data=plotData_p ,aes(x = 0.5*(SM_max), y=0.3 , label= Study_note),
                     color = "black",
                     size= 6)
@@ -1540,11 +1508,9 @@ server <- function(input,output,session) {
           axis.title.y = element_blank(),
               axis.ticks.y= element_blank(),
               axis.text.y = element_blank(),
-           
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
               plot.title = element_text(size= 20, hjust = 1),
-              
               axis.title.x = element_text(size = 18, vjust = -0.9),
               axis.text.x = element_text(size = 16),
               legend.position = "none",
@@ -1584,12 +1550,10 @@ server <- function(input,output,session) {
               legend.justification = "top")+
         #labs(title = '' )+
         guides(fill = guide_legend(override.aes = aes(label = "")))
-
       girafe(code = print(p+q+plot_layout(ncol = 2, widths = c(3,1))),
              options = list(opts_tooltip(css = tooltip_css)),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
-      
     }}
   })
 
@@ -1598,22 +1562,15 @@ server <- function(input,output,session) {
     values$selectData <- input$selectData
   })
   
-  
   ## download rds file
-
-  
   output$download_rds <- renderUI({
-    
     datasets <- c(grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     selectInput("downloadRDS", "Select to Download an Application:", choices = datasets, selected = NULL)
-    
   })
   
-
   output$down_btn <- downloadHandler(
     filename = function() {
-      
       app_name <- basename(input$downloadRDS)
       app_name
     },
@@ -1634,7 +1591,6 @@ server <- function(input,output,session) {
     updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
   })
   
-  
   # download tar file ----
 
   output$tar_file <- downloadHandler(
@@ -1654,16 +1610,12 @@ server <- function(input,output,session) {
   })
   ###
   output$download_tar_file <- renderMenu({
-    
     if (input$pass_admin == "HeLLo_aDMiN_PT") {
       downloadButton("tar_file", "Download all file")
     }
-    
-    
   })
   ####
   output$show_file_table <- renderMenu({
-    
     if (input$pass_admin == "HeLLo_aDMiN_PT") {
       DT::dataTableOutput("dir_list")
     }
@@ -1675,12 +1627,9 @@ server <- function(input,output,session) {
     
     df_files <- data.frame(matrix(ncol = 2))
     colnames(df_files) <- c("user", "files")
-    
     folder_list <- basename(list.dirs("Applications/"))
     folder_list <- tail(folder_list, -1)
-    
     count <- 1
-    
     for (folder in folder_list) {
       
         file_list <- grep(".rds", list.files(paste0("Applications/", folder)), value = T)
@@ -1691,11 +1640,9 @@ server <- function(input,output,session) {
           count <- count+1
         }
     }
-    
     df_files <- df_files %>% 
       arrange(user, files)
     df_files
-    
   })
   
 ###
@@ -1794,7 +1741,8 @@ server <- function(input,output,session) {
                              br()
                     ),
                     hr(),
-                    menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+                    menuItem('Questions/Feedback',icon=icon('envelope-square'),
+                             href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       } else {
         sidebarMenu(id='menu',
