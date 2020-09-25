@@ -17,7 +17,7 @@ library(ggiraph)
 library(patchwork)
 #library(ggstance)
 #library(ggrepel)
-
+library(shinyjs)
 # Bugs ####
 
 
@@ -623,6 +623,13 @@ server <- function(input,output,session) {
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
     showNotification("saved", duration = 3)
+  })
+  
+  
+  # click refresh button after save clinical information
+  
+  observeEvent(input$saveClinicalInfo, {
+    click('refreshPlot')
   })
   
   
@@ -1880,6 +1887,7 @@ ui <- dashboardPage(
                    )
   ),
   dashboardBody(
+    useShinyjs(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
