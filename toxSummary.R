@@ -147,9 +147,9 @@ Data <- list(
   'Nonclinical Information' = list(
     'New Study' = list(
       Species = NULL,
-      Duration = NULL,
+      Duration = '',
       Notes = NULL,
-      check_note = NULL,
+      check_note = F,
       nDoses = 1,
       Doses = list(Dose1=list(
         Dose = '',
@@ -488,6 +488,7 @@ server <- function(input,output,session) {
   observeEvent(input$selectStudy,ignoreNULL = T,{
     Data <- getData()
     studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
+    print(str(studyData))
     updateSelectInput(session,'Species',selected=studyData$Species)
     updateTextInput(session,'Duration',value=studyData$Duration)
     updateNumericInput(session,'nDoses',value=studyData$nDoses)
