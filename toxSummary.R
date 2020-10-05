@@ -488,7 +488,6 @@ server <- function(input,output,session) {
   observeEvent(input$selectStudy,ignoreNULL = T,{
     Data <- getData()
     studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-    print(str(studyData))
     updateSelectInput(session,'Species',selected=studyData$Species)
     updateTextInput(session,'Duration',value=studyData$Duration)
     updateNumericInput(session,'nDoses',value=studyData$nDoses)
