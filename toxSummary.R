@@ -1740,6 +1740,70 @@ server <- function(input,output,session) {
   })
   
 
+  
+  data_modal <- function() {
+    
+    modalDialog(
+      uiOutput('selectStudy'),
+      br(),
+      actionButton('saveStudy','Save Study',icon=icon('plus-circle'),
+                   style = "
+                   background-color: white;
+                   border: 2px solid #4CAF50;"),
+      
+      actionButton('deleteStudy','Delete Study',icon=icon('minus-circle'),
+                   style = "
+                   background-color: white;
+                   border: 2px solid #FF0000;"),
+      br(),
+      br(),
+      selectInput('Species',
+                  label = tags$div(HTML('<i class="fa fa-dog" style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
+                  #'*Select Species:',
+                  choices=names(speciesConversion)),
+      textInput('Duration','*Study Duration/Description:'),
+      h4('Study Name:'),
+      verbatimTextOutput('studyTitle'),
+      hr(),
+      
+      numericInput('nDoses',
+                   label = tags$div(HTML('<i class="fa fa-syringe" style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
+                   value=1,step=1,min=1),
+      #numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
+      uiOutput('Doses'),
+      hr(),
+      
+      numericInput('nFindings',
+                   label = tags$div(HTML('<i class="fa fa-microscope" style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
+                   value=1,step=1,min=1),
+      uiOutput('Findings'),
+      checkboxInput("notes", "Notes for Study?", value = FALSE),
+      uiOutput("study_note"),
+      actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'),
+                   style = "
+                   background-color: white;
+                   border: 2px solid #4CAF50;"
+                   ),
+      
+      
+      
+
+      
+      footer = tagList(
+        tags$h4("Please save the study before close", style="color:#E31616;"),
+        modalButton("Close")
+        
+      )
+      
+    )
+    
+    
+  }
+  
+  observeEvent(eventExpr = input$edit_nonclinical, {
+    showModal(data_modal())
+  })
+  
    
   # output$menu function -----
   
@@ -1840,24 +1904,25 @@ server <- function(input,output,session) {
                              br()
                     ),                   
                     menuItem('Nonclinical Data',icon=icon('flask'),tabName = 'Nonclinical Info',
-                             uiOutput('selectStudy'),
-                             actionButton('saveStudy','Save Study',icon=icon('plus-circle')),
-                             actionButton('deleteStudy','Delete Study',icon=icon('minus-circle')),
-                             selectInput('Species','*Select Species:',choices=names(speciesConversion)),
-                             textInput('Duration','*Study Duration/Description:'),
-                             h4('Study Name:'),
-                             verbatimTextOutput('studyTitle'),
-                             hr(),
-                             #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
-                             numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
-                             uiOutput('Doses'),
-                             hr(),
-                             #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
-                             numericInput('nFindings','*Number of Findings:',value=1,step=1,min=1),
-                             uiOutput('Findings'),
-                             checkboxInput("notes", "Notes for Study?", value = FALSE),
-                             uiOutput("study_note"),
-                             actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'))
+                             actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study")
+                             # uiOutput('selectStudy'),
+                             # actionButton('saveStudy','Save Study',icon=icon('plus-circle')),
+                             # actionButton('deleteStudy','Delete Study',icon=icon('minus-circle')),
+                             # selectInput('Species','*Select Species:',choices=names(speciesConversion)),
+                             # textInput('Duration','*Study Duration/Description:'),
+                             # h4('Study Name:'),
+                             # verbatimTextOutput('studyTitle'),
+                             # hr(),
+                             
+                             # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
+                             # uiOutput('Doses'),
+                             # hr(),
+                             # 
+                             # numericInput('nFindings','*Number of Findings:',value=1,step=1,min=1),
+                             #uiOutput('Findings'),
+                             #checkboxInput("notes", "Notes for Study?", value = FALSE),
+                             #uiOutput("study_note"),
+                             #actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'))
                     ),
                     hr(),
                     h6('* Indicates Required Fields'),
