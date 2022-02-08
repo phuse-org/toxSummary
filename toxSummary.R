@@ -1881,13 +1881,17 @@ server <- function(input,output,session) {
       )
     }
   })
+  
+    output$renderFigure <- renderUI({
+    withSpinner(girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
+  })
 }
 
 
 # ui function ------
 ui <- dashboardPage(
   dashboardHeader(title="Nonclinical Summary Tool",titleWidth = 250),
-  dashboardSidebar(width = 250,
+  dashboardSidebar(width = 350,
                    sidebarMenuOutput('menu'),
                    tags$head(
                      tags$style(
@@ -1937,7 +1941,8 @@ ui <- dashboardPage(
                  column(3, 
                         sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
                  br(),
-                 withSpinner(girafeOutput('figure')),
+                 #withSpinner(girafeOutput('figure')),
+				 uiOutput('renderFigure'),
                  br(),
                  hr(style = "border-top: 1px dashed black"),
                  fluidRow(
