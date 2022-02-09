@@ -119,9 +119,9 @@ server <- function(input, output, session) {
             numericInput(paste0("AUC",I),paste0(input$auc, " ",I, " ",auc[I, PPSTRESU], ":"), min=0, value=auc[I, .(mean)]))
         
       }
-      # else {
-      #   div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value= T))
-      # }
+      else {
+        div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value= F))
+      }
     })
     
     
