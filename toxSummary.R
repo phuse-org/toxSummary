@@ -19,6 +19,9 @@ library(patchwork)
 #library(ggrepel)
 library(shinyjs)
 library(data.table)
+#library(DBI)
+library(RSQLite)
+source("get_dose_pp.R")
 # Bugs ####
 
 
@@ -220,6 +223,15 @@ roundSigfigs <- function(x,N=2) {
       return(roundNumber)
     }
 }
+
+
+### extract studyid from database ----
+
+db_path <- "C:/Users/Md.Ali/not_in_onedrive/CDER_SEND.db"
+
+conn <-RSQLite::dbConnect(drv = SQLite(),db_path)
+sd_id <- RSQLite::dbGetQuery(conn=conn, 'SELECT DISTINCT STUDYID FROM TX')
+sd_id <- data.table::as.data.table(sd_id)
 
 # function for using whether there are any value that is not NULL
 # fundctin will return sum of all clinical doses
@@ -703,10 +715,57 @@ server <- function(input,output,session) {
                             options=list(plugins=list('drag_drop','remove_button' ))))
   })
   
+  ## get dose and pk values
+  get_dose_pk_for_study <- shiny::reactive({
+    
+    if (!is.null(input$studyid) & !is.null(input$auc_db)) {
+      df <- get_pk_param(conn=conn, input$studyid, pk_param = input$auc_db)
+      df
+    }
+    
+    
+  })
+  
+ 
+  
   ## output$Doses -----
   
   output$Doses <- renderUI({
     req(input$selectStudy)
+    if (input$get_from_database) {
+      
+      df <- get_dose_pk_for_study()
+      print(df)
+      n_dose <-   length(unique(df[,TRTDOS]))
+      
+      #updateNumericInput(session,'nDoses', value = n_dose)
+      
+      cmax <- df[PPTESTCD=="CMAX"]
+      auc <- df[PPTESTCD!="CMAX"]
+
+      
+      lapply(1:(4*n_dose), function(i) {
+        I <- ceiling(i/4)
+        #doseName <- names(studyData$Doses)[I]
+        if (i %% 4 == 1) {
+          div(hr(style = "border-top: 1px dashed skyblue"),
+              numericInput(paste0('dose',I),paste0('*Dose ',I,  " ",cmax[I, .(TRTDOSU)], ":"), min=0, value = cmax[I, .(TRTDOS)]))
+        } else if (i %% 4 == 2) {
+          div(style="display: inline-block;vertical-align:top; width: 115px;",
+              numericInput(paste0('Cmax',I),paste0('Cmax ',I, " ", cmax[I, .(PPSTRESU)], ":"), min=0, value=cmax[I, .(mean)]))
+        }
+        else if (i %% 4 == 3) {
+          div(style="display: inline-block;vertical-align:top; width: 115px;",
+              numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"), min=0, value=auc[I, .(mean)]))
+          
+        }
+        else {
+          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value= F))
+        }
+      })
+      
+    } else {
+    
     cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0(" AUC (", input$auc_unit, ")")
     studyData <- values$tmpData
@@ -727,7 +786,7 @@ server <- function(input,output,session) {
       } else {
         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
       }
-    })
+    })}
   })
   
   #  Findings -----
@@ -1739,7 +1798,7 @@ server <- function(input,output,session) {
     HTML(paste0(five_space, strong(auc)))
   })
   
-
+#### dailogbox for nonclinical study ----
   
   data_modal <- function() {
     
@@ -1765,6 +1824,15 @@ server <- function(input,output,session) {
       h4('Study Name:'),
       verbatimTextOutput('studyTitle'),
       hr(),
+      
+      shiny::selectizeInput(inputId = "studyid",
+                            # label= "Select StudyID",
+                            label = tags$div(HTML('<i class="fa fa-database" style = "color:#000000;font-size:18px;"></i> Select StudyID')),
+                            selected = NULL,
+                            choices = c(Choose = '', sd_id),
+                            options = list(maxOptions = 5000)), 
+      uiOutput('choose_auc'),
+      checkboxInput(inputId = 'get_from_database', label = 'Populate from Database', value = FALSE),
       
       numericInput('nDoses',
                    label = tags$div(HTML('<i class="fa fa-syringe" style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
@@ -1800,11 +1868,35 @@ server <- function(input,output,session) {
     
   }
   
+  # observeEvent(input$get_from_database, {
+  #   updateNumericInput(session = session, inputId = 'nDoses')
+  # })
+  
   observeEvent(eventExpr = input$edit_nonclinical, {
     showModal(data_modal())
   })
   
-   
+  #### choose AUC from database
+  output$choose_auc <- shiny::renderUI({
+    
+    auc_list <- RSQLite::dbGetQuery(conn=conn, 'SELECT DISTINCT PPTESTCD FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
+                                    params=list(x=input$studyid))
+    # print(input$studyid)
+    # print("----")
+    
+    auc_list <- data.table::as.data.table(auc_list)
+    #print(auc_list)
+    
+    
+    shiny::selectizeInput(inputId = "auc_db", 
+                          label="Select AUC parameter",
+                          selected= NULL,
+                          choices= c(Choose="", auc_list))
+  }) 
+  
+  # 
+
+  
   # output$menu function -----
   
   output$menu <- renderMenu({
@@ -1950,6 +2042,8 @@ server <- function(input,output,session) {
     output$renderFigure <- renderUI({
     withSpinner(girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
   })
+    
+    runcodeServer()
 }
 
 
@@ -1966,6 +2060,7 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     useShinyjs(),
+    shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
