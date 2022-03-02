@@ -1,26 +1,31 @@
 
 # libraries
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    shiny, ggplot2, stringr, htmltools,
+    shinydashboard, shinycssloaders, tidyverse,
+    RColorBrewer, DT, plotly, officer, flextable,
+    ggiraph, patchwork, shinyjs, data.table, RSQLite
+)
+# library(shiny)
+# library(ggplot2)
+# library(stringr)
+# library(htmltools)
+# library(shinydashboard)
+# library(shinycssloaders)
+# library(tidyverse)
+# library(RColorBrewer)
+# library(DT)
+# library(plotly)
+# library(officer)
+# library(flextable)
+# library(ggiraph)
+# library(patchwork)
+# library(RSQLite)
+# library(shinyjs)
+# library(data.table)
 
-library(shiny)
-library(ggplot2)
-library(stringr)
-library(htmltools)
-library(shinydashboard)
-library(shinycssloaders)
-library(tidyverse)
-library(RColorBrewer)
-library(DT)
-library(plotly)
-library(officer)
-library(flextable)
-library(ggiraph)
-library(patchwork)
-#library(ggstance)
-#library(ggrepel)
-library(shinyjs)
-library(data.table)
-#library(DBI)
-library(RSQLite)
+
 source("get_dose_pp.R")
 # Bugs ####
 
@@ -224,14 +229,30 @@ roundSigfigs <- function(x,N=2) {
     }
 }
 
+#### get IND list
+
+col_name <- c(
+    "load_date", "application_type",
+    "application_number", "IND_num",
+    "studyID", "version", "designation",
+    "study_type", "IG"
+)
+ind_table <- read.csv("data/IND_with_studies.csv",
+    col.names = col_name
+)
+ind_table <- data.table::as.data.table(ind_table)
+ind_table <- ind_table[application_type == "IND", .(IND_num, studyID)]
+ind_number_list <- ind_table[!duplicated(IND_num), .(IND_num)]
+ 
+
 
 ### extract studyid from database ----
 
 db_path <- "C:/Users/Md.Ali/not_in_onedrive/CDER_SEND.db"
-
-conn <-RSQLite::dbConnect(drv = SQLite(),db_path)
-sd_id <- RSQLite::dbGetQuery(conn=conn, 'SELECT DISTINCT STUDYID FROM TX')
+conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
+sd_id <- RSQLite::dbGetQuery(conn = conn, "SELECT DISTINCT STUDYID FROM TX")
 sd_id <- data.table::as.data.table(sd_id)
+
 
 # function for using whether there are any value that is not NULL
 # fundctin will return sum of all clinical doses
@@ -735,7 +756,6 @@ server <- function(input,output,session) {
     if (input$get_from_database) {
       
       df <- get_dose_pk_for_study()
-      print(df)
       n_dose <-   length(unique(df[,TRTDOS]))
       
       #updateNumericInput(session,'nDoses', value = n_dose)
@@ -1798,6 +1818,13 @@ server <- function(input,output,session) {
     HTML(paste0(five_space, strong(auc)))
   })
   
+  
+ 
+
+  
+  
+  
+  
 #### dailogbox for nonclinical study ----
   
   data_modal <- function() {
@@ -1816,21 +1843,33 @@ server <- function(input,output,session) {
                    border: 2px solid #FF0000;"),
       br(),
       br(),
-      selectInput('Species',
-                  label = tags$div(HTML('<i class="fa fa-dog" style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
-                  #'*Select Species:',
-                  choices=names(speciesConversion)),
-      textInput('Duration','*Study Duration/Description:'),
-      h4('Study Name:'),
-      verbatimTextOutput('studyTitle'),
-      hr(),
-      
-      shiny::selectizeInput(inputId = "studyid",
+	      
+      shiny::selectizeInput(inputId = "ind_id",
+                            label = tags$div(HTML('<i class="fa fa-database" style = "color:#000000;font-size:18px;"></i> Select IND')),
+                            selected = NULL,
+                            choices = c(Choose = '', ind_number_list),
+                            options = list(maxOptions = 50)),
+	    br(),
+       br(),
+	  
+	        shiny::selectizeInput(inputId = "studyid",
                             # label= "Select StudyID",
                             label = tags$div(HTML('<i class="fa fa-database" style = "color:#000000;font-size:18px;"></i> Select StudyID')),
                             selected = NULL,
                             choices = c(Choose = '', sd_id),
                             options = list(maxOptions = 5000)), 
+	  
+	  br(), 
+      br(),
+      selectInput('Species',
+                  label = tags$div(HTML('<i class="fa fa-dog" style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
+                  choices=names(speciesConversion)),
+      textAreaInput('Duration','*Study Duration/Description:', height="100px"),
+      h4('Study Name:'),
+      verbatimTextOutput('studyTitle'),
+      hr(),
+      
+
       uiOutput('choose_auc'),
       checkboxInput(inputId = 'get_from_database', label = 'Populate from Database', value = FALSE),
       
@@ -1868,6 +1907,88 @@ server <- function(input,output,session) {
     
   }
   
+  
+   #### get studyID from IND selection
+  
+
+  get_studyid <- reactive({
+      # req(input$ind_id)
+      df <- ind_table
+      df <- df[IND_num == input$ind_id, studyID]
+
+      df
+  })
+  
+  #### get information about studyid
+  
+  studyid_info <- shiny::reactive({
+	  req(input$ind_id)
+	  st_id <- get_studyid()
+	  st_id_df <- RSQLite::dbGetQuery(conn=conn,
+	'SELECT STUDYID,  TSPARMCD,TSPARM, TSVAL 
+FROM TS WHERE 
+STUDYID IN (:x)
+AND
+TSPARMCD IN ("SDESIGN",
+"SPECIES",
+"SSTYP",
+"STITLE",
+"STRAIN", 
+"RECSAC", 
+"DOSDUR", 
+"ROUTE")',
+	 params=list(x=st_id))
+	  st_id_df <- data.table::as.data.table(st_id_df)
+	  st_id_df
+  })
+  
+  #### studyid options
+  
+  studyid_option <- reactive({
+	  df <- studyid_info()
+	#   print(df)
+	  #df <- data.table::as.data.table(df)
+	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
+	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
+	  #df <- df[, st_title]
+	  df
+	  
+  })
+  
+  # update studyID list
+  
+  shiny::observeEvent(input$ind_id, {
+	  st_id_option <- studyid_option()
+	  st_id_option <- st_id_option$st_title
+	  shiny::updateSelectizeInput(inputId = "studyid",
+     selected=NULL, 
+	 choices = c(choose= "", st_id_option))
+	  
+  })
+  
+  studyid_selected <- shiny::eventReactive(input$studyid, {
+	  df <- studyid_option()
+	  df <- df[st_title==input$studyid, STUDYID]
+	  df
+  })
+  
+  # get species information
+  
+  shiny::observeEvent(input$studyid, {
+	  st_selected <- studyid_selected()
+	  df <- studyid_info()
+	  df_species <- df[STUDYID==st_selected, ][TSPARMCD=="SPECIES"][!duplicated(STUDYID)][, TSVAL]
+	  df_species <- stringr::str_to_title(df_species)
+	  print("1985")
+	  print(df_species)
+	  df_duration <- df[STUDYID==st_selected, ][TSPARMCD=="STITLE"][!duplicated(STUDYID)][,  TSVAL]
+	  print(df_duration)
+	  shiny::updateSelectInput(session=session, inputId="Species", selected=df_species )
+	  shiny::updateTextInput(session=session, inputId="Duration",  value=df_duration )
+	#   choices=names(speciesConversion)
+	  
+  })
+  
   # observeEvent(input$get_from_database, {
   #   updateNumericInput(session = session, inputId = 'nDoses')
   # })
@@ -1878,9 +1999,11 @@ server <- function(input,output,session) {
   
   #### choose AUC from database
   output$choose_auc <- shiny::renderUI({
+	  study <- studyid_selected()
     
-    auc_list <- RSQLite::dbGetQuery(conn=conn, 'SELECT DISTINCT PPTESTCD FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
-                                    params=list(x=input$studyid))
+    auc_list <- RSQLite::dbGetQuery(conn=conn,
+	 'SELECT DISTINCT PPTESTCD FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
+	 params=list(x=study))
     # print(input$studyid)
     # print("----")
     
