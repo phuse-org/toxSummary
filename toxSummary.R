@@ -740,7 +740,8 @@ server <- function(input,output,session) {
   get_dose_pk_for_study <- shiny::reactive({
     
     if (!is.null(input$studyid) & !is.null(input$auc_db)) {
-      df <- get_pk_param(conn=conn, input$studyid, pk_param = input$auc_db)
+		
+      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db)
       df
     }
     
@@ -748,6 +749,17 @@ server <- function(input,output,session) {
   })
   
  
+  shiny::observe({
+	   req(input$selectStudy)
+    if (input$get_from_database) {
+      
+      df <- get_dose_pk_for_study()
+      n_dose <-   length(unique(df[,TRTDOS]))
+      
+      updateNumericInput(session,'nDoses', value = n_dose)
+	}
+
+  })
   
   ## output$Doses -----
   
@@ -1843,12 +1855,13 @@ server <- function(input,output,session) {
                    border: 2px solid #FF0000;"),
       br(),
       br(),
+	  htmltools::tags$hr(style="border-top: 3px solid#1e9acd;"),
 	      
       shiny::selectizeInput(inputId = "ind_id",
                             label = tags$div(HTML('<i class="fa fa-database" style = "color:#000000;font-size:18px;"></i> Select IND')),
                             selected = NULL,
                             choices = c(Choose = '', ind_number_list),
-                            options = list(maxOptions = 50)),
+                            options = list(maxOptions = 1500)),
 	    br(),
        br(),
 	  
@@ -1867,7 +1880,7 @@ server <- function(input,output,session) {
       textAreaInput('Duration','*Study Duration/Description:', height="100px"),
       h4('Study Name:'),
       verbatimTextOutput('studyTitle'),
-      hr(),
+      hr(style="border-top: 3px solid#1e9acd;"),
       
 
       uiOutput('choose_auc'),
@@ -1878,12 +1891,13 @@ server <- function(input,output,session) {
                    value=1,step=1,min=1),
       #numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
       uiOutput('Doses'),
-      hr(),
+      hr(style="border-top: 3px solid#1e9acd;"),
       
       numericInput('nFindings',
                    label = tags$div(HTML('<i class="fa fa-microscope" style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
                    value=1,step=1,min=1),
       uiOutput('Findings'),
+	  htmltools::tags$hr(style="border-top: 2px solid#1e9acd;"),
       checkboxInput("notes", "Notes for Study?", value = FALSE),
       uiOutput("study_note"),
       actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'),
@@ -1915,7 +1929,9 @@ server <- function(input,output,session) {
       # req(input$ind_id)
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
-
+	  print("line 1920")
+	  print(input$ind_id)
+	  print(df)
       df
   })
   
@@ -1969,6 +1985,7 @@ TSPARMCD IN ("SDESIGN",
   studyid_selected <- shiny::eventReactive(input$studyid, {
 	  df <- studyid_option()
 	  df <- df[st_title==input$studyid, STUDYID]
+	  print(df)
 	  df
   })
   
@@ -1979,10 +1996,9 @@ TSPARMCD IN ("SDESIGN",
 	  df <- studyid_info()
 	  df_species <- df[STUDYID==st_selected, ][TSPARMCD=="SPECIES"][!duplicated(STUDYID)][, TSVAL]
 	  df_species <- stringr::str_to_title(df_species)
-	  print("1985")
-	  print(df_species)
+	  #print(df_species)
 	  df_duration <- df[STUDYID==st_selected, ][TSPARMCD=="STITLE"][!duplicated(STUDYID)][,  TSVAL]
-	  print(df_duration)
+	  #print(df_duration)
 	  shiny::updateSelectInput(session=session, inputId="Species", selected=df_species )
 	  shiny::updateTextInput(session=session, inputId="Duration",  value=df_duration )
 	#   choices=names(speciesConversion)
