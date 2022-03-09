@@ -776,7 +776,7 @@ server <- function(input,output,session) {
       auc <- df[PPTESTCD!="CMAX"]
 
       
-      lapply(1:(4*n_dose), function(i) {
+      lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
         #doseName <- names(studyData$Doses)[I]
         if (i %% 4 == 1) {
@@ -1885,6 +1885,11 @@ server <- function(input,output,session) {
 
       uiOutput('choose_auc'),
       checkboxInput(inputId = 'get_from_database', label = 'Populate from Database', value = FALSE),
+    #   shiny::actionButton(inputId = "get_from_database",
+    #   label = "Populate From Database",
+	#   style = "background-color: white; 
+	#   border: 2px solid #4CAF50;"),
+	  
       
       numericInput('nDoses',
                    label = tags$div(HTML('<i class="fa fa-syringe" style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
