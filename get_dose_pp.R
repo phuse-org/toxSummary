@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-get_pk_param <- function(conn, studyid, pk_param="AUCLST"){
+get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
   
   
   '%ni%' <- Negate('%in%')
@@ -37,6 +37,13 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST"){
   if (pk_param %ni% testcode_list_pp$PPTESTCD) {
     stop(paste0(pk_param, " is not found in PPTESTCD variable in PP domain for ", studyid, " study"))
   }
+
+  #  get sex argument
+  
+  sex_include <- toupper(sex_include)
+  if (sex_include %ni% c("ALL", "M", "F")) {
+	  stop("Please select sex_include as ALL, M or F")
+  }
   
   pp_domain <- RSQLite::dbGetQuery(conn = conn,
                                    'SELECT * FROM PP WHERE STUDYID==:x AND PPTESTCD IN ($CMAX, $AUC)',
@@ -44,7 +51,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST"){
   
   # get the dose information
   dose <- RSQLite::dbGetQuery(conn=conn, 'SELECT TX.STUDYID, TX.TXPARMCD, TX.TXVAL, TX.SETCD,
-           DM.USUBJID FROM TX INNER JOIN DM ON (TX.STUDYID=DM.STUDYID AND TX.SETCD=DM.SETCD)
+           DM.USUBJID, DM.SEX FROM TX INNER JOIN DM ON (TX.STUDYID=DM.STUDYID AND TX.SETCD=DM.SETCD)
            WHERE TX.STUDYID==:x AND (TX.TXPARMCD="TRTDOS" OR TX.TXPARMCD="TRTDOSU")',
            params=list(x=studyid))
   
@@ -62,7 +69,12 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST"){
   if (nrow(pp_domain) == sum(pp_domain$USUBJID!="")) {
     df <- merge(dose_wide,pp_domain, by=c("STUDYID","USUBJID"))
     # print("USUBJID is populated in PP")
-    df <- df[, .(TRTDOS,TRTDOSU, PPSTRESN, PPSTRESU,PPTESTCD )]
+	# filter sex
+	  if (sex_include != "ALL") {
+	  df <- df[SEX == sex_include, ]
+  }
+
+    df <- df[, .(TRTDOS, TRTDOSU, PPSTRESN, PPSTRESU, PPTESTCD)]
     df <- df[, .(mean=mean(PPSTRESN)), by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
     #names(df)[5] <- paste0(pk_param, "_Mean")
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
@@ -77,6 +89,9 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST"){
     pp_domain <- pp_domain[, USUBJID := NULL]
     df <- data.table::merge.data.table(pp_domain, pooldef, by=c("STUDYID", "POOLID"),allow.cartesian=T)
     df <- data.table::merge.data.table(df,dose_wide, by=c("STUDYID","USUBJID"))
+	if (sex_include != "ALL") {
+	df <- df[SEX == sex_include, ]
+  }
     df <- df[, .(TRTDOS,TRTDOSU, PPSTRESN, PPSTRESU,PPTESTCD)]
     df <- df[, .(mean=mean(PPSTRESN)), by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
     #names(df)[5] <- paste0(pk_param, "_Mean")
@@ -108,6 +123,9 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST"){
     
     row_bind <- list(df,df_usubjid)
     df_all <- data.table::rbindlist(row_bind, use.names = T)
+	if (sex_include != "ALL") {
+	df_all <- df_all[SEX == sex_include, ]
+  }
     # check duplicated value dataframe
     df <- df_all[, .(mean_cmax=mean(PPSTRESN)), by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
     #names(df)[5] <- paste0(pk_param, "_Mean")
