@@ -741,7 +741,7 @@ server <- function(input,output,session) {
     
     if (!is.null(input$studyid) & !is.null(input$auc_db)) {
 		
-      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db)
+      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db, sex_include = input$which_sex)
       df
     }
     
@@ -1858,7 +1858,7 @@ server <- function(input,output,session) {
 	  htmltools::tags$hr(style="border-top: 3px solid#1e9acd;"),
 	      
       shiny::selectizeInput(inputId = "ind_id",
-                            label = tags$div(HTML('<i class="fa fa-database" style = "color:#000000;font-size:18px;"></i> Select IND')),
+                            label = tags$div(HTML('<i class="fa fa-folder-open" style = "color:#000000;font-size:18px;"></i> Select IND')),
                             selected = NULL,
                             choices = c(Choose = '', ind_number_list),
                             options = list(maxOptions = 1500)),
@@ -1877,6 +1877,11 @@ server <- function(input,output,session) {
       selectInput('Species',
                   label = tags$div(HTML('<i class="fa fa-dog" style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
                   choices=names(speciesConversion)),
+				  br(), 
+				  br(),
+				  selectInput('which_sex',
+                  label = tags$div(HTML('<i class="fa fa-venus" style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
+                  choices=c("ALL", "M", "F")),
       textAreaInput('Duration','*Study Duration/Description:', height="100px"),
       h4('Study Name:'),
       verbatimTextOutput('studyTitle'),
