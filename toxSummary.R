@@ -5,7 +5,7 @@ pacman::p_load(
     shiny, ggplot2, stringr, htmltools,
     shinydashboard, shinycssloaders, tidyverse,
     RColorBrewer, DT, plotly, officer, flextable,
-    ggiraph, patchwork, shinyjs, data.table, RSQLite
+    ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
 )
 # library(shiny)
 # library(ggplot2)
@@ -27,6 +27,7 @@ pacman::p_load(
 
 
 source("get_dose_pp.R")
+source("connect_database.R")
 # Bugs ####
 
 
@@ -228,30 +229,6 @@ roundSigfigs <- function(x,N=2) {
       return(roundNumber)
     }
 }
-
-#### get IND list
-
-col_name <- c(
-    "load_date", "application_type",
-    "application_number", "IND_num",
-    "studyID", "version", "designation",
-    "study_type", "IG"
-)
-ind_table <- read.csv("data/IND_with_studies.csv",
-    col.names = col_name
-)
-ind_table <- data.table::as.data.table(ind_table)
-ind_table <- ind_table[application_type == "IND", .(IND_num, studyID)]
-ind_number_list <- ind_table[!duplicated(IND_num), .(IND_num)]
- 
-
-
-### extract studyid from database ----
-
-db_path <- "C:/Users/Md.Ali/not_in_onedrive/CDER_SEND.db"
-conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
-sd_id <- RSQLite::dbGetQuery(conn = conn, "SELECT DISTINCT STUDYID FROM TX")
-sd_id <- data.table::as.data.table(sd_id)
 
 
 # function for using whether there are any value that is not NULL
