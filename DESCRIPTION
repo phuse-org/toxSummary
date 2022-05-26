@@ -1,0 +1,29 @@
+Package: toxSummary
+Title: Visualize and Summarize Nonclinical Toxicology Study
+Version: 0.0.0.9000
+Authors@R: 
+    person("Yousuf", "Ali", , "md.ali@fda.hhs.gov", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: An R Shiny app to Visualize and Summarize Nonclinical  Toxicology Study
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    data.table,
+    DT,
+    flextable,
+    ggiraph,
+    ggplot2,
+    htmltools,
+    ini,
+    officer,
+    patchwork,
+    plotly,
+    RColorBrewer,
+    RSQLite,
+    shiny,
+    shinycssloaders,
+    shinydashboard,
+    shinyjs,
+    stringr
