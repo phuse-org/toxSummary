@@ -28,6 +28,7 @@ Data <- list(
     "Nonclinical Information" = list(
         "New Study" = list(
             Species = NULL,
+            Sex_include = NULL,
             Duration = "",
             Notes = NULL,
             check_note = F,

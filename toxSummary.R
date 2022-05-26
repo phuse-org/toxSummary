@@ -12,6 +12,7 @@ source("get_dose_pp.R")
 source("connect_database.R")
 source("data_entry_modal.R")
 source("create_blank_data.R")
+source("utils.R")
 
 ######
 
@@ -35,112 +36,132 @@ clinDosingOptions <- c('Start Dose','MRHD','Custom Dose')
 
 # Server function started here (selectData) ----
 
-server <- function(input,output,session) {
-  
+server <- function(input, output, session) {
+
 # user folder  ----
   user <- reactive({
-    url_search <- session$clientData$url_search
-    username <- unlist(strsplit(url_search,'user='))[2]
-    username <- str_to_lower(username)
-    username <- paste0("Applications/", username)
-    return(username)
+      url_search <- session$clientData$url_search
+      username <- unlist(strsplit(url_search, "user="))[2]
+      username <- str_to_lower(username)
+      username <- paste0("Applications/", username)
+      return(username)
   })
-  
+
   # create folder and copy Aplication_Demo.rds file that folder
   observeEvent(user(), {
-    dir_list <- list.dirs("Applications", full.names = F, recursive = F)
-    if (!basename(user()) %in% dir_list) {
-      dir.create(user())
-      file.copy("Application_Demo.rds", user())
-    }
+      dir_list <- list.dirs("Applications", full.names = F, recursive = F)
+      if (!basename(user()) %in% dir_list) {
+          dir.create(user())
+          file.copy("Application_Demo.rds", user())
+      }
   })
 
   ###
   output$selectData <- renderUI({
-    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
-    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    if (is.null(values$selectData)) {
-      selectInput('selectData','Select Application:',datasets,selected='blankData.rds')
-    } else {
-      selectInput('selectData','Select Application:',datasets,selected=values$selectData)
-    }
+      datasets <- c("blankData.rds", grep(".rds", list.files(user(),
+          full.names = T
+      ), value = T))
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      if (is.null(values$selectData)) {
+          selectInput("selectData", "Select Application:",
+              datasets,
+              selected = "blankData.rds"
+          )
+      } else {
+          selectInput("selectData", "Select Application:",
+              datasets,
+              selected = values$selectData
+          )
+      }
   })
   
   ### Study Name ----
   output$studyName <- renderUI({
-    req(input$selectData)
-    if (input$selectData!='blankData.rds') {
-      HTML(paste(
-        p(HTML(paste0('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
+      req(input$selectData)
+      if (input$selectData != "blankData.rds") {
+          HTML(paste(
+              p(HTML(paste0(
+                  '<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
                       <h4 style= "color:skyblue"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-                      (basename(unlist(strsplit(input$selectData,'.rds')))),'</h4>')
-        ))
-      ))
-    }
+                  (basename(unlist(strsplit(input$selectData, ".rds")))), "</h4>"
+              )))
+          ))
+      }
   })
   
 # getData ------
-  
+
   getData <- reactive({
-    input$refreshPlot
-    req(input$selectData)
-    input$selectStudy
-    Data <- readRDS(input$selectData)
+      input$refreshPlot
+      req(input$selectData)
+      input$selectStudy
+      Data <- readRDS(input$selectData)
   })
   
   observe({
-    req(input$selectData)
-    if (input$selectData == 'blankData.rds') {
-      values$Application <- paste0(user(), "/",input$newApplication,'.rds')
-    } else {
-      values$Application <- input$selectData
-    }
+      req(input$selectData)
+      if (input$selectData == "blankData.rds") {
+          values$Application <- paste0(user(), "/", input$newApplication, ".rds")
+      } else {
+          values$Application <- input$selectData
+      }
   })
   
   # 
-  observeEvent(input$saveData,{
-    Data <- getData()
-    saveRDS(Data,values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
-    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    selectInput('selectData','Select Application:',datasets)
-    updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
+  observeEvent(input$saveData, {
+      Data <- getData()
+      saveRDS(Data, values$Application)
+      datasets <- c(
+          "blankData.rds",
+          grep(".rds", list.files(user(), full.names = T), value = T)
+      )
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      selectInput("selectData", "Select Application:", datasets)
+      updateSelectInput(session, "selectData",
+          choices = datasets, selected = values$Application
+      )
   })
   
   
 # delete application ----
 
   observeEvent(input$deleteData, {
-    showModal(modalDialog(
-      title="Delete Application?",
-      footer = tagList(modalButton("Cancel"),
-                       actionButton("confirmDelete", "Delete")
-      )
-    ))
+      showModal(modalDialog(
+          title = "Delete Application?",
+          footer = tagList(
+              modalButton("Cancel"),
+              actionButton("confirmDelete", "Delete")
+          )
+      ))
   })
   
   
-  # COnfirm delete application ----
+  # Confirm delete application ----
   observeEvent(input$confirmDelete, {
-    file.remove(values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
-    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    selectInput('selectData','Select Application:',datasets)
-    updateSelectInput(session,'selectData',choices=datasets,selected='blankData.rds')
-    
-    removeModal()
+      file.remove(values$Application)
+      datasets <- c(
+          "blankData.rds",
+          grep(".rds", list.files(user(), full.names = T), value = T)
+      )
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      selectInput("selectData", "Select Application:", datasets)
+      updateSelectInput(session, "selectData",
+          choices = datasets, selected = "blankData.rds"
+      )
+
+      removeModal()
   })
   
   # select study ----
   output$selectStudy <- renderUI({
-    req(input$selectData)
-    input$selectData
-    isolate(Data <- getData())
-    studyList <- names(Data[['Nonclinical Information']])
-    selectInput('selectStudy','Select Study:',choices=studyList)
+      req(input$selectData)
+      input$selectData
+      isolate(Data <- getData())
+      studyList <- names(Data[["Nonclinical Information"]])
+      selectInput("selectStudy", "Select Study:", choices = studyList)
   })
   
 ############## Auto-Save Dose ######################
@@ -197,21 +218,21 @@ server <- function(input,output,session) {
   
  # Add findings to the list
           
-  observeEvent(input$selectData,ignoreNULL = T,{
-    Data <- getData()
-    for (Study in names(Data[['Nonclinical Information']])) {
-      if (Study != "New Study") {
-        studyData <- Data[['Nonclinical Information']][[Study]]
-        
-        for ( i in seq(studyData$nFindings)) {
-          Finding <- studyData[['Findings']][[paste0('Finding', i)]][['Finding']]
-          if (Finding %ni% values$Findings) {
-            values$Findings <- c(values$Findings, Finding)
+  observeEvent(input$selectData, ignoreNULL = T, {
+      Data <- getData()
+      for (Study in names(Data[["Nonclinical Information"]])) {
+          if (Study != "New Study") {
+              studyData <- Data[["Nonclinical Information"]][[Study]]
+
+              for (i in seq(studyData$nFindings)) {
+                  Finding <- studyData[["Findings"]][[paste0("Finding", i)]][["Finding"]]
+                  if (Finding %ni% values$Findings) {
+                      values$Findings <- c(values$Findings, Finding)
+                  }
+              }
           }
-        }
       }
-    }
-    })
+  })
 
   ########### Auto-save findings ###############
   
@@ -281,18 +302,19 @@ server <- function(input,output,session) {
   
 # Nonclinical data update ------
   
-  observeEvent(input$selectStudy,ignoreNULL = T,{
-    Data <- getData()
-    studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-    updateSelectInput(session,'Species',selected=studyData$Species)
-    updateTextInput(session,'Duration',value=studyData$Duration)
-    updateNumericInput(session,'nDoses',value=studyData$nDoses)
-    updateNumericInput(session,'nFindings',value=studyData$nFindings)
-    updateCheckboxInput(session, "notes", value = studyData$check_note) 
+  observeEvent(input$selectStudy, ignoreNULL = T, {
+      Data <- getData()
+      studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
+      updateSelectInput(session, "Species", selected = studyData$Species)
+	  updateSelectInput(session, "which_sex", selected = studyData$Sex_include)
+      updateTextInput(session, "Duration", value = studyData$Duration)
+      updateNumericInput(session, "nDoses", value = studyData$nDoses)
+      updateNumericInput(session, "nFindings", value = studyData$nFindings)
+      updateCheckboxInput(session, "notes", value = studyData$check_note)
   })
   
   
-  # first save study button ----
+# first save study button ----
   
   observeEvent(eventExpr = input$saveStudy, {
     doseList <- as.list(seq(input$nDoses))
@@ -332,6 +354,7 @@ server <- function(input,output,session) {
     studyName <- paste(input$Species,input$Duration,sep=': ')
     Data[['Nonclinical Information']][[studyName]] <- list(
       Species = input$Species,
+	  Sex_include = input$which_sex,
       Duration = input$Duration,
       Notes = input$note_text,
       check_note = input$notes,
@@ -349,60 +372,10 @@ server <- function(input,output,session) {
   })
   
   # second save study button ----
-  
-  observeEvent(eventExpr = input$saveStudy_02, {
-    doseList <- as.list(seq(input$nDoses))
-    names(doseList) <- paste0('Dose',seq(input$nDoses))
-    for (i in seq(input$nDoses)) {
-      doseList[[i]] <- list(Dose=input[[paste0('dose',i)]],
-                            NOAEL = input[[paste0('NOAEL',i)]],
-                            Cmax = input[[paste0('Cmax',i)]],
-                            AUC = input[[paste0('AUC',i)]]
-      )
-    }
-    
-    findingList <- as.list(seq(input$nFindings))
-    names(findingList) <- paste0('Finding',seq(input$nFindings))
-    if (input$nFindings > 0) {
-      for (i in seq(input$nFindings)) {
-        severity <- list()
-        for (j in seq(input$nDoses)) {
-          severity[[paste0("Dose", j)]] <- input[[paste0("Severity", i, "_", j)]]
-        }
-        if ((is.null(input[[paste0('Finding',i)]])) | (input[[paste0('Finding',i)]]=='')) {
-          finding_null <- "No Finding"
-        } else {
-          finding_null <- input[[paste0('Finding',i)]]
-        }
-        findingList[[i]] <- list(Finding=finding_null,
-                                 Reversibility = input[[paste0('Reversibility',i)]],
-                                 # FindingDoses = input[[paste0('FindingDoses',i)]],
-                                 Severity = severity
-        )
-      }
-    } else {
-      findingList[[1]] <- NULL
-    }
-    
-    Data <- getData()
-    studyName <- paste(input$Species,input$Duration,sep=': ')
-    Data[['Nonclinical Information']][[studyName]] <- list(
-      Species = input$Species,
-      Duration = input$Duration,
-      Notes = input$note_text,
-      check_note = input$notes,
-      nDoses = input$nDoses,
-      Doses = doseList,
-      nFindings = input$nFindings,
-      Findings = findingList
-      
-    )
-    saveRDS(Data,values$Application)
-    showNotification("Saved", duration = 3)
-    studyList <- names(Data[['Nonclinical Information']])
-    updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
-    input$refreshPlot
-  })
+
+    shiny::observeEvent(input$saveStudy_02, {
+      session$sendCustomMessage("mymessage", "saveStudy")
+    })
   
 
 ## save clinical information ---- 
@@ -1609,7 +1582,7 @@ server <- function(input,output,session) {
       # req(input$ind_id)
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
-	  print("line 1920")
+	  print("line 1613")
 	  print(input$ind_id)
 	  print(df)
       df
@@ -1806,6 +1779,7 @@ ui <- dashboardPage(
                    )
   ),
   dashboardBody(
+	  tags$head(tags$script(src = "button.js")),
     useShinyjs(),
     shinyjs::runcodeUI(),
     # tags$head(
