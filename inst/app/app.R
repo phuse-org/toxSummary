@@ -1,16 +1,5 @@
 
 
-
-#' run toxSummary shiny app
-#'
-#' @return
-#' @export
-#' @import shiny
-#' @import data.table
-#'
-#' @examples
-#' 
-toxSummary <- function() {
   
   speciesConversion <- c(6.2,1.8,3.1,3.1
                          ,12.3,1.1,4.6,7.4)
@@ -461,7 +450,7 @@ server <- function(input, output, session) {
     shiny::isolate(Data <- getData())
     studyList <- names(Data[['Nonclinical Information']])
     studyList <- studyList[-which(studyList=='New Study')]
-    studyList <- str_sort(studyList, numeric = T)
+    studyList <- stringr::str_sort(studyList, numeric = T)
 
     addUIDep(shiny::selectizeInput('displayStudies',
 	label='Select and Order Studies to Display:',choices=studyList,
@@ -538,7 +527,7 @@ server <- function(input, output, session) {
         }
         else if (i %% 4 == 3) {
           shiny::div(style="display: inline-block;vertical-align:top; width: 115px;",
-              nshiny::umericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"), min=0, value=auc[I, .(mean)]))
+              shiny::numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"), min=0, value=auc[I, .(mean)]))
           
         }
         else {
@@ -1183,7 +1172,7 @@ server <- function(input, output, session) {
  
 # output table for notes  ----
    
-   output$table_note <- dplyr::renderTable({
+   output$table_note <- shiny::renderTable({
      data <- getData()
      clin_dose <- clin_data(data)
      if (clin_dose>0) {
@@ -1194,7 +1183,7 @@ server <- function(input, output, session) {
                              width = '100%', align = 'lr')
  
 ## download notes table
-   table_note_to_flex <- dplyr::reactive({
+   table_note_to_flex <- shiny::reactive({
      note_table <- all_study_notes() %>%
        flextable::flextable() %>%
        flextable::add_header_row(values = c("Note for Studies"), colwidths = c(2)) %>%
@@ -1410,8 +1399,8 @@ server <- function(input, output, session) {
               legend.justification = "top")+
         #labs(title = '' )+
         guides(fill = guide_legend(override.aes = aes(label = "")))
-      girafe(code = print(p+q+plot_layout(ncol = 2, widths = c(3,1))),
-             options = list(opts_tooltip(css = tooltip_css)),
+      ggiraph::girafe(code = print(p+q+patchwork::plot_layout(ncol = 2, widths = c(3,1))),
+             options = list(ggiraph::opts_tooltip(css = tooltip_css)),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
     }}
@@ -1692,6 +1681,7 @@ server <- function(input, output, session) {
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
 	  print("line 1613")
+	  print("new text")
 	  print(input$ind_id)
 	  print(df)
       df
@@ -1998,7 +1988,7 @@ ui <- shinydashboard::dashboardPage(
   shinydashboard::dashboardBody(
 	  htmltools::tags$head(
 		  htmltools::tags$script(src = "button.js")),
-    useShinyjs(),
+    shinyjs::useShinyjs(),
     shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
@@ -2111,4 +2101,16 @@ ui <- shinydashboard::dashboardPage(
 
 shiny::shinyApp(ui = ui, server = server)
 
-}
+
+
+
+####################
+
+AUC  <- Cmax <-  DOMAIN <-  Findings  <- HED_value <- NULL
+  NOAEL <-  POOLID <-  PPORRES <- NULL
+PPORRESU <-  PPSTRESC <-  PPSTRESN <-  PPSTRESU <-  PPTEST  <- NULL
+PPTESTCD <-  Rev <-  Reversibility <- NULL
+    SEX <-  SM <-  SM_start_dose <-  STUDYID <-  Severity <-  Study_note <- NULL
+TRTDOS <-  TRTDOSU <- TSPARMCD <-  TSVAL <-  USUBJID <- NULL
+ Value <-  Value_order <-    files <- NULL
+    noael_value <-  st_title <-  studyID <- NULL

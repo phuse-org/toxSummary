@@ -1,11 +1,11 @@
-library(shiny)
-library(DBI)
-library(data.table)
-library(RSQLite)
-source("get_dose_pp.R")
+# library(shiny)
+# library(DBI)
+# library(data.table)
+# library(RSQLite)
+# source("get_dose_pp.R")
 
 
-db_path <- "C:/Users/Md.Ali/not_in_onedrive/CDER_SEND.db"
+ db_path <- "C:/Users/Md.Ali/not_in_onedrive/CDER_SEND.db"
 
 conn <-RSQLite::dbConnect(drv = SQLite(),db_path)
 sd_id <- RSQLite::dbGetQuery(conn=conn, 'SELECT DISTINCT STUDYID FROM TX')

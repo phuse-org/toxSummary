@@ -2,20 +2,27 @@
 % Please edit documentation in R/get_dose_pp.R
 \name{get_pk_param}
 \alias{get_pk_param}
-\title{Title}
+\title{function to get dose and Pharmacokinetics parameter for a specific study}
 \usage{
 get_pk_param(conn, studyid, pk_param = "AUCLST", sex_include = "ALL")
 }
 \arguments{
-\item{studyid}{}
+\item{conn}{madatory.}
 
-\item{pk_param}{}
+\item{studyid}{mandatory, character}
 
-\item{db}{}
+\item{pk_param}{optional,  character}
+
+\item{sex_include}{optional,  character}
 }
 \value{
-
+return data.table with PP calculation  for studyid provided
 }
 \description{
-Title
+function to get dose and Pharmacokinetics parameter for a specific study
+}
+\examples{
+\dontrun{
+get_pk_param(conn, studyid, pk_param = "AUCLST", sex_include =  "ALL")
+}
 }
