@@ -1,18 +1,18 @@
 
-# function to get dose and Pharmacokinetics parameter for a specific study
-# library(DBI)
-# library(data.table)
-
-#' Title
+#' function to get dose and Pharmacokinetics parameter for a specific study
 #'
-#' @param db 
-#' @param studyid 
-#' @param pk_param 
+#' @param conn madatory.
+#' @param studyid mandatory, character
+#' @param pk_param optional,  character
+#' @param sex_include optional,  character
 #'
-#' @return
+#' @return return data.table with PP calculation  for studyid provided
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' get_pk_param(conn, studyid, pk_param = "AUCLST", sex_include =  "ALL")
+#' }
 get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
   '%ni%' <- Negate('%in%')
   studyid <- as.character(studyid)
@@ -166,3 +166,20 @@ clean_txval_dose <- function(dose) {
   }
   return(final_dose)
 }
+
+
+
+STUDYID <- NULL
+DOMAIN <- NULL
+USUBJID <- NULL
+POOLID <- NULL
+PPTESTCD <- NULL
+PPTEST <- NULL
+PPORRES <- NULL
+PPORRESU <- NULL
+PPSTRESC <- NULL
+PPSTRESU <- NULL
+PPSTRESN <- NULL
+SEX <- NULL
+TRTDOS <- NULL
+TRTDOSU <- NULL
