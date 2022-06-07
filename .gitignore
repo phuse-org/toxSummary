@@ -2,3 +2,7 @@ rsconnect/*
 *.Rproj.user
 *.Rproj
 .Rproj.user
+paths.ini
+blankData.rds
+.RData
+.Rhistory
