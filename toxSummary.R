@@ -8,10 +8,11 @@ pacman::p_load(
     ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
 )
 
-source("get_dose_pp.R")
+
+source("utils.R")
 source("connect_database.R")
 source("create_blank_data.R")
-source("utils.R")
+source("get_dose_pp.R")
 
 ######
 
@@ -357,7 +358,7 @@ server <- function(input, output, session) {
   # second save study button ----
 
     shiny::observeEvent(input$saveStudy_02, {
-      session$sendCustomMessage("mymessage", "saveStudy")
+      shinyjs::click("saveStudy")
     })
   
 
@@ -387,12 +388,13 @@ server <- function(input, output, session) {
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
     showNotification("saved", duration = 3)
+	click('refreshPlot')
   })
   
 # click refresh button after save clinical information
-  observeEvent(input$saveClinicalInfo, {
-    click('refreshPlot')
-  })
+#   observeEvent(input$saveClinicalInfo, {
+#     click('refreshPlot')
+#   })
   
   ## delete study ---- 
   observeEvent(input$deleteStudy, {
@@ -1980,7 +1982,7 @@ ui <- dashboardPage(
                    )
   ),
   dashboardBody(
-	  tags$head(tags$script(src = "button.js")),
+	#   tags$head(tags$script(src = "button.js")),
     useShinyjs(),
     shinyjs::runcodeUI(),
     # tags$head(
