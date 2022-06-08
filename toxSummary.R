@@ -1682,7 +1682,6 @@ server <- function(input, output, session) {
       # req(input$ind_id)
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
-	  print("line 1613")
 	  print(input$ind_id)
 	  print(df)
       df
@@ -1823,6 +1822,7 @@ data_modal <- function() {
         verbatimTextOutput("studyTitle"),
         hr(style = "border-top: 3px solid#1e9acd;"),
         uiOutput("choose_auc"),
+		uiOutput("Choose_visit_day"),
         checkboxInput(
             inputId = "get_from_database",
             label = "Populate from Database", value = FALSE
@@ -1904,6 +1904,24 @@ data_modal <- function() {
   }) 
   
   # 
+
+  #### group by visit day
+output$Choose_visit_day  <- shiny::renderUI({
+	study <- studyid_selected()
+    
+    auc_list <- RSQLite::dbGetQuery(conn=conn,
+	 'SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x',
+	 params=list(x=study))
+    # print(input$studyid)
+    # print("----")
+    
+    auc_list <- data.table::as.data.table(auc_list)
+	shiny::selectizeInput(inputId = "pp_visitday", 
+                          label="Select Visit Day",
+                          selected= NULL,
+                          choices= c(Choose="", auc_list))
+
+})
 
   
   # output$menu function -----
