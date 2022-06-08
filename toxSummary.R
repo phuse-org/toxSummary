@@ -104,7 +104,7 @@ server <- function(input, output, session) {
   getData <- reactive({
       input$refreshPlot
       req(input$selectData)
-      input$selectStudy
+       input$selectStudy
       Data <- readRDS(input$selectData)
   })
   
@@ -1867,7 +1867,20 @@ data_modal <- function() {
   
   observeEvent(eventExpr = input$edit_nonclinical, {
     showModal(data_modal())
+
+	 
   })
+
+  observeEvent(input$edit_nonclinical, {
+	  req(input$selectData)
+      input$selectData
+      Data <- getData()
+      studyList <- names(Data[["Nonclinical Information"]])
+	updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
+
+  })
+
+  
   
   #### choose AUC from database
   output$choose_auc <- shiny::renderUI({
