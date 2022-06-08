@@ -1,4 +1,15 @@
 
+# Species Conversion ----
+
+speciesConversion <- c(6.2,1.8,3.1,3.1
+                       ,12.3,1.1,4.6,7.4)
+names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit',
+                              'Mouse', 'Mini-pig', 'Guinea pig', 'Hamster')
+
+## 
+clinDosingOptions <- c('Start Dose','MRHD','Custom Dose')
+
+
 # clinical data modal
 clinical_data_modal <- function() {
      modalDialog(
