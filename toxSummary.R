@@ -1718,6 +1718,9 @@ TSPARMCD IN ("SDESIGN",
 	  #df <- data.table::as.data.table(df)
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
 	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
+	  df <- df[, st_bullet := paste0("\U2022 ", st_title)]
+
+	  print(df)
 	  #df <- df[, st_title]
 	  df
 	  
@@ -1727,7 +1730,7 @@ TSPARMCD IN ("SDESIGN",
   
   shiny::observeEvent(input$ind_id, {
 	  st_id_option <- studyid_option()
-	  st_id_option <- st_id_option$st_title
+	  st_id_option <- st_id_option$st_bullet
 	  shiny::updateSelectizeInput(inputId = "studyid",
      selected=NULL, 
 	 choices = c(choose= "", st_id_option))
@@ -1736,7 +1739,7 @@ TSPARMCD IN ("SDESIGN",
   
   studyid_selected <- shiny::eventReactive(input$studyid, {
 	  df <- studyid_option()
-	  df <- df[st_title==input$studyid, STUDYID]
+	  df <- df[st_bullet==input$studyid, STUDYID]
 	  print(df)
 	  df
   })
