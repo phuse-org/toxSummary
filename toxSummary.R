@@ -1887,19 +1887,20 @@ data_modal <- function() {
 	  study <- studyid_selected()
     
     auc_list <- RSQLite::dbGetQuery(conn=conn,
-	 'SELECT DISTINCT PPTESTCD FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
+	 'SELECT DISTINCT PPTESTCD,PPTEST FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
 	 params=list(x=study))
     # print(input$studyid)
     # print("----")
     
     auc_list <- data.table::as.data.table(auc_list)
+	auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
     #print(auc_list)
     
     
     shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
                           selected= NULL,
-                          choices= c(Choose="", auc_list))
+                          choices= c(Choose="", setNames(auc_list$PPTESTCD, auc_list$choice_option)))
   }) 
   
   # 
