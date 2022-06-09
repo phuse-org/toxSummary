@@ -1718,7 +1718,7 @@ TSPARMCD IN ("SDESIGN",
 	  #df <- data.table::as.data.table(df)
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
 	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
-	  df <- df[, st_bullet := paste0("\U2022 ", st_title)]
+	  df <- df[, st_bullet := paste0("\U25FC ", st_title)]
 
 	  print(df)
 	  #df <- df[, st_title]
