@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
+get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL", visit_day="ALL"){
   '%ni%' <- Negate('%in%')
   studyid <- as.character(studyid)
   pk_param <- toupper(as.character(pk_param))
@@ -65,7 +65,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
   pp_domain <-  pp_domain[, .(STUDYID, DOMAIN, USUBJID,
   POOLID, PPTESTCD,  PPTEST,
   PPORRES, PPORRESU, PPSTRESC,
-  PPSTRESU, PPSTRESN)]
+  PPSTRESU, PPSTRESN,VISITDY)]
 
   if (nrow(pp_domain) == sum(pp_domain$USUBJID != "")) {
     df <- merge(dose_wide, pp_domain, by = c("STUDYID", "USUBJID"))
@@ -74,6 +74,12 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
 	  if (sex_include != "ALL") {
 	  df <- df[SEX == sex_include, ]
   }
+
+	  if (visit_day != "ALL") {
+		  visit_day  <- as.integer(visit_day)
+	  df <- df[VISITDY == visit_day, ]
+  }
+
 
     df <- df[, .(TRTDOS, TRTDOSU, PPSTRESN, PPSTRESU, PPTESTCD)]
     df <- df[, .(mean=mean(PPSTRESN)), by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
@@ -100,6 +106,11 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
 	if (sex_include != "ALL") {
 	df <- df[SEX == sex_include, ]
   }
+
+	if (visit_day != "ALL") {
+		visit_day  <- as.integer(visit_day)
+		df <- df[VISITDY == visit_day, ]
+}
     df <- df[, .(TRTDOS,TRTDOSU, PPSTRESN, PPSTRESU,PPTESTCD)]
     df <- df[, .(mean=mean(PPSTRESN)),
 	 by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
@@ -133,8 +144,13 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL"){
     
     row_bind <- list(df,df_usubjid)
     df_all <- data.table::rbindlist(row_bind, use.names = T)
+
 	if (sex_include != "ALL") {
 	df_all <- df_all[SEX == sex_include, ]
+  }
+    if (visit_day != "ALL") {
+		visit_day  <- as.integer(visit_day)
+		df_all <- df_all[VISITDY == visit_day, ]
   }
     # check duplicated value dataframe
     df <- df_all[, .(mean_cmax=mean(PPSTRESN)),
