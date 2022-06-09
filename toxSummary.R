@@ -461,7 +461,7 @@ server <- function(input, output, session) {
     
     if (!is.null(input$studyid) & !is.null(input$auc_db)) {
 		
-      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db, sex_include = input$which_sex)
+      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db, sex_include = input$which_sex, visit_day=input$pp_visitday)
       df
     }
     
@@ -1921,8 +1921,8 @@ output$Choose_visit_day  <- shiny::renderUI({
     auc_list <- data.table::as.data.table(auc_list)
 	shiny::selectizeInput(inputId = "pp_visitday", 
                           label="Select Visit Day",
-                          selected= NULL,
-                          choices= c(Choose="", auc_list))
+                          choices= c(Choose="", "ALL", auc_list),
+						  selected= "ALL")
 
 })
 
