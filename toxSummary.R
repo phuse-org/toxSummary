@@ -1718,29 +1718,49 @@ TSPARMCD IN ("SDESIGN",
 	  #df <- data.table::as.data.table(df)
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
 	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
-	  df <- df[, st_bullet := paste0("\U25FC ", st_title)]
+	#    df <- df[, st_bullet := paste0("\U25FC ", st_title)]
 
-	  print(df)
+	#   print(df)
 	  #df <- df[, st_title]
 	  df
 	  
   })
+
+  # 
+output$studyid_ui  <- shiny::renderUI({
+     shiny::req(input$ind_id)
+	#  if (!is.null(input$ind_id)) {
+	  st_id_option <- studyid_option()
+	  st_id_option <- st_id_option$st_title
+	  
+	 
+	 shiny::selectizeInput(
+            inputId = "studyid",
+            label = tags$div(HTML('<i class="fa fa-database"
+           style = "color:#000000;font-size:18px;"></i> Select StudyID')),
+            selected = NULL,
+            choices = setNames(st_id_option, paste0("\U25FC ", st_id_option)),
+            options = list(maxOptions = 50)
+        )
+	#  }
+})
   
   # update studyID list
   
   shiny::observeEvent(input$ind_id, {
 	  st_id_option <- studyid_option()
-	  st_id_option <- st_id_option$st_bullet
+	  st_id_option <- st_id_option$st_title
 	  shiny::updateSelectizeInput(inputId = "studyid",
      selected=NULL, 
-	 choices = c(choose= "", st_id_option))
+	 choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
+	 )
 	  
   })
   
   studyid_selected <- shiny::eventReactive(input$studyid, {
 	  df <- studyid_option()
-	  df <- df[st_bullet==input$studyid, STUDYID]
-	  print(df)
+	  df <- df[st_title==input$studyid, STUDYID]
+	#   print(df)
 	  df
   })
   
@@ -1795,15 +1815,7 @@ data_modal <- function() {
         ),
         br(),
         br(),
-        shiny::selectizeInput(
-            inputId = "studyid",
-            # label= "Select StudyID",
-            label = tags$div(HTML('<i class="fa fa-database"
-           style = "color:#000000;font-size:18px;"></i> Select StudyID')),
-            selected = NULL,
-            choices = c(Choose = "", sd_id),
-            options = list(maxOptions = 5000)
-        ),
+		shiny::uiOutput("studyid_ui"),
         br(),
         br(),
         selectInput("Species",
@@ -1882,6 +1894,7 @@ data_modal <- function() {
 	updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
 
   })
+
 
   
   
