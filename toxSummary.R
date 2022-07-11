@@ -27,10 +27,9 @@ names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit',
 ## 
 clinDosingOptions <- c('Start Dose','MRHD','Custom Dose')
 
-choices_df <- data.frame(
-    names = c("ALL (Default)", "MALE", "FEMALE"),
-    id = c("ALL", "M", "F")
-)
+choices_sex <- c("M", "F")
+names(choices_sex) <- choices_sex
+choices_sex <- sort(choices_sex)
 ########
 
 values <- reactiveValues()
@@ -290,7 +289,7 @@ server <- function(input, output, session) {
       Data <- getData()
       studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
       updateSelectInput(session, "Species", selected = studyData$Species)
-	  updateSelectInput(session, "which_sex", selected = studyData$Sex_include)
+	  updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
       updateTextInput(session, "Duration", value = studyData$Duration)
       updateNumericInput(session, "nDoses", value = studyData$nDoses)
       updateNumericInput(session, "nFindings", value = studyData$nFindings)
@@ -1764,6 +1763,28 @@ output$studyid_ui  <- shiny::renderUI({
 	  df
   })
   
+
+    # select sex 
+  # update from database
+  get_sex_from_studyid <- shiny::reactive({
+      st_selected <- studyid_selected()
+      df <- RSQLite::dbGetQuery(
+          conn = conn,
+          "SELECT DISTINCT SEX FROM DM WHERE STUDYID==:x",
+          params = list(x = st_selected)
+      )
+      df$SEX
+  })
+
+  shiny::observeEvent(input$studyid, {
+	  sex <- get_sex_from_studyid()
+	  names(sex) <- sex
+	  sex <- sort(sex)
+	  shiny::updateCheckboxGroupInput(session = session, inputId = "which_sex",
+	  choices = sex,
+	  inline = TRUE
+	  )
+  })
   # get species information
   
   shiny::observeEvent(input$studyid, {
@@ -1780,6 +1801,10 @@ output$studyid_ui  <- shiny::renderUI({
 	  
   })
   
+# 
+
+
+
   # observeEvent(input$get_from_database, {
   #   updateNumericInput(session = session, inputId = 'nDoses')
   # })
@@ -1825,10 +1850,11 @@ data_modal <- function() {
         ),
         br(),
         br(),
-        selectInput("which_sex",
+		shiny::checkboxGroupInput("which_sex",
             label = tags$div(HTML('<i class="fa fa-venus"
             style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
-            choices = setNames(choices_df$id, choices_df$names)
+            choices = choices_sex,
+			inline  = TRUE
             # choices = c("ALL", "M", "F")
         ),
         textAreaInput("Duration", "*Study Duration/Description:",
