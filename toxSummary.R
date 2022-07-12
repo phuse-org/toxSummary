@@ -5,196 +5,17 @@ pacman::p_load(
     shiny, ggplot2, stringr, htmltools,
     shinydashboard, shinycssloaders, tidyverse,
     RColorBrewer, DT, plotly, officer, flextable,
-    ggiraph, patchwork, shinyjs, data.table, RSQLite
+    ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
 )
-# library(shiny)
-# library(ggplot2)
-# library(stringr)
-# library(htmltools)
-# library(shinydashboard)
-# library(shinycssloaders)
-# library(tidyverse)
-# library(RColorBrewer)
-# library(DT)
-# library(plotly)
-# library(officer)
-# library(flextable)
-# library(ggiraph)
-# library(patchwork)
-# library(RSQLite)
-# library(shinyjs)
-# library(data.table)
 
 
+source("utils.R")
+source("connect_database.R")
+source("create_blank_data.R")
 source("get_dose_pp.R")
-# Bugs ####
-
-
-# notes from 07/13/2020
-
-# nonclinical 
-#### group findings, rearranging like study option and put right side of Study # done
-##### fix finding plot so that dose text readable when there are lot more findings --
-##### (text size 4, when more than 6 findings, else textsize 6)
-
-##### add autocompletion for adding findings # done
-# make a list for possible findings and provide that list as choices in findings # yousuf
-# warning message for save study while required field empty
-# save automatically for study 
-##### double save button not working properly for savestudy # fixed
-# male/female (sex) severity filtered in plot
-
-#clinical
-# fix the issue that two start dose appeared 
-# dosing units
-
-#table 
-# check filter option for numeric column (only slider option available)
-# table 2 does not show table sometimes (only shows NOAEL and no absent severity)
-# export any appication (whole dataset in rds)
-
-
-
-# Notes from 6/29: ################################
-
-# Data Selection:
-#### - Change Enter Tox Program to Enter Application Number # done
-
-# - Automatically open new application after entering it rather than having user select from list
-
-# Clinical Data:
-# - Set default to check Start Dose and MRHD
-# - Fix that need to enter both a Start Dose and MRHD
-#### pop up delete button to confirm delete # added by yousuf
-
-#### - Add solid-lines above Start Dose/MRHD/Custom Dose ## Done
-
-# - Wait for feedback on everything above Start Dose Information: in Clinical Data
-
-# Nonclinical Data:
-#### - Move study name below Species and Duration  ## Done
-#### - Add a save button at bottom of Nonclincial Data 
-#### - Add dashed-lines above Dose 2/3/etc., and above Findings 2/3/etc.  ## Done # dashed line above 1/2/3
-#### - Move NOAEL checkbox below Cmax and AUC # done
-#### - Add solid-lines above number of Dose levels and above number of findings # done
-# - Add asterisk next to Dose 1/2/3/etc. ???
-#### - Fix typo in "Partially Revesible" # done
-
-# Main Panel:
-# - Generate informative error message if safety margin calculation method of Cmax or
-#   AUC is selected but no Cmax or AUC clinical (or nonclinical) data has been provided.
-
-# - Wait for feedback on table names
-
-# General Notes:
-#### - Fix numericInputs to not take negative values for dose and Cmax and AUC # done, what should be the minimum number? 0?
-# - Figure out how to handle data entry in the context of updates to the application'
-# - Explore User-based updates
-
-###################################################
-
-# Project Improvement Ideas:
-# - Add legend to figure that lists dose compared and PK/HED option
-# - Allow user to create display names of findings with legend at bottom
-# - Add option to display margin on top of figure
-# - Make an optional figure legend (with checkbox)
-# - Color "errorbar" to indicate severity (white for no toxicity at dose)
-#   Color by the lowest dose on the ladder and switch color half-way between dose edges if space allows
-#     on the UI bar side, change checkboxes to selectInputs to indicate dose severity
-# - For table export, generate the three tables from the smart template in Word format
-# - Add footnotes tied to findings (numbered) as well as a general footnote
-# - Start with Smart Template as default table layout
-# - Allow table to be flexibly modified
-# - Brackets for findings
-# - Text wrap finding names so that they don't overlap and use bullets to denote findings
-# - Stagger doses (down -> up) so they don't overlap when close
-# - use error bar to combine findings across doses
-
-## added by Yousuf
-
-
-# apply roundSigigs funciton to plotData_p$SM 
-# remove findings string from hovertext in findings figure
-
-### need to add or change in 3rd table of template
-# correct the HED calculation
-# add starting Dose and MHRD 
-# add 
-
-# 
-
-
-'%ni%' <- Negate('%in%')
-
-# # Save configuration of blankData.rds below for later: ####
-
-Data <- list(
-  CmaxUnit = 'ng/mL',
-  AUCUnit = 'ng*h/mL',
-  'Clinical Information'= list(
-    HumanWeight = 60,
-    MgKg = F,
-    'Start Dose' = list(
-      StartDose = NULL,
-      StartDoseMgKg = NULL,
-      StartDoseCmax = NULL,
-      StartDoseAUC = NULL
-    ),
-    'MRHD' = list(
-      MRHD = NULL,
-      MRHDMgKg = NULL,
-      MRHDCmax = NULL,
-      MRHDAUC = NULL
-    ),
-    'Custom Dose' = list(
-      CustomDose = NULL,
-      CustomDoseMgKg = NULL,
-      CustomDoseCmax = NULL,
-      CustomDoseAUC = NULL
-    )
-  ),
-  'Nonclinical Information' = list(
-    'New Study' = list(
-      Species = NULL,
-      Duration = '',
-      Notes = NULL,
-      check_note = F,
-      nDoses = 1,
-      Doses = list(Dose1=list(
-        Dose = '',
-        NOAEL = F,
-        Cmax = '',
-        AUC = ''
-      )),
-      nFindings=1,
-      Findings = list(Finding1=list(
-        Finding = '',
-        Reversibility = '[Rev]',
-        Severity = list(
-          Dose1='Absent')
-      ))
-    )
-  )
-)
-
-saveRDS(Data,'blankData.rds')
-####
-addUIDep <- function(x) {
-  jqueryUIDep <- htmlDependency("jqueryui", "1.10.4", c(href="shared/jqueryui/1.10.4"),
-                                script = "jquery-ui.min.js",
-                                stylesheet = "jquery-ui.min.css")
-  attachDependencies(x, c(htmlDependencies(x), list(jqueryUIDep)))
-}
 
 ######
 
-values <- reactiveValues()
-values$Application <- NULL
-values$SM <- NULL
-values$selectData <- NULL
-values$tmpData <- NULL
-values$changeStudyFlag <- F
-values$Findings <- ''
 
 # Species Conversion ----
 
@@ -206,179 +27,149 @@ names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit',
 ## 
 clinDosingOptions <- c('Start Dose','MRHD','Custom Dose')
 
-## significant figure
+choices_sex <- c("M", "F")
+names(choices_sex) <- choices_sex
+choices_sex <- sort(choices_sex)
+########
 
-sigfigs <- function(x){
-  orig_scipen <- getOption("scipen")
-  options(scipen = 999)
-  on.exit(options(scipen = orig_scipen))
-  x <- as.character(x)
-  x <- sub("\\.", "", x)
-  x <- gsub("(^0+|0+$)", "", x)
-  nchar(x)
-}
-
-roundSigfigs <- function(x,N=2) {
-  if (is.na(x)) {
-    return(x)} else {
-      roundNumber <- round(x,digits=0)
-      if (sigfigs(roundNumber)<=N) {
-        roundNumber <- signif(x,digits=N)
-      }
-      return(roundNumber)
-    }
-}
-
-#### get IND list
-
-col_name <- c(
-    "load_date", "application_type",
-    "application_number", "IND_num",
-    "studyID", "version", "designation",
-    "study_type", "IG"
-)
-ind_table <- read.csv("data/IND_with_studies.csv",
-    col.names = col_name
-)
-ind_table <- data.table::as.data.table(ind_table)
-ind_table <- ind_table[application_type == "IND", .(IND_num, studyID)]
-ind_number_list <- ind_table[!duplicated(IND_num), .(IND_num)]
- 
+values <- reactiveValues()
+values$Application <- NULL
+values$SM <- NULL
+values$selectData <- NULL
+values$tmpData <- NULL
+values$changeStudyFlag <- F
+values$Findings <- ''
 
 
-### extract studyid from database ----
-
-db_path <- "C:/Users/Md.Ali/not_in_onedrive/CDER_SEND.db"
-conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
-sd_id <- RSQLite::dbGetQuery(conn = conn, "SELECT DISTINCT STUDYID FROM TX")
-sd_id <- data.table::as.data.table(sd_id)
-
-
-# function for using whether there are any value that is not NULL
-# fundctin will return sum of all clinical doses
-
-clin_data <- function(Data_rds) {
-  Data <- Data_rds[["Clinical Information"]]
-  dose_list <- list(
-    start_dose = Data[["Start Dose"]][["StartDose"]],
-    mrhd = Data[["MRHD"]][["MRHD"]],
-    custom = Data[["Custom Dose"]][["CustomDose"]],
-    start_dose_kg = Data[["Start Dose"]][["StartDoseMgKg"]],
-    mrhd_kg = Data[["MRHD"]][["MRHDMgKg"]],
-    custom_kg = Data[["Custom Dose"]][["CustomDoseMgKg"]]
-  )
-  dose_value <- sum(unlist(dose_list))
-  dose_value
-}
 
 # Server function started here (selectData) ----
 
-server <- function(input,output,session) {
-  
+server <- function(input, output, session) {
+
 # user folder  ----
   user <- reactive({
-    url_search <- session$clientData$url_search
-    username <- unlist(strsplit(url_search,'user='))[2]
-    username <- str_to_lower(username)
-    username <- paste0("Applications/", username)
-    return(username)
+      url_search <- session$clientData$url_search
+      username <- unlist(strsplit(url_search, "user="))[2]
+      username <- str_to_lower(username)
+      username <- paste0("Applications/", username)
+      return(username)
   })
-  
+
   # create folder and copy Aplication_Demo.rds file that folder
   observeEvent(user(), {
-    dir_list <- list.dirs("Applications", full.names = F, recursive = F)
-    if (!basename(user()) %in% dir_list) {
-      dir.create(user())
-      file.copy("Application_Demo.rds", user())
-    }
+      dir_list <- list.dirs("Applications", full.names = F, recursive = F)
+      if (!basename(user()) %in% dir_list) {
+          dir.create(user())
+          file.copy("Application_Demo.rds", user())
+      }
   })
 
   ###
   output$selectData <- renderUI({
-    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
-    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    if (is.null(values$selectData)) {
-      selectInput('selectData','Select Application:',datasets,selected='blankData.rds')
-    } else {
-      selectInput('selectData','Select Application:',datasets,selected=values$selectData)
-    }
+      datasets <- c("blankData.rds", grep(".rds", list.files(user(),
+          full.names = T
+      ), value = T))
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      if (is.null(values$selectData)) {
+          selectInput("selectData", "Select Application:",
+              datasets,
+              selected = "blankData.rds"
+          )
+      } else {
+          selectInput("selectData", "Select Application:",
+              datasets,
+              selected = values$selectData
+          )
+      }
   })
   
   ### Study Name ----
   output$studyName <- renderUI({
-    req(input$selectData)
-    if (input$selectData!='blankData.rds') {
-      HTML(paste(
-        p(HTML(paste0('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
+      req(input$selectData)
+      if (input$selectData != "blankData.rds") {
+          HTML(paste(
+              p(HTML(paste0(
+                  '<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
                       <h4 style= "color:skyblue"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-                      (basename(unlist(strsplit(input$selectData,'.rds')))),'</h4>')
-        ))
-      ))
-    }
+                  (basename(unlist(strsplit(input$selectData, ".rds")))), "</h4>"
+              )))
+          ))
+      }
   })
   
 # getData ------
-  
+
   getData <- reactive({
-    input$refreshPlot
-    req(input$selectData)
-    input$selectStudy
-    Data <- readRDS(input$selectData)
+      input$refreshPlot
+      req(input$selectData)
+       input$selectStudy
+      Data <- readRDS(input$selectData)
   })
   
   observe({
-    req(input$selectData)
-    if (input$selectData == 'blankData.rds') {
-      values$Application <- paste0(user(), "/",input$newApplication,'.rds')
-    } else {
-      values$Application <- input$selectData
-    }
+      req(input$selectData)
+      if (input$selectData == "blankData.rds") {
+          values$Application <- paste0(user(), "/", input$newApplication, ".rds")
+      } else {
+          values$Application <- input$selectData
+      }
   })
   
   # 
-  observeEvent(input$saveData,{
-    Data <- getData()
-    saveRDS(Data,values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
-    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    selectInput('selectData','Select Application:',datasets)
-    updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
+  observeEvent(input$saveData, {
+      Data <- getData()
+      saveRDS(Data, values$Application)
+      datasets <- c(
+          "blankData.rds",
+          grep(".rds", list.files(user(), full.names = T), value = T)
+      )
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      selectInput("selectData", "Select Application:", datasets)
+      updateSelectInput(session, "selectData",
+          choices = datasets, selected = values$Application
+      )
   })
   
   
 # delete application ----
 
   observeEvent(input$deleteData, {
-    showModal(modalDialog(
-      title="Delete Application?",
-      footer = tagList(modalButton("Cancel"),
-                       actionButton("confirmDelete", "Delete")
-      )
-    ))
+      showModal(modalDialog(
+          title = "Delete Application?",
+          footer = tagList(
+              modalButton("Cancel"),
+              actionButton("confirmDelete", "Delete")
+          )
+      ))
   })
   
   
-  # COnfirm delete application ----
+  # Confirm delete application ----
   observeEvent(input$confirmDelete, {
-    file.remove(values$Application)
-    datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
-    names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    selectInput('selectData','Select Application:',datasets)
-    updateSelectInput(session,'selectData',choices=datasets,selected='blankData.rds')
-    
-    removeModal()
+      file.remove(values$Application)
+      datasets <- c(
+          "blankData.rds",
+          grep(".rds", list.files(user(), full.names = T), value = T)
+      )
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      selectInput("selectData", "Select Application:", datasets)
+      updateSelectInput(session, "selectData",
+          choices = datasets, selected = "blankData.rds"
+      )
+
+      removeModal()
   })
   
   # select study ----
   output$selectStudy <- renderUI({
-    req(input$selectData)
-    input$selectData
-    isolate(Data <- getData())
-    studyList <- names(Data[['Nonclinical Information']])
-    selectInput('selectStudy','Select Study:',choices=studyList)
+      req(input$selectData)
+      input$selectData
+      isolate(Data <- getData())
+      studyList <- names(Data[["Nonclinical Information"]])
+      selectInput("selectStudy", "Select Study:", choices = studyList)
   })
   
 ############## Auto-Save Dose ######################
@@ -435,21 +226,21 @@ server <- function(input,output,session) {
   
  # Add findings to the list
           
-  observeEvent(input$selectData,ignoreNULL = T,{
-    Data <- getData()
-    for (Study in names(Data[['Nonclinical Information']])) {
-      if (Study != "New Study") {
-        studyData <- Data[['Nonclinical Information']][[Study]]
-        
-        for ( i in seq(studyData$nFindings)) {
-          Finding <- studyData[['Findings']][[paste0('Finding', i)]][['Finding']]
-          if (Finding %ni% values$Findings) {
-            values$Findings <- c(values$Findings, Finding)
+  observeEvent(input$selectData, ignoreNULL = T, {
+      Data <- getData()
+      for (Study in names(Data[["Nonclinical Information"]])) {
+          if (Study != "New Study") {
+              studyData <- Data[["Nonclinical Information"]][[Study]]
+
+              for (i in seq(studyData$nFindings)) {
+                  Finding <- studyData[["Findings"]][[paste0("Finding", i)]][["Finding"]]
+                  if (Finding %ni% values$Findings) {
+                      values$Findings <- c(values$Findings, Finding)
+                  }
+              }
           }
-        }
       }
-    }
-    })
+  })
 
   ########### Auto-save findings ###############
   
@@ -485,52 +276,28 @@ server <- function(input,output,session) {
   # Clinical information -----
   
   observeEvent(input$selectData,ignoreNULL = T,{
-    Data <- getData()
+	 Data <- getData()
     #update units for Cmax/AUC
     updateTextInput(session, "cmax_unit", value=Data[["CmaxUnit"]])
     updateTextInput(session, "auc_unit", value=Data[["AUCUnit"]])
-    # update clinical information
-    clinData <- Data[['Clinical Information']]
-    if (clinData$MgKg==F) {
-      updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
-    } else { updateCheckboxInput(session, "MgKg", value = T)}
-    
-    clinDosing <- NULL
-    for (dose in clinDosingOptions) {
-      clin_dose <- clinData[[dose]][[gsub(' ','',dose)]]
-      clin_dose_mgkg <- clinData[[dose]][[paste0(gsub(' ','',dose), 'MgKg')]]
-      if ((!is.null(clin_dose)) | (!is.null(clin_dose_mgkg))) {
-        clinDosing <- c(clinDosing,dose)
-      }
-    }
-    updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
-    
-    for (dose in clinDosing) {
-      doseName <- gsub(' ','',dose)
-      if (clinData$MgKg==F) {
-        updateNumericInput(session,doseName,value = clinData[[dose]][[doseName]])
-      } else {
-        updateNumericInput(session,paste0(doseName,'MgKg'),value = clinData[[dose]][[paste0(doseName,'MgKg')]])
-      }
-      updateNumericInput(session,paste0(doseName,'Cmax'),value = clinData[[dose]][[paste0(doseName,'Cmax')]])
-      updateNumericInput(session,paste0(doseName,'AUC'),value = clinData[[dose]][[paste0(doseName,'AUC')]])
-    }
+   
   })
   
 # Nonclinical data update ------
   
-  observeEvent(input$selectStudy,ignoreNULL = T,{
-    Data <- getData()
-    studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
-    updateSelectInput(session,'Species',selected=studyData$Species)
-    updateTextInput(session,'Duration',value=studyData$Duration)
-    updateNumericInput(session,'nDoses',value=studyData$nDoses)
-    updateNumericInput(session,'nFindings',value=studyData$nFindings)
-    updateCheckboxInput(session, "notes", value = studyData$check_note) 
+  observeEvent(input$selectStudy, ignoreNULL = T, {
+      Data <- getData()
+      studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
+      updateSelectInput(session, "Species", selected = studyData$Species)
+	  updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
+      updateTextInput(session, "Duration", value = studyData$Duration)
+      updateNumericInput(session, "nDoses", value = studyData$nDoses)
+      updateNumericInput(session, "nFindings", value = studyData$nFindings)
+      updateCheckboxInput(session, "notes", value = studyData$check_note)
   })
   
   
-  # first save study button ----
+# first save study button ----
   
   observeEvent(eventExpr = input$saveStudy, {
     doseList <- as.list(seq(input$nDoses))
@@ -570,6 +337,7 @@ server <- function(input,output,session) {
     studyName <- paste(input$Species,input$Duration,sep=': ')
     Data[['Nonclinical Information']][[studyName]] <- list(
       Species = input$Species,
+	  Sex_include = input$which_sex,
       Duration = input$Duration,
       Notes = input$note_text,
       check_note = input$notes,
@@ -587,60 +355,10 @@ server <- function(input,output,session) {
   })
   
   # second save study button ----
-  
-  observeEvent(eventExpr = input$saveStudy_02, {
-    doseList <- as.list(seq(input$nDoses))
-    names(doseList) <- paste0('Dose',seq(input$nDoses))
-    for (i in seq(input$nDoses)) {
-      doseList[[i]] <- list(Dose=input[[paste0('dose',i)]],
-                            NOAEL = input[[paste0('NOAEL',i)]],
-                            Cmax = input[[paste0('Cmax',i)]],
-                            AUC = input[[paste0('AUC',i)]]
-      )
-    }
-    
-    findingList <- as.list(seq(input$nFindings))
-    names(findingList) <- paste0('Finding',seq(input$nFindings))
-    if (input$nFindings > 0) {
-      for (i in seq(input$nFindings)) {
-        severity <- list()
-        for (j in seq(input$nDoses)) {
-          severity[[paste0("Dose", j)]] <- input[[paste0("Severity", i, "_", j)]]
-        }
-        if ((is.null(input[[paste0('Finding',i)]])) | (input[[paste0('Finding',i)]]=='')) {
-          finding_null <- "No Finding"
-        } else {
-          finding_null <- input[[paste0('Finding',i)]]
-        }
-        findingList[[i]] <- list(Finding=finding_null,
-                                 Reversibility = input[[paste0('Reversibility',i)]],
-                                 # FindingDoses = input[[paste0('FindingDoses',i)]],
-                                 Severity = severity
-        )
-      }
-    } else {
-      findingList[[1]] <- NULL
-    }
-    
-    Data <- getData()
-    studyName <- paste(input$Species,input$Duration,sep=': ')
-    Data[['Nonclinical Information']][[studyName]] <- list(
-      Species = input$Species,
-      Duration = input$Duration,
-      Notes = input$note_text,
-      check_note = input$notes,
-      nDoses = input$nDoses,
-      Doses = doseList,
-      nFindings = input$nFindings,
-      Findings = findingList
-      
-    )
-    saveRDS(Data,values$Application)
-    showNotification("Saved", duration = 3)
-    studyList <- names(Data[['Nonclinical Information']])
-    updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
-    input$refreshPlot
-  })
+
+    shiny::observeEvent(input$saveStudy_02, {
+      shinyjs::click("saveStudy")
+    })
   
 
 ## save clinical information ---- 
@@ -669,12 +387,13 @@ server <- function(input,output,session) {
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
     showNotification("saved", duration = 3)
+	click('refreshPlot')
   })
   
 # click refresh button after save clinical information
-  observeEvent(input$saveClinicalInfo, {
-    click('refreshPlot')
-  })
+#   observeEvent(input$saveClinicalInfo, {
+#     click('refreshPlot')
+#   })
   
   ## delete study ---- 
   observeEvent(input$deleteStudy, {
@@ -738,14 +457,13 @@ server <- function(input,output,session) {
   
   ## get dose and pk values
   get_dose_pk_for_study <- shiny::reactive({
-    
-    if (!is.null(input$studyid) & !is.null(input$auc_db)) {
-		
-      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db, sex_include = input$which_sex)
-      df
-    }
-    
-    
+      if (!is.null(input$studyid) & !is.null(input$auc_db)) {
+          df <- get_pk_param(
+              conn = conn, studyid_selected(), pk_param = input$auc_db,
+              sex_include = input$which_sex, visit_day = input$pp_visitday
+          )
+          df
+      }
   })
   
  
@@ -1830,107 +1548,130 @@ server <- function(input,output,session) {
     HTML(paste0(five_space, strong(auc)))
   })
   
+  #clinical data modal function 
+  clinical_data_modal <- function() {
+     modalDialog(
+         checkboxGroupInput(
+             "clinDosing", "Clinical Dosing:",
+             clinDosingOptions
+         ),
+         conditionalPanel(
+             "condition=input.MgKg==false",
+             numericInput("HumanWeight", "*Human Weight (kg):",
+                 value = 60, min = 0
+             )
+         ),
+         checkboxInput("MgKg", "Dosing in mg/kg?", value = F),
+         conditionalPanel(
+             condition = 'input.clinDosing.includes("Start Dose")',
+             hr(),
+             h4("Start Dose Information:"),
+             conditionalPanel(
+                 condition = "input.MgKg==true",
+                 numericInput("StartDoseMgKg", "*Start Dose (mg/kg/day):",
+                     value = NULL, min = 0
+                 )
+             ),
+             conditionalPanel(
+                 condition = "input.MgKg==false",
+                 numericInput("StartDose", "*Start Dose (mg/day):",
+                     value = NULL, min = 0
+                 )
+             ),
+             uiOutput("start_cmax"),
+             numericInput("StartDoseCmax", NULL, value = NULL, min = 0),
+             uiOutput("start_auc"),
+             numericInput("StartDoseAUC", NULL, value = NULL, min = 0)
+         ),
+         conditionalPanel(
+             condition = 'input.clinDosing.includes("MRHD")',
+             hr(),
+             h4("MRHD Information:"),
+             conditionalPanel(
+                 condition = "input.MgKg==true",
+                 numericInput("MRHDMgKg", "*MRHD (mg/kg):",
+                     value = NULL, min = 0
+                 )
+             ),
+             conditionalPanel(
+                 condition = "input.MgKg==false",
+                 numericInput("MRHD", "*MRHD (mg):", value = NULL, min = 0)
+             ),
+             uiOutput("MRHD_cmax"),
+             numericInput("MRHDCmax", NULL, value = NULL, min = 0),
+             uiOutput("MRHD_auc"),
+             numericInput("MRHDAUC", NULL, value = NULL, min = 0)
+         ),
+         conditionalPanel(
+             condition = 'input.clinDosing.includes("Custom Dose")',
+             hr(),
+             h4("Custom Dose Information:"),
+             conditionalPanel(
+                 condition = "input.MgKg==true",
+                 numericInput("CustomDoseMgKg", "*Custom Dose (mg/kg):",
+                     value = NULL, min = 0
+                 )
+             ),
+             conditionalPanel(
+                 condition = "input.MgKg==false",
+                 numericInput("CustomDose", "*Custom Dose (mg):",
+                     value = NULL, min = 0
+                 )
+             ),
+             uiOutput("custom_cmax"),
+             numericInput("CustomDoseCmax", NULL, value = NULL, min = 0),
+             uiOutput("custom_auc"),
+             numericInput("CustomDoseAUC", NULL, value = NULL, min = 0)
+         ),
+         actionButton("saveClinicalInfo", "Save Clinical Information",
+             icon = icon("plus-circle")
+         ),
+         br(),
+         footer = tagList(
+             tags$h4("Please save the Clinical Data before close",
+                 style = "color:#E31616;"
+             ),
+             modalButton("Close")
+         )
+     )
+ }
   
+ #  call clinical data Modal function ---- 
  
+  
+   observeEvent(eventExpr = input$edit_clinical, {
+    showModal(clinical_data_modal())
+	 Data <- getData()
 
-  
-  
-  
-  
-#### dailogbox for nonclinical study ----
-  
-  data_modal <- function() {
+    # update clinical information
+    clinData <- Data[['Clinical Information']]
+    if (clinData$MgKg==F) {
+      updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
+    } else { updateCheckboxInput(session, "MgKg", value = T)}
     
-    modalDialog(
-      uiOutput('selectStudy'),
-      br(),
-      actionButton('saveStudy','Save Study',icon=icon('plus-circle'),
-                   style = "
-                   background-color: white;
-                   border: 2px solid #4CAF50;"),
-      
-      actionButton('deleteStudy','Delete Study',icon=icon('minus-circle'),
-                   style = "
-                   background-color: white;
-                   border: 2px solid #FF0000;"),
-      br(),
-      br(),
-	  htmltools::tags$hr(style="border-top: 3px solid#1e9acd;"),
-	      
-      shiny::selectizeInput(inputId = "ind_id",
-                            label = tags$div(HTML('<i class="fa fa-folder-open" style = "color:#000000;font-size:18px;"></i> Select IND')),
-                            selected = NULL,
-                            choices = c(Choose = '', ind_number_list),
-                            options = list(maxOptions = 1500)),
-	    br(),
-       br(),
-	  
-	        shiny::selectizeInput(inputId = "studyid",
-                            # label= "Select StudyID",
-                            label = tags$div(HTML('<i class="fa fa-database" style = "color:#000000;font-size:18px;"></i> Select StudyID')),
-                            selected = NULL,
-                            choices = c(Choose = '', sd_id),
-                            options = list(maxOptions = 5000)), 
-	  
-	  br(), 
-      br(),
-      selectInput('Species',
-                  label = tags$div(HTML('<i class="fa fa-dog" style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
-                  choices=names(speciesConversion)),
-				  br(), 
-				  br(),
-				  selectInput('which_sex',
-                  label = tags$div(HTML('<i class="fa fa-venus" style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
-                  choices=c("ALL", "M", "F")),
-      textAreaInput('Duration','*Study Duration/Description:', height="100px"),
-      h4('Study Name:'),
-      verbatimTextOutput('studyTitle'),
-      hr(style="border-top: 3px solid#1e9acd;"),
-      
+    clinDosing <- NULL
+    for (dose in clinDosingOptions) {
+      clin_dose <- clinData[[dose]][[gsub(' ','',dose)]]
+      clin_dose_mgkg <- clinData[[dose]][[paste0(gsub(' ','',dose), 'MgKg')]]
+      if ((!is.null(clin_dose)) | (!is.null(clin_dose_mgkg))) {
+        clinDosing <- c(clinDosing,dose)
+      }
+    }
+    updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
+    
+    for (dose in clinDosing) {
+      doseName <- gsub(' ','',dose)
+      if (clinData$MgKg==F) {
+        updateNumericInput(session,doseName,value = clinData[[dose]][[doseName]])
+      } else {
+        updateNumericInput(session,paste0(doseName,'MgKg'),value = clinData[[dose]][[paste0(doseName,'MgKg')]])
+      }
+      updateNumericInput(session,paste0(doseName,'Cmax'),value = clinData[[dose]][[paste0(doseName,'Cmax')]])
+      updateNumericInput(session,paste0(doseName,'AUC'),value = clinData[[dose]][[paste0(doseName,'AUC')]])
+    }
+  })
+  
 
-      uiOutput('choose_auc'),
-      checkboxInput(inputId = 'get_from_database', label = 'Populate from Database', value = FALSE),
-    #   shiny::actionButton(inputId = "get_from_database",
-    #   label = "Populate From Database",
-	#   style = "background-color: white; 
-	#   border: 2px solid #4CAF50;"),
-	  
-      
-      numericInput('nDoses',
-                   label = tags$div(HTML('<i class="fa fa-syringe" style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
-                   value=1,step=1,min=1),
-      #numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
-      uiOutput('Doses'),
-      hr(style="border-top: 3px solid#1e9acd;"),
-      
-      numericInput('nFindings',
-                   label = tags$div(HTML('<i class="fa fa-microscope" style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
-                   value=1,step=1,min=1),
-      uiOutput('Findings'),
-	  htmltools::tags$hr(style="border-top: 2px solid#1e9acd;"),
-      checkboxInput("notes", "Notes for Study?", value = FALSE),
-      uiOutput("study_note"),
-      actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'),
-                   style = "
-                   background-color: white;
-                   border: 2px solid #4CAF50;"
-                   ),
-      
-      
-      
-
-      
-      footer = tagList(
-        tags$h4("Please save the study before close", style="color:#E31616;"),
-        modalButton("Close")
-        
-      )
-      
-    )
-    
-    
-  }
-  
   
    #### get studyID from IND selection
   
@@ -1939,7 +1680,6 @@ server <- function(input,output,session) {
       # req(input$ind_id)
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
-	  print("line 1920")
 	  print(input$ind_id)
 	  print(df)
       df
@@ -1976,10 +1716,32 @@ TSPARMCD IN ("SDESIGN",
 	  #df <- data.table::as.data.table(df)
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
 	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
+	#    df <- df[, st_bullet := paste0("\U25FC ", st_title)]
+
+	#   print(df)
 	  #df <- df[, st_title]
 	  df
 	  
   })
+
+  # 
+output$studyid_ui  <- shiny::renderUI({
+     shiny::req(input$ind_id)
+	#  if (!is.null(input$ind_id)) {
+	  st_id_option <- studyid_option()
+	  st_id_option <- st_id_option$st_title
+	  
+	 
+	 shiny::selectizeInput(
+            inputId = "studyid",
+            label = tags$div(HTML('<i class="fa fa-database"
+           style = "color:#000000;font-size:18px;"></i> Select StudyID')),
+            selected = NULL,
+            choices = setNames(st_id_option, paste0("\U25FC ", st_id_option)),
+            options = list(maxOptions = 50)
+        )
+	#  }
+})
   
   # update studyID list
   
@@ -1988,17 +1750,40 @@ TSPARMCD IN ("SDESIGN",
 	  st_id_option <- st_id_option$st_title
 	  shiny::updateSelectizeInput(inputId = "studyid",
      selected=NULL, 
-	 choices = c(choose= "", st_id_option))
+	 choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
+	 )
 	  
   })
   
   studyid_selected <- shiny::eventReactive(input$studyid, {
 	  df <- studyid_option()
 	  df <- df[st_title==input$studyid, STUDYID]
-	  print(df)
+	#   print(df)
 	  df
   })
   
+
+    # select sex 
+  # update from database
+  get_sex_from_studyid <- shiny::reactive({
+      st_selected <- studyid_selected()
+      df <- RSQLite::dbGetQuery(
+          conn = conn,
+          "SELECT DISTINCT SEX FROM DM WHERE STUDYID==:x",
+          params = list(x = st_selected)
+      )
+      df$SEX
+  })
+
+  shiny::observeEvent(input$studyid, {
+	  sex <- get_sex_from_studyid()
+	  names(sex) <- sex
+	  sex <- sort(sex)
+	  shiny::updateCheckboxGroupInput(session = session, inputId = "which_sex",
+	  choices = sex,
+	  inline = TRUE
+	  )
+  })
   # get species information
   
   shiny::observeEvent(input$studyid, {
@@ -2015,35 +1800,175 @@ TSPARMCD IN ("SDESIGN",
 	  
   })
   
+# 
+
+
+
   # observeEvent(input$get_from_database, {
   #   updateNumericInput(session = session, inputId = 'nDoses')
   # })
+
+  # nonclinical
+
+data_modal <- function() {
+    modalDialog(
+        uiOutput("selectStudy"),
+        br(),
+        actionButton("saveStudy", "Save Study",
+            icon = icon("plus-circle"),
+            style = "background-color: white;
+            border: 2px solid #4CAF50;"
+        ),
+        actionButton("deleteStudy", "Delete Study",
+            icon = icon("minus-circle"),
+            style = "background-color: white;
+                    border: 2px solid #FF0000;"
+        ),
+        br(),
+        br(),
+        htmltools::tags$hr(style = "border-top: 3px solid#1e9acd;"),
+        shiny::selectizeInput(
+            inputId = "ind_id",
+            label = tags$div(
+                HTML('<i class="fa fa-folder-open"
+             style = "color:#000000;font-size:18px;"></i> Select IND')
+            ),
+            selected = NULL,
+            choices = c(Choose = "", ind_number_list),
+            options = list(maxOptions = 1500)
+        ),
+        br(),
+        br(),
+		shiny::uiOutput("studyid_ui"),
+        br(),
+        br(),
+        selectInput("Species",
+            label = tags$div(HTML('<i class="fa fa-dog"
+            style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
+            choices = names(speciesConversion)
+        ),
+        br(),
+        br(),
+		shiny::checkboxGroupInput("which_sex",
+            label = tags$div(HTML('<i class="fa fa-venus"
+            style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
+            choices = choices_sex,
+			inline  = TRUE
+            # choices = c("ALL", "M", "F")
+        ),
+        textAreaInput("Duration", "*Study Duration/Description:",
+         height = "100px"),
+        h4("Study Name:"),
+        verbatimTextOutput("studyTitle"),
+        hr(style = "border-top: 3px solid#1e9acd;"),
+        uiOutput("choose_auc"),
+		uiOutput("Choose_visit_day"),
+        checkboxInput(
+            inputId = "get_from_database",
+            label = "Populate from Database", value = FALSE
+        ),
+        #   shiny::actionButton(inputId = "get_from_database",
+        #   label = "Populate From Database",
+        #   style = "background-color: white;
+        #   border: 2px solid #4CAF50;"),
+
+
+        numericInput("nDoses",
+            label = tags$div(HTML('<i class="fa fa-syringe"
+			style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
+            value = 1, step = 1, min = 1
+        ),
+        # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
+        uiOutput("Doses"),
+        hr(style = "border-top: 3px solid#1e9acd;"),
+        numericInput("nFindings",
+            label = tags$div(HTML('<i class="fa fa-microscope"
+			style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
+            value = 1, step = 1, min = 1
+        ),
+        uiOutput("Findings"),
+        htmltools::tags$hr(style = "border-top: 2px solid#1e9acd;"),
+        checkboxInput("notes", "Notes for Study?", value = FALSE),
+        uiOutput("study_note"),
+        actionButton("saveStudy_02", "Save Study",
+            icon = icon("plus-circle"),
+            style = "
+                   background-color: white;
+                   border: 2px solid #4CAF50;"
+        ),
+        footer = tagList(
+            tags$h4("Please save the study before close",
+                style = "color:#E31616;"
+            ),
+            modalButton("Close")
+        )
+    )
+}
   
   observeEvent(eventExpr = input$edit_nonclinical, {
     showModal(data_modal())
+
+	 
   })
+
+  observeEvent(input$edit_nonclinical, {
+	  req(input$selectData)
+      input$selectData
+      Data <- getData()
+      studyList <- names(Data[["Nonclinical Information"]])
+	updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
+
+  })
+
+
+  
   
   #### choose AUC from database
   output$choose_auc <- shiny::renderUI({
 	  study <- studyid_selected()
     
     auc_list <- RSQLite::dbGetQuery(conn=conn,
-	 'SELECT DISTINCT PPTESTCD FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
+	 'SELECT DISTINCT PPTESTCD,PPTEST FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
 	 params=list(x=study))
     # print(input$studyid)
     # print("----")
     
     auc_list <- data.table::as.data.table(auc_list)
+	auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
     #print(auc_list)
     
     
     shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
                           selected= NULL,
-                          choices= c(Choose="", auc_list))
+                          choices= c(Choose="", setNames(auc_list$PPTESTCD, auc_list$choice_option)))
   }) 
   
   # 
+
+  #### group by visit day ----
+output$Choose_visit_day <- shiny::renderUI({
+    study <- studyid_selected()
+
+    auc_list <- RSQLite::dbGetQuery(
+        conn = conn,
+        "SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x",
+        params = list(x = study)
+    )
+	
+    auc_list <- auc_list[["VISITDY"]]
+	names(auc_list) <- as.character(auc_list)
+    addUIDep(
+        shiny::selectizeInput(
+            inputId = "pp_visitday",
+            label = "Select Visit Day",
+            choices = c(auc_list),
+            selected = auc_list,
+            multiple = TRUE,
+            options = list(plugins = list("drag_drop", "remove_button"))
+        )
+    )
+})
 
   
   # output$menu function -----
@@ -2085,85 +2010,13 @@ TSPARMCD IN ("SDESIGN",
                              br()),
                     
                     
-                    menuItem('Clinical Data',icon=icon('user'),
-                             checkboxGroupInput('clinDosing','Clinical Dosing:',clinDosingOptions),
-                             conditionalPanel('condition=input.MgKg==false',
-                                              numericInput('HumanWeight','*Human Weight (kg):',value=60, min=0)
-                             ),
-                             checkboxInput('MgKg','Dosing in mg/kg?',value=F),
-                             conditionalPanel(
-                               condition='input.clinDosing.includes("Start Dose")',
-                               hr(),
-                               #tags$hr(style="height:3px;border-width:0;color:white;background-color:green"),
-                               h4('Start Dose Information:'),
-                               conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('StartDoseMgKg','*Start Dose (mg/kg/day):',value=NULL,min=0)
-                               ),
-                               conditionalPanel(condition='input.MgKg==false',
-                                                numericInput('StartDose','*Start Dose (mg/day):',value = NULL, min=0)
-                               ),
-                               uiOutput("start_cmax"),
-                               numericInput('StartDoseCmax',NULL,value=NULL, min=0),
-                               #numericInput('StartDoseCmax',paste0('Start Dose Cmax ', input$cmax_unit),value=NULL, min=0),
-                               uiOutput("start_auc"),
-                               numericInput('StartDoseAUC',NULL,value=NULL, min=0)
-                             ),
-                             conditionalPanel(
-                               condition='input.clinDosing.includes("MRHD")',
-                               hr(),
-                               #tags$hr(style="height:3px;border-width:0;color:white;background-color:skyblue"),
-                               
-                               h4('MRHD Information:'),
-                               conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('MRHDMgKg','*MRHD (mg/kg):',value=NULL, min=0)
-                               ),
-                               conditionalPanel(condition='input.MgKg==false',
-                                                numericInput('MRHD','*MRHD (mg):',value = NULL, min=0)
-                               ),
-                               uiOutput("MRHD_cmax"),
-                               numericInput('MRHDCmax',NULL,value=NULL, min=0),
-                               uiOutput("MRHD_auc"),
-                               numericInput('MRHDAUC',NULL,value=NULL, min=0)
-                             ),
-                             conditionalPanel(
-                               condition='input.clinDosing.includes("Custom Dose")',
-                            hr(),
-                            #tags$hr(style="height:3px;border-width:0;color:white;background-color:white"),
-                               h4('Custom Dose Information:'),
-                               conditionalPanel(condition='input.MgKg==true',
-                                                numericInput('CustomDoseMgKg','*Custom Dose (mg/kg):',value=NULL, min=0)
-                               ),
-                               conditionalPanel(condition='input.MgKg==false',
-                                                numericInput('CustomDose','*Custom Dose (mg):',value = NULL, min=0)
-                               ),
-                               uiOutput("custom_cmax"),
-                               numericInput('CustomDoseCmax',NULL,value=NULL, min=0),
-                               uiOutput("custom_auc"),
-                               numericInput('CustomDoseAUC',NULL,value=NULL, min=0)
-                             ),
-                             actionButton('saveClinicalInfo','Save Clinical Information',icon=icon('plus-circle')),
-                             br()
+                    menuItem('Clinical Data',icon=icon('user'), tabName = "Clinical Info",
+					actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")
+                            
                     ),                   
                     menuItem('Nonclinical Data',icon=icon('flask'),tabName = 'Nonclinical Info',
                              actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study")
-                             # uiOutput('selectStudy'),
-                             # actionButton('saveStudy','Save Study',icon=icon('plus-circle')),
-                             # actionButton('deleteStudy','Delete Study',icon=icon('minus-circle')),
-                             # selectInput('Species','*Select Species:',choices=names(speciesConversion)),
-                             # textInput('Duration','*Study Duration/Description:'),
-                             # h4('Study Name:'),
-                             # verbatimTextOutput('studyTitle'),
-                             # hr(),
                              
-                             # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
-                             # uiOutput('Doses'),
-                             # hr(),
-                             # 
-                             # numericInput('nFindings','*Number of Findings:',value=1,step=1,min=1),
-                             #uiOutput('Findings'),
-                             #checkboxInput("notes", "Notes for Study?", value = FALSE),
-                             #uiOutput("study_note"),
-                             #actionButton('saveStudy_02','Save Study',icon=icon('plus-circle'))
                     ),
                     hr(),
                     h6('* Indicates Required Fields'),
@@ -2208,6 +2061,7 @@ ui <- dashboardPage(
                    )
   ),
   dashboardBody(
+	#   tags$head(tags$script(src = "button.js")),
     useShinyjs(),
     shinyjs::runcodeUI(),
     # tags$head(
