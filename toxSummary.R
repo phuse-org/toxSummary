@@ -1551,6 +1551,7 @@ server <- function(input, output, session) {
   #clinical data modal function 
   clinical_data_modal <- function() {
      modalDialog(
+		 size = "l",
          checkboxGroupInput(
              "clinDosing", "Clinical Dosing:",
              clinDosingOptions
@@ -1813,6 +1814,7 @@ output$studyid_ui  <- shiny::renderUI({
 
 data_modal <- function() {
     modalDialog(
+		size = "l",
         uiOutput("selectStudy"),
         br(),
         actionButton("saveStudy", "Save Study",
