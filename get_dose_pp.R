@@ -13,10 +13,14 @@
 #' @export
 #'
 #' @examples
-get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL", visit_day="ALL"){
+get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, visit_day=NULL){
   '%ni%' <- Negate('%in%')
   studyid <- as.character(studyid)
   pk_param <- toupper(as.character(pk_param))
+  if(!is.null(visit_day)) {
+
+  visit_day <- as.integer(visit_day)
+  }
   studyid_list_all <- RSQLite::dbGetQuery(conn = conn,
   'SELECT DISTINCT STUDYID FROM TX')
   studyid_list_pp <- RSQLite::dbGetQuery(conn = conn,
@@ -38,10 +42,10 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL", vi
   }
 
   #  get sex argument
+  if(!is.null(sex_include)) {
   sex_include <- toupper(sex_include)
-  if (sex_include %ni% c("ALL", "M", "F")) {
-	  stop("Please select sex_include as ALL, M or F")
   }
+
 
   pp_domain <- RSQLite::dbGetQuery(conn = conn,
   'SELECT * FROM PP WHERE STUDYID==:x AND PPTESTCD IN ($CMAX, $AUC)',
@@ -71,13 +75,13 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL", vi
     df <- merge(dose_wide, pp_domain, by = c("STUDYID", "USUBJID"))
  
 	# filter sex
-	  if (sex_include != "ALL") {
-	  df <- df[SEX == sex_include, ]
+	  if (!is.null(sex_include)) {
+	  df <- df[SEX %in% sex_include, ]
   }
 
-	  if (visit_day != "ALL") {
-		  visit_day  <- as.integer(visit_day)
-	  df <- df[VISITDY == visit_day, ]
+	  if (!is.null(visit_day)) {
+		 
+	  df <- df[VISITDY %in% visit_day, ]
   }
 
 
@@ -103,14 +107,14 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL", vi
     df <- data.table::merge.data.table(df,dose_wide,
 	 by=c("STUDYID","USUBJID"))
 
-	if (sex_include != "ALL") {
-	df <- df[SEX == sex_include, ]
+	if (!is.null(sex_include)) {
+	df <- df[SEX %in% sex_include, ]
   }
 
-	if (visit_day != "ALL") {
-		visit_day  <- as.integer(visit_day)
-		df <- df[VISITDY == visit_day, ]
-}
+	  if (!is.null(visit_day)) {
+		 
+	  df <- df[VISITDY %in% visit_day, ]
+  }
     df <- df[, .(TRTDOS,TRTDOSU, PPSTRESN, PPSTRESU,PPTESTCD)]
     df <- df[, .(mean=mean(PPSTRESN)),
 	 by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
@@ -145,12 +149,12 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include="ALL", vi
     row_bind <- list(df,df_usubjid)
     df_all <- data.table::rbindlist(row_bind, use.names = T)
 
-	if (sex_include != "ALL") {
-	df_all <- df_all[SEX == sex_include, ]
+	if (!is.null(sex_include)) {
+	df_all <- df_all[SEX %in% sex_include, ]
   }
-    if (visit_day != "ALL") {
-		visit_day  <- as.integer(visit_day)
-		df_all <- df_all[VISITDY == visit_day, ]
+    if (!is.null(visit_day)) {
+		
+		df_all <- df_all[VISITDY %in% visit_day, ]
   }
     # check duplicated value dataframe
     df <- df_all[, .(mean_cmax=mean(PPSTRESN)),
