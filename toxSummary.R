@@ -1781,6 +1781,7 @@ output$studyid_ui  <- shiny::renderUI({
 	  sex <- sort(sex)
 	  shiny::updateCheckboxGroupInput(session = session, inputId = "which_sex",
 	  choices = sex,
+	  selected = sex,
 	  inline = TRUE
 	  )
   })
@@ -1853,6 +1854,7 @@ data_modal <- function() {
             label = tags$div(HTML('<i class="fa fa-venus"
             style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
             choices = choices_sex,
+			selected = choices_sex,
 			inline  = TRUE
             # choices = c("ALL", "M", "F")
         ),
