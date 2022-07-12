@@ -457,14 +457,13 @@ server <- function(input, output, session) {
   
   ## get dose and pk values
   get_dose_pk_for_study <- shiny::reactive({
-    
-    if (!is.null(input$studyid) & !is.null(input$auc_db)) {
-		
-      df <- get_pk_param(conn=conn, studyid_selected(), pk_param = input$auc_db, sex_include = input$which_sex, visit_day=input$pp_visitday)
-      df
-    }
-    
-    
+      if (!is.null(input$studyid) & !is.null(input$auc_db)) {
+          df <- get_pk_param(
+              conn = conn, studyid_selected(), pk_param = input$auc_db,
+              sex_include = input$which_sex, visit_day = input$pp_visitday
+          )
+          df
+      }
   })
   
  
@@ -1947,22 +1946,28 @@ data_modal <- function() {
   
   # 
 
-  #### group by visit day
-output$Choose_visit_day  <- shiny::renderUI({
-	study <- studyid_selected()
-    
-    auc_list <- RSQLite::dbGetQuery(conn=conn,
-	 'SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x',
-	 params=list(x=study))
-    # print(input$studyid)
-    # print("----")
-    
-    auc_list <- data.table::as.data.table(auc_list)
-	shiny::selectizeInput(inputId = "pp_visitday", 
-                          label="Select Visit Day",
-                          choices= c(Choose="", "ALL", auc_list),
-						  selected= "ALL")
+  #### group by visit day ----
+output$Choose_visit_day <- shiny::renderUI({
+    study <- studyid_selected()
 
+    auc_list <- RSQLite::dbGetQuery(
+        conn = conn,
+        "SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x",
+        params = list(x = study)
+    )
+	
+    auc_list <- auc_list[["VISITDY"]]
+	names(auc_list) <- as.character(auc_list)
+    addUIDep(
+        shiny::selectizeInput(
+            inputId = "pp_visitday",
+            label = "Select Visit Day",
+            choices = c(auc_list),
+            selected = auc_list,
+            multiple = TRUE,
+            options = list(plugins = list("drag_drop", "remove_button"))
+        )
+    )
 })
 
   
