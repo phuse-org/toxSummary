@@ -457,7 +457,7 @@ server <- function(input, output, session) {
   
   ## get dose and pk values
   get_dose_pk_for_study <- shiny::reactive({
-      if (!is.null(input$studyid) & !is.null(input$auc_db)) {
+      if (!is.null(input$study_id) & !is.null(input$auc_db)) {
           df <- get_pk_param(
               conn = conn, studyid_selected(), pk_param = input$auc_db,
               sex_include = input$which_sex, visit_day = input$pp_visitday
@@ -1731,15 +1731,16 @@ output$studyid_ui  <- shiny::renderUI({
 	#  if (!is.null(input$ind_id)) {
 	  st_id_option <- studyid_option()
 	  st_id_option <- st_id_option$st_title
+	  names(st_id_option) <- paste0("\U25FC ", st_id_option)
 	  
 	 
 	 shiny::selectizeInput(
-            inputId = "studyid",
+            inputId = "study_id",
             label = tags$div(HTML('<i class="fa fa-database"
            style = "color:#000000;font-size:18px;"></i> Select StudyID')),
             selected = NULL,
-            choices = setNames(st_id_option, paste0("\U25FC ", st_id_option)),
-            options = list(maxOptions = 50)
+            # choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
+            choices =  c(Choose = "", st_id_option)
         )
 	#  }
 })
@@ -1749,18 +1750,25 @@ output$studyid_ui  <- shiny::renderUI({
   shiny::observeEvent(input$ind_id, {
 	  st_id_option <- studyid_option()
 	  st_id_option <- st_id_option$st_title
-	  shiny::updateSelectizeInput(inputId = "studyid",
+	  names(st_id_option) <- paste0("\U25FC ", st_id_option)
+	  shiny::updateSelectizeInput(inputId = "study_id",
      selected=NULL, 
-	 choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
+	 choices =  c(Choose = "", st_id_option)
+	#  choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
 	 )
 	  
   })
   
-  studyid_selected <- shiny::eventReactive(input$studyid, {
+  studyid_selected <- shiny::eventReactive(input$study_id, {
+	   if(!is.null(input$study_id) & (input$study_id != "")) {
 	  df <- studyid_option()
-	  df <- df[st_title==input$studyid, STUDYID]
-	#   print(df)
+	  print("studyid_selected")
+	  print(df)
+	  print(input$study_id)
+	  df <- df[st_title==input$study_id, STUDYID]
+	  print(df)
 	  df
+	  }
   })
   
 
@@ -1776,7 +1784,9 @@ output$studyid_ui  <- shiny::renderUI({
       df$SEX
   })
 
-  shiny::observeEvent(input$studyid, {
+  shiny::observeEvent(input$study_id, {
+
+	  if(!is.null(input$study_id) & (input$study_id != "")) {
 	  sex <- get_sex_from_studyid()
 	  names(sex) <- sex
 	  sex <- sort(sex)
@@ -1785,10 +1795,13 @@ output$studyid_ui  <- shiny::renderUI({
 	  selected = sex,
 	  inline = TRUE
 	  )
+	  }
   })
   # get species information
   
-  shiny::observeEvent(input$studyid, {
+  shiny::observeEvent(input$study_id, {
+	   if(!is.null(input$study_id) & (input$study_id != "")) {
+
 	  st_selected <- studyid_selected()
 	  df <- studyid_info()
 	  df_species <- df[STUDYID==st_selected, ][TSPARMCD=="SPECIES"][!duplicated(STUDYID)][, TSVAL]
@@ -1798,6 +1811,7 @@ output$studyid_ui  <- shiny::renderUI({
 	  #print(df_duration)
 	  shiny::updateSelectInput(session=session, inputId="Species", selected=df_species )
 	  shiny::updateTextInput(session=session, inputId="Duration",  value=df_duration )
+	   }
 	#   choices=names(speciesConversion)
 	  
   })
