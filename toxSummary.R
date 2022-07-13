@@ -289,7 +289,7 @@ server <- function(input, output, session) {
       Data <- getData()
       studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
       updateSelectInput(session, "Species", selected = studyData$Species)
-	  updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
+      updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
       updateTextInput(session, "Duration", value = studyData$Duration)
       updateNumericInput(session, "nDoses", value = studyData$nDoses)
       updateNumericInput(session, "nFindings", value = studyData$nFindings)
@@ -434,25 +434,30 @@ server <- function(input, output, session) {
     studyList <- names(Data[['Nonclinical Information']])
     studyList <- studyList[-which(studyList=='New Study')]
     studyList <- str_sort(studyList, numeric = T)
-    addUIDep(selectizeInput('displayStudies',label='Select and Order Studies to Display:',choices=studyList,
-                            selected=studyList,
-                            multiple=TRUE,width='100%',options=list(plugins=list('drag_drop','remove_button'))))
+    addUIDep(selectizeInput("displayStudies",
+        label = "Select and Order Studies to Display:", choices = studyList,
+        selected = studyList,
+        multiple = TRUE,
+        width = "100%", options = list(plugins = list("drag_drop", "remove_button"))
+    ))
   })
   
   ## display findings ----
   
   output$displayFindings <- renderUI({
-    req(input$clinDosing)
-    input$selectData
-    input$selectStudy
-    data <- getPlotData()
-    find_fact <- as.factor(data$Findings)
-    findings <- unique(find_fact)
-    findings <- str_sort(findings, numeric = T)
-    addUIDep(selectizeInput('displayFindings', label = 'Select and Order Findings to Display:',
-                            choice= findings, selected = findings,
-                            multiple = TRUE, width = "100%",
-                            options=list(plugins=list('drag_drop','remove_button' ))))
+      req(input$clinDosing)
+      input$selectData
+      input$selectStudy
+      data <- getPlotData()
+      find_fact <- as.factor(data$Findings)
+      findings <- unique(find_fact)
+      findings <- str_sort(findings, numeric = T)
+      addUIDep(selectizeInput("displayFindings",
+          label = "Select and Order Findings to Display:",
+          choice = findings, selected = findings,
+          multiple = TRUE, width = "100%",
+          options = list(plugins = list("drag_drop", "remove_button"))
+      ))
   })
   
   ## get dose and pk values
@@ -468,15 +473,13 @@ server <- function(input, output, session) {
   
  
   shiny::observe({
-	   req(input$selectStudy)
-    if (input$get_from_database) {
-      
-      df <- get_dose_pk_for_study()
-      n_dose <-   length(unique(df[,TRTDOS]))
-      
-      updateNumericInput(session,'nDoses', value = n_dose)
-	}
+      req(input$selectStudy)
+      if (input$get_from_database) {
+          df <- get_dose_pk_for_study()
+          n_dose <- length(unique(df[, TRTDOS]))
 
+          updateNumericInput(session, "nDoses", value = n_dose)
+      }
   })
   
   ## output$Doses -----
@@ -499,14 +502,17 @@ server <- function(input, output, session) {
         #doseName <- names(studyData$Doses)[I]
         if (i %% 4 == 1) {
           div(hr(style = "border-top: 1px dashed skyblue"),
-              numericInput(paste0('dose',I),paste0('*Dose ',I,  " ",cmax[I, .(TRTDOSU)], ":"), min=0, value = cmax[I, .(TRTDOS)]))
+              numericInput(paste0('dose',I),paste0('*Dose ',I,  " ",cmax[I, .(TRTDOSU)], ":"),
+			   min=0, value = cmax[I, .(TRTDOS)]))
         } else if (i %% 4 == 2) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Cmax ',I, " ", cmax[I, .(PPSTRESU)], ":"), min=0, value=cmax[I, .(mean)]))
+              numericInput(paste0('Cmax',I),paste0('Cmax ',I, " ", cmax[I, .(PPSTRESU)], ":"),
+			   min=0, value=cmax[I, .(mean)]))
         }
         else if (i %% 4 == 3) {
           div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"), min=0, value=auc[I, .(mean)]))
+              numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"),
+			   min=0, value=auc[I, .(mean)]))
           
         }
         else {
@@ -524,14 +530,17 @@ server <- function(input, output, session) {
       doseName <- names(studyData$Doses)[I]
       if (i %% 4 == 1) {
         div(hr(style = "border-top: 1px dashed skyblue"),
-            numericInput(paste0('dose',I),paste0('*Dose ',I,' (mg/kg/day):'), min=0, value =studyData$Doses[[doseName]][['Dose']]))
+            numericInput(paste0('dose',I),paste0('*Dose ',I,' (mg/kg/day):'),
+			 min=0, value =studyData$Doses[[doseName]][['Dose']]))
       } else if (i %% 4 == 2) {
         div(style="display: inline-block;vertical-align:top; width: 115px;",
-            numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), min=0, value=studyData$Doses[[doseName]][['Cmax']]))
+            numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), 
+			min=0, value=studyData$Doses[[doseName]][['Cmax']]))
       }
       else if (i %% 4 == 3) {
         div(style="display: inline-block;vertical-align:top; width: 115px;",
-            numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit), min=0, value=studyData$Doses[[doseName]][['AUC']]))
+            numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),
+			 min=0, value=studyData$Doses[[doseName]][['AUC']]))
         
       } else {
         div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
@@ -586,11 +595,13 @@ server <- function(input, output, session) {
     
     if (input$selectStudy=='New Study') {
       if (input$notes ==T) {
-        textAreaInput("note_text", "Notes:", placeholder = "Enter Note here for this Study", height = "100px")
+        textAreaInput("note_text", "Notes:", 
+		placeholder = "Enter Note here for this Study", height = "100px")
       }
     } else{
         if (input$notes==T) {
-          textAreaInput("note_text", "Notes:", value = studyData$Notes, height = "100px")
+          textAreaInput("note_text", "Notes:",
+		   value = studyData$Notes, height = "100px")
         }
       }
   })
@@ -604,7 +615,8 @@ server <- function(input, output, session) {
   column_names <- c("Study", "Dose", 
                     "NOAEL", "Cmax", "AUC", "Findings",
                     "Reversibility", "Severity",  "Value_order", 
-                    "SM", "HED_value", "SM_start_dose", "SM_MRHD", "noael_value", "Severity_max", "Severity_num", "Study_note")
+                    "SM", "HED_value", "SM_start_dose", "SM_MRHD",
+					 "noael_value", "Severity_max", "Severity_num", "Study_note")
   colnames(plotData) <- column_names
   
   count <- 1
@@ -1255,7 +1267,8 @@ server <- function(input, output, session) {
       #plotData_note$Study <- factor(plotData_note$Study, levels = input$displayStudies)
       plotData$Findings <- factor(plotData$Findings, levels = input$displayFindings)
       plotData$DoseLabel <- factor(paste(plotData$Dose,'mg/kg/day'),
-                                   levels=unique(paste(plotData$Dose,'mg/kg/day'))[order(unique(as.numeric(plotData$Dose),decreasing=F))])
+                                   levels=unique(paste(plotData$Dose,'mg/kg/day'))[order(unique(as.numeric(plotData$Dose),
+								   decreasing=F))])
       maxFindings <- 1
       for (doseFinding in plotData$doseFindings) {
         nFindings <- str_count(doseFinding,'\n')
@@ -1681,8 +1694,6 @@ server <- function(input, output, session) {
       # req(input$ind_id)
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
-	  print(input$ind_id)
-	  print(df)
       df
   })
   
@@ -1713,14 +1724,9 @@ TSPARMCD IN ("SDESIGN",
   
   studyid_option <- reactive({
 	  df <- studyid_info()
-	#   print(df)
-	  #df <- data.table::as.data.table(df)
+
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
 	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
-	#    df <- df[, st_bullet := paste0("\U25FC ", st_title)]
-
-	#   print(df)
-	  #df <- df[, st_title]
 	  df
 	  
   })
@@ -1762,11 +1768,7 @@ output$studyid_ui  <- shiny::renderUI({
   studyid_selected <- shiny::eventReactive(input$study_id, {
 	   if(!is.null(input$study_id) & (input$study_id != "")) {
 	  df <- studyid_option()
-	  print("studyid_selected")
-	  print(df)
-	  print(input$study_id)
 	  df <- df[st_title==input$study_id, STUDYID]
-	  print(df)
 	  df
 	  }
   })
@@ -1806,13 +1808,11 @@ output$studyid_ui  <- shiny::renderUI({
 	  df <- studyid_info()
 	  df_species <- df[STUDYID==st_selected, ][TSPARMCD=="SPECIES"][!duplicated(STUDYID)][, TSVAL]
 	  df_species <- stringr::str_to_title(df_species)
-	  #print(df_species)
 	  df_duration <- df[STUDYID==st_selected, ][TSPARMCD=="STITLE"][!duplicated(STUDYID)][,  TSVAL]
-	  #print(df_duration)
 	  shiny::updateSelectInput(session=session, inputId="Species", selected=df_species )
 	  shiny::updateTextInput(session=session, inputId="Duration",  value=df_duration )
 	   }
-	#   choices=names(speciesConversion)
+
 	  
   })
   
@@ -1948,12 +1948,10 @@ data_modal <- function() {
     auc_list <- RSQLite::dbGetQuery(conn=conn,
 	 'SELECT DISTINCT PPTESTCD,PPTEST FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
 	 params=list(x=study))
-    # print(input$studyid)
-    # print("----")
-    
+  
     auc_list <- data.table::as.data.table(auc_list)
 	auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
-    #print(auc_list)
+   
     
     
     shiny::selectizeInput(inputId = "auc_db", 
@@ -2113,14 +2111,18 @@ ui <- dashboardPage(
                    column(2,
                           actionButton('refreshPlot','Refresh Plot')),
                   column(3, 
-                         selectInput("NOAEL_choices", "Filter NOAEL:", choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
+                         selectInput("NOAEL_choices", "Filter NOAEL:",
+						  choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
                   column(3, 
-                         radioButtons("dose_sm", "Display Dose/Exposure Margin/Notes:", choices = list("Show Dose Only"=1,
-                                                                           "Show Dose with Exposure Margin"= 2,
-                                                                           "Show Notes" =3))),
+                         radioButtons("dose_sm", "Display Dose/Exposure Margin/Notes:",
+						 choices = list(
+						"Show Dose Only"=1,
+						 "Show Dose with Exposure Margin"= 2,
+						 "Show Notes" =3))),
                  column(3, 
-                        sliderInput("plotheight", "Adjust Plot Height:", min = 1, max = 15, value = 6))),
+                        sliderInput("plotheight", "Adjust Plot Height:",
+						 min = 1, max = 15, value = 6))),
                  br(),
                  #withSpinner(girafeOutput('figure')),
 				 uiOutput('renderFigure'),
