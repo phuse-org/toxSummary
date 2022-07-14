@@ -1568,10 +1568,14 @@ server <- function(input, output, session) {
     HTML(paste0(five_space, strong(auc)))
   })
   
-  #clinical data modal function 
+# clinical data modal function ----
   clinical_data_modal <- function() {
      modalDialog(
 		 size = "l",
+		 htmltools::h4("Edit Clinical Data"),
+		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
+		 htmltools::br(),
+        
          checkboxGroupInput(
              "clinDosing", "Clinical Dosing:",
              clinDosingOptions
@@ -1585,7 +1589,7 @@ server <- function(input, output, session) {
          checkboxInput("MgKg", "Dosing in mg/kg?", value = F),
          conditionalPanel(
              condition = 'input.clinDosing.includes("Start Dose")',
-             hr(),
+             htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
              h4("Start Dose Information:"),
              conditionalPanel(
                  condition = "input.MgKg==true",
@@ -1606,7 +1610,7 @@ server <- function(input, output, session) {
          ),
          conditionalPanel(
              condition = 'input.clinDosing.includes("MRHD")',
-             hr(),
+            htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
              h4("MRHD Information:"),
              conditionalPanel(
                  condition = "input.MgKg==true",
@@ -1625,7 +1629,7 @@ server <- function(input, output, session) {
          ),
          conditionalPanel(
              condition = 'input.clinDosing.includes("Custom Dose")',
-             hr(),
+             htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
              h4("Custom Dose Information:"),
              conditionalPanel(
                  condition = "input.MgKg==true",
@@ -1649,7 +1653,7 @@ server <- function(input, output, session) {
          ),
          br(),
          footer = tagList(
-             tags$h4("Please save the Clinical Data before close",
+             tags$h4("Please save the clinical data before hit the close button",
                  style = "color:#E31616;"
              ),
              modalButton("Close")
@@ -1831,11 +1835,15 @@ output$studyid_ui  <- shiny::renderUI({
   #   updateNumericInput(session = session, inputId = 'nDoses')
   # })
 
-  # nonclinical
+# nonclinical modal dialog ----
 
 data_modal <- function() {
     modalDialog(
 		size = "l",
+		htmltools::h4("Edit Nonclinical Data"),
+		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
+		htmltools::br(),
+        
         uiOutput("selectStudy"),
         br(),
         actionButton("saveStudy", "Save Study",
@@ -2084,6 +2092,7 @@ ui <- dashboardPage(
                    )
   ),
   dashboardBody(
+	  htmltools::includeCSS("www/modal_dialog.css"),
 	#   tags$head(tags$script(src = "button.js")),
     useShinyjs(),
     shinyjs::runcodeUI(),
