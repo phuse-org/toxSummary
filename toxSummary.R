@@ -288,6 +288,11 @@ server <- function(input, output, session) {
   observeEvent(input$selectStudy, ignoreNULL = T, {
       Data <- getData()
       studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
+	#  print(studyData$studyid_name)
+	#   names(studyData$studyid_name) <- paste0("\U25FC ", studyData$studyid_name)
+	  print(studyData$studyid_name)
+	  updateSelectizeInput(session, "ind_id", selected = studyData$IND_number)
+	  updateSelectizeInput(session, "study_id", selected = studyData$studyid_name)
       updateSelectInput(session, "Species", selected = studyData$Species)
       updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
       updateTextInput(session, "Duration", value = studyData$Duration)
@@ -336,6 +341,8 @@ server <- function(input, output, session) {
     Data <- getData()
     studyName <- paste(input$Species,input$Duration,sep=': ')
     Data[['Nonclinical Information']][[studyName]] <- list(
+	  IND_number = input$ind_id,
+	  studyid_name  = input$study_id,
       Species = input$Species,
 	  Sex_include = input$which_sex,
       Duration = input$Duration,
