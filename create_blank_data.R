@@ -27,6 +27,8 @@ Data <- list(
     ),
     "Nonclinical Information" = list(
         "New Study" = list(
+			IND_number = "",
+			studyid_name = "",
             Species = NULL,
             Sex_include = NULL,
             Duration = "",
