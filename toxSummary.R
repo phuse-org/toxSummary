@@ -1986,18 +1986,16 @@ output$Choose_visit_day <- shiny::renderUI({
         "SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x",
         params = list(x = study)
     )
-	
     auc_list <- auc_list[["VISITDY"]]
-	names(auc_list) <- as.character(auc_list)
-    addUIDep(
-        shiny::selectizeInput(
-            inputId = "pp_visitday",
-            label = "Select Visit Day",
-            choices = c(auc_list),
-            selected = auc_list,
-            multiple = TRUE,
-            options = list(plugins = list("drag_drop", "remove_button"))
-        )
+    names(auc_list) <- as.character(auc_list)
+
+    shiny::selectizeInput(
+        inputId = "pp_visitday",
+        label = "Select Visit Day",
+        choices = c(auc_list),
+        selected = auc_list,
+        multiple = TRUE,
+        options = list(plugins = list("remove_button"))
     )
 })
 
