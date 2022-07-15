@@ -290,9 +290,9 @@ server <- function(input, output, session) {
       studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
 	#  print(studyData$studyid_name)
 	#   names(studyData$studyid_name) <- paste0("\U25FC ", studyData$studyid_name)
-	  print(studyData$studyid_name)
+	#   print(studyData$studyid_name)
 	  updateSelectizeInput(session, "ind_id", selected = studyData$IND_number)
-	  updateSelectizeInput(session, "study_id", selected = studyData$studyid_name)
+	#   updateSelectizeInput(session, "study_id", selected = studyData$studyid_name)
       updateSelectInput(session, "Species", selected = studyData$Species)
       updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
       updateTextInput(session, "Duration", value = studyData$Duration)
@@ -343,6 +343,7 @@ server <- function(input, output, session) {
     Data[['Nonclinical Information']][[studyName]] <- list(
 	  IND_number = input$ind_id,
 	  studyid_name  = input$study_id,
+	#   studyid_name_att  = paste0("", input$study_id),
       Species = input$Species,
 	  Sex_include = input$which_sex,
       Duration = input$Duration,
@@ -1765,15 +1766,32 @@ output$studyid_ui  <- shiny::renderUI({
   # update studyID list
   
   shiny::observeEvent(input$ind_id, {
-	  st_id_option <- studyid_option()
-	  st_id_option <- st_id_option$st_title
-	  names(st_id_option) <- paste0("\U25FC ", st_id_option)
-	  shiny::updateSelectizeInput(inputId = "study_id",
-     selected=NULL, 
-	 choices =  c(Choose = "", st_id_option)
-	#  choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
-	 )
-	  
+      st_id_option <- studyid_option()
+      st_id_option <- st_id_option$st_title
+      names(st_id_option) <- paste0("\U25FC ", st_id_option)
+	   if (input$selectStudy=='New Study') {
+      shiny::updateSelectizeInput(
+          inputId = "study_id",
+          selected = NULL,
+          choices = c(Choose = "", st_id_option)
+          #  choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
+      )
+	   } else {
+		   Data <- getData()
+      studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
+		   select_study <- studyData$studyid_name
+		   if(select_study %ni% st_id_option) {
+			   select_study <- NULL 
+
+		   }
+		    shiny::updateSelectizeInput(
+          inputId = "study_id",
+          selected = select_study,
+          choices = c(Choose = "", st_id_option)
+          #  choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
+      )
+
+	   }
   })
   
   studyid_selected <- shiny::eventReactive(input$study_id, {
@@ -1820,11 +1838,26 @@ output$studyid_ui  <- shiny::renderUI({
 	  df_species <- df[STUDYID==st_selected, ][TSPARMCD=="SPECIES"][!duplicated(STUDYID)][, TSVAL]
 	  df_species <- stringr::str_to_title(df_species)
 	  df_duration <- df[STUDYID==st_selected, ][TSPARMCD=="STITLE"][!duplicated(STUDYID)][,  TSVAL]
-	  shiny::updateSelectInput(session=session, inputId="Species", selected=df_species )
-	  shiny::updateTextInput(session=session, inputId="Duration",  value=df_duration )
-	   }
 
-	  
+
+		if (input$selectStudy == "New Study" ) {
+			shiny::updateSelectInput(session = session, inputId = "Species", selected = df_species)
+			shiny::updateTextInput(session = session, inputId = "Duration", value = df_duration)
+		} else {
+			Data <- getData()
+      		studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
+		   select_study <- studyData$studyid_name
+		   if (input$study_id != select_study  ) {
+			   shiny::updateSelectInput(session = session, inputId = "Species", selected = df_species)
+			   shiny::updateTextInput(session = session, inputId = "Duration", value = df_duration)
+
+		   }
+		   
+		}
+		
+
+
+	   }
   })
   
 # 
