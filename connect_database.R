@@ -9,10 +9,10 @@ col_name <- c(
     "IND_num",
     "studyID"
 )
-ind_table <- read.csv(ind_map_path,
+ind_table <- data.table::fread(ind_map_path,
     col.names = col_name
 )
-ind_table <- data.table::as.data.table(ind_table)
+
 ind_table <- ind_table[application_type == "IND", .(IND_num, studyID)]
 ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
 ind_number_list <- ind_number_list$IND_num
