@@ -70,8 +70,9 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   POOLID, PPTESTCD,  PPTEST,
   PPORRES, PPORRESU, PPSTRESC,
   PPSTRESU, PPSTRESN,VISITDY)]
-
+# if all USUBJID populated in PP domain
   if (nrow(pp_domain) == sum(pp_domain$USUBJID != "")) {
+	  print("first condition_ line 75")
     df <- merge(dose_wide, pp_domain, by = c("STUDYID", "USUBJID"))
  
 	# filter sex
@@ -89,7 +90,10 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .(mean=mean(PPSTRESN)), by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
     df <- df[, .SD, .SDcols=c(1, 2, 3, 5, 4)]
 
+# if all USUBJID empty in pp domain
+
   } else if (nrow(pp_domain) == sum(pp_domain$USUBJID == "")) {
+	  print("second condition- line 94")
     pooldef_list <- RSQLite::dbGetQuery(conn = conn,
 	 'SELECT DISTINCT STUDYID FROM POOLDEF')
 
@@ -122,6 +126,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
 
   } else {
+	  print("third condition_ line 127")
     # filter only poolid populated
     poolid_pp <- pp_domain[POOLID != "", ]
     poolid_pp <- poolid_pp[, USUBJID := NULL]
@@ -163,6 +168,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
   }
   df <- df[order(PPTESTCD,TRTDOS),]
+
   return(df)
 }
 
