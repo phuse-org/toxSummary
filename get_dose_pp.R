@@ -69,7 +69,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   pp_domain <-  pp_domain[, .(STUDYID, DOMAIN, USUBJID,
   POOLID, PPTESTCD,  PPTEST,
   PPORRES, PPORRESU, PPSTRESC,
-  PPSTRESU, PPSTRESN,VISITDY)]
+  PPSTRESU, PPSTRESN,VISITDY, PPNOMDY)]
 # if all USUBJID populated in PP domain
   if (nrow(pp_domain) == sum(pp_domain$USUBJID != "")) {
 	  print("first condition_ line 75")
@@ -81,8 +81,15 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   }
 
 	  if (!is.null(visit_day)) {
+
+		if (!all(is.na(pp_domain[["PPNOMDY"]]))) {
+			df <- df[PPNOMDY %in% visit_day, ]
+
+		} else {
+			df <- df[VISITDY %in% visit_day, ]
+		}
 		 
-	  df <- df[VISITDY %in% visit_day, ]
+	  
   }
 
 
@@ -116,9 +123,17 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   }
 
 	  if (!is.null(visit_day)) {
+
+		if (!all(is.na(pp_domain[["PPNOMDY"]]))) {
+			df <- df[PPNOMDY %in% visit_day, ]
+
+		} else {
+			df <- df[VISITDY %in% visit_day, ]
+		}
 		 
-	  df <- df[VISITDY %in% visit_day, ]
+	  
   }
+
     df <- df[, .(TRTDOS,TRTDOSU, PPSTRESN, PPSTRESU,PPTESTCD)]
     df <- df[, .(mean=mean(PPSTRESN)),
 	 by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]
@@ -157,10 +172,19 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
 	if (!is.null(sex_include)) {
 	df_all <- df_all[SEX %in% sex_include, ]
   }
-    if (!is.null(visit_day)) {
-		
-		df_all <- df_all[VISITDY %in% visit_day, ]
+
+	  if (!is.null(visit_day)) {
+
+		if (!all(is.na(pp_domain[["PPNOMDY"]]))) {
+			df <- df[PPNOMDY %in% visit_day, ]
+
+		} else {
+			df <- df[VISITDY %in% visit_day, ]
+		}
+		 
+	  
   }
+
     # check duplicated value dataframe
     df <- df_all[, .(mean_cmax=mean(PPSTRESN)),
 	 by=.(TRTDOS, TRTDOSU,PPTESTCD,PPSTRESU)]

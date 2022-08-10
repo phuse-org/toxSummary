@@ -2014,18 +2014,30 @@ data_modal <- function() {
   #### group by visit day ----
 output$Choose_visit_day <- shiny::renderUI({
     study <- studyid_selected()
-
-    auc_list <- RSQLite::dbGetQuery(
+    pp_df <- RSQLite::dbGetQuery(
         conn = conn,
-        "SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x",
+        "SELECT * FROM PP WHERE STUDYID=:x",
         params = list(x = study)
     )
-    auc_list <- auc_list[["VISITDY"]]
+
+	if(!all(is.na(pp_df[["PPNOMDY"]]))) {
+		auc_list <- unique(pp_df[["PPNOMDY"]])
+
+	} else {
+		auc_list <- unique(pp_df[["VISITDY"]])
+
+	}
+    # auc_list <- RSQLite::dbGetQuery(
+    #     conn = conn,
+    #     "SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x",
+    #     params = list(x = study)
+    # )
+    # auc_list <- auc_list[["VISITDY"]]
     names(auc_list) <- as.character(auc_list)
 
     shiny::selectizeInput(
         inputId = "pp_visitday",
-        label = "Select Visit Day",
+        label = "Select PPNOMDY/VISITDY Day",
         choices = c(auc_list),
         selected = auc_list,
         multiple = TRUE,
