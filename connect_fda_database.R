@@ -8,7 +8,7 @@
 
 ind_table[, `:=`(IND_num=APPID, studyID = STUDYID, APPID=NULL, STUDYID=NULL)]
 dim(ind_table)
-ind_table <- ind_table[!duplicated( studyID)]
+# ind_table <- ind_table[!duplicated( studyID)]
 ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
 ind_number_list <- ind_number_list$IND_num
 
