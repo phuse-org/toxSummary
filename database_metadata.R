@@ -29,7 +29,7 @@ pp <- RSQLite::dbGetQuery(
     conn = conn,
     "SELECT *  FROM PP "
 )
-
+pp <- data.table::as.data.table(pp)
 
 num_row <- NA
 USUBJID <- NA
@@ -75,6 +75,7 @@ final_df[, `:=`(
 	unq_testcd = PPTESTCD
 )]
 
+#data.table::fwrite(final_df, "data/pp_metadata.csv")
 # end
 
 
