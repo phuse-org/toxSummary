@@ -13,3 +13,7 @@ Change the directory in __paths.ini__ file.
 
 ## current status
 [project issue tracking board](https://github.com/phuse-org/toxSummary/projects/1)
+
+## Demo App
+A demo app can be found here
+[Demo Shiny App](https://phuse-org.shinyapps.io/toxSummary/)
