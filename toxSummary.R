@@ -1930,6 +1930,8 @@ data_modal <- function() {
         hr(style = "border-top: 3px solid#1e9acd;"),
         uiOutput("choose_auc"),
 		uiOutput("Choose_visit_day"),
+		actionButton("get_from_db",  "Click me  to populate dose and pk from  database", 
+		icon  = icon("mouse-pointer")),
         checkboxInput(
             inputId = "get_from_database",
             label = "Populate from Database", value = FALSE
