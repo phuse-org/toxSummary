@@ -493,6 +493,8 @@ server <- function(input, output, session) {
 
     shiny::observeEvent(input$get_from_db,{
       req(input$selectStudy)
+	  req(input$ind_id)
+	  req(input$study_id)
       
           df <- get_dose_pk_for_study()
           n_dose <- length(unique(df[, TRTDOS]))
@@ -511,6 +513,7 @@ server <- function(input, output, session) {
 	observe({
 		input$ind_id
 		input$study_id
+		input$selectStudy
 		req(input$ind_id)
 		req(input$study_id)
 		
@@ -523,6 +526,7 @@ server <- function(input, output, session) {
   output$Doses <- renderUI({
     req(input$selectStudy)
     if (toggle$db == "run") {
+		req(input$study_id)
       
       df <- get_dose_pk_for_study()
       n_dose <-   length(unique(df[,TRTDOS]))
@@ -1961,7 +1965,7 @@ data_modal <- function() {
         #     inputId = "get_from_database",
         #     label = "Populate from Database", value = FALSE
         # ),
-		
+
         #   shiny::actionButton(inputId = "get_from_database",
         #   label = "Populate From Database",
         #   style = "background-color: white;
