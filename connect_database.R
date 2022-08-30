@@ -15,7 +15,7 @@ ind_table <- data.table::fread(ind_map_path,
 
 ind_table <- ind_table[application_type == "IND", .(IND_num, studyID)]
 # ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
-ind_number_list <- ind_number_list$IND_num
+ind_number_list <- ind_table$IND_num
 
 ### extract studyid from database ----
 
