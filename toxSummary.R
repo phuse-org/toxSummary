@@ -3,7 +3,7 @@
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(
     shiny, ggplot2, stringr, htmltools,
-    shinydashboard, shinycssloaders, tidyverse,
+    shinydashboard, shinycssloaders,
     RColorBrewer, DT, plotly, officer, flextable,
     ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
 )
@@ -481,31 +481,56 @@ server <- function(input, output, session) {
   })
   
  
-  shiny::observe({
+#   shiny::observe({
+#       req(input$selectStudy)
+#       if (input$get_from_database) {
+#           df <- get_dose_pk_for_study()
+#           n_dose <- length(unique(df[, TRTDOS]))
+
+#           updateNumericInput(session, "nDoses", value = n_dose)
+#       }
+#   })
+
+    shiny::observeEvent(input$get_from_db,{
       req(input$selectStudy)
-      if (input$get_from_database) {
+      
           df <- get_dose_pk_for_study()
           n_dose <- length(unique(df[, TRTDOS]))
 
           updateNumericInput(session, "nDoses", value = n_dose)
-      }
+      
   })
+
+
+    toggle <- shiny::reactiveValues(db = "no run")
+
+	observeEvent(input$get_from_db,{
+		toggle$db <- "run"
+	})
+
+	observe({
+		input$ind_id
+		input$study_id
+		req(input$ind_id)
+		req(input$study_id)
+		
+
+		toggle$db <- "no run"
+	})
   
   ## output$Doses -----
   
   output$Doses <- renderUI({
     req(input$selectStudy)
-    if (input$get_from_database) {
+    if (toggle$db == "run") {
       
       df <- get_dose_pk_for_study()
       n_dose <-   length(unique(df[,TRTDOS]))
       
-      #updateNumericInput(session,'nDoses', value = n_dose)
       
       cmax <- df[PPTESTCD=="CMAX"]
       auc <- df[PPTESTCD!="CMAX"]
 
-      
       lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
         #doseName <- names(studyData$Doses)[I]
@@ -1932,10 +1957,11 @@ data_modal <- function() {
 		uiOutput("Choose_visit_day"),
 		actionButton("get_from_db",  "Click me  to populate dose and pk from  database", 
 		icon  = icon("mouse-pointer")),
-        checkboxInput(
-            inputId = "get_from_database",
-            label = "Populate from Database", value = FALSE
-        ),
+        # checkboxInput(
+        #     inputId = "get_from_database",
+        #     label = "Populate from Database", value = FALSE
+        # ),
+		
         #   shiny::actionButton(inputId = "get_from_database",
         #   label = "Populate From Database",
         #   style = "background-color: white;
