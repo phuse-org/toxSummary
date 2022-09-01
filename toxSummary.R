@@ -503,23 +503,38 @@ server <- function(input, output, session) {
       
   })
 
-
+#### toggle button ----
     toggle <- shiny::reactiveValues(db = "no run")
 
-	observeEvent(input$get_from_db,{
-		toggle$db <- "run"
-	})
+ observeEvent(input$get_from_db, {
+     toggle$db <- "run"
+     updateActionButton(
+         session = session,
+         "get_from_db", "Clicked: Data updated  from database",
+         icon = icon("mouse-pointer")
+     )
+ })
 
-	observe({
-		input$ind_id
-		input$study_id
-		input$selectStudy
-		req(input$ind_id)
-		req(input$study_id)
-		
+# update toggle to "no run" when ind, studyid changes 
 
-		toggle$db <- "no run"
-	})
+ observe({
+     input$ind_id
+     input$study_id
+     input$selectStudy
+     req(input$ind_id)
+     req(input$study_id)
+
+     toggle$db <- "no run"
+
+     updateActionButton(
+         session = session,
+         "get_from_db",
+         "Click me  to populate dose and pk from  database",
+         icon = icon("mouse-pointer")
+     )
+ })
+
+
   
   ## output$Doses -----
   
@@ -1959,8 +1974,10 @@ data_modal <- function() {
         hr(style = "border-top: 3px solid#1e9acd;"),
         uiOutput("choose_auc"),
 		uiOutput("Choose_visit_day"),
-		actionButton("get_from_db",  "Click me  to populate dose and pk from  database", 
-		icon  = icon("mouse-pointer")),
+		actionButton("get_from_db", 
+		 "Click me  to populate dose and pk from  database", 
+		icon  = icon("mouse-pointer"),
+		 style = "background-color:skyblue"),
         # checkboxInput(
         #     inputId = "get_from_database",
         #     label = "Populate from Database", value = FALSE
