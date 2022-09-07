@@ -1,13 +1,31 @@
 
 # libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-    shiny, ggplot2, stringr, htmltools,
-    shinydashboard, shinycssloaders,
-    RColorBrewer, DT, plotly, officer, flextable,
-    ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
-)
+# if (!require("pacman")) install.packages("pacman")
+# pacman::p_load(
+#     shiny, ggplot2, stringr, htmltools,
+#     shinydashboard, shinycssloaders,
+#     RColorBrewer, DT, plotly, officer, flextable,
+#     ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
+# )
 
+
+library("shiny")
+library("ggplot2")
+library("stringr")
+library("htmltools")
+library("shinydashboard")
+library("shinycssloaders")
+library("RColorBrewer")
+library("DT")
+library("plotly")
+library("officer")
+library("flextable")
+library("ggiraph")
+library("patchwork")
+library("shinyjs")
+library("data.table")
+library("RSQLite")
+library("ini")
 
 source("utils.R")
 source("connect_fda_database.R")
