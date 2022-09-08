@@ -1287,6 +1287,9 @@ server <- function(input, output, session) {
      plot_height <- (input$plotheight) * (nStudies)
      plot_height
    })
+
+
+  
   
 ## figure -----
   
@@ -1410,7 +1413,7 @@ server <- function(input, output, session) {
         scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
         #scale_fill_manual(values = color_NOAEL)+
         ylim(0,y_max)+
-        facet_grid( Study ~ .)+
+        facet_grid( Study ~ ., labeller = label_wrap_gen(width = input$text_width))+
         labs( title = "      Summary of Toxicology Studies", x = "Exposure Margin")+
         theme_bw(base_size=12)+
         theme(
@@ -1423,7 +1426,7 @@ server <- function(input, output, session) {
               axis.title.x = element_text(size = 18, vjust = -0.9),
               axis.text.x = element_text(size = 16),
               legend.position = "none",
-              strip.text.y = element_text(size=14, color="black"),
+              strip.text.y = element_text(size=14, color="#000000", hjust = 0),
               strip.background = element_rect( fill = "white"))
       
 # findings plot ----
@@ -2237,11 +2240,11 @@ ui <- dashboardPage(
                    
                    column(2,
                           actionButton('refreshPlot','Refresh Plot')),
-                  column(3, 
+                  column(2, 
                          selectInput("NOAEL_choices", "Filter NOAEL:",
 						  choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
-                  column(3, 
+                  column(2, 
                          radioButtons("dose_sm", "Display Dose/Exposure Margin/Notes:",
 						 choices = list(
 						"Show Dose Only"=1,
@@ -2249,7 +2252,10 @@ ui <- dashboardPage(
 						 "Show Notes" =3))),
                  column(3, 
                         sliderInput("plotheight", "Adjust Plot Height:",
-						 min = 1, max = 15, value = 6))),
+						 min = 1, max = 15, value = 6)),
+				column(2,
+				sliderInput("text_width", "Adjust Text", 
+				min = 10, max = 60, value = 25 ))),
                  br(),
                  #withSpinner(girafeOutput('figure')),
 				 uiOutput('renderFigure'),
