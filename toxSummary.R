@@ -2070,13 +2070,37 @@ data_modal <- function() {
   
     auc_list <- data.table::as.data.table(auc_list)
 	auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
-   
-    
+	
+	if ("AUCLST" %in% auc_list$PPTESTCD) {
+		shiny::selectizeInput(inputId = "auc_db", 
+                          label="Select AUC parameter",
+                          selected= "AUCLST",
+                          choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
+
+	} else {
     
     shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
-                          selected= NULL,
-                          choices= c(Choose="", setNames(auc_list$PPTESTCD, auc_list$choice_option)))
+                          choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
+	}
+
+	# if(length(auc_list$PPTESTCD) < 1) {
+	# 	  shiny::selectizeInput(inputId = "auc_db", 
+    #                       label="NO AUC parameter available",
+    #                       choices= c(choose = ""))
+
+	# } else if ("AUCLST" %in% auc_list$PPTESTCD) {
+	# 	shiny::selectizeInput(inputId = "auc_db", 
+    #                       label="Select AUC parameter",
+    #                       selected= "AUCLST",
+    #                       choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
+
+	# } else {
+    
+    # shiny::selectizeInput(inputId = "auc_db", 
+    #                       label="Select AUC parameter",
+    #                       choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
+	# }
   }) 
   
   # 
