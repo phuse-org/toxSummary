@@ -1716,10 +1716,15 @@ server <- function(input, output, session) {
              numericInput("CustomDoseAUC", NULL, value = NULL, min = 0)
          ),
          actionButton("saveClinicalInfo", "Save Clinical Information",
-             icon = icon("plus-circle")
+             icon = icon("plus-circle"),
+			 style = "background-color: white;
+            border: 2px solid #4CAF50;"
+
          ),
          br(),
+		 br(),
          footer = tagList(
+			tags$h4("* Indicates Required Fields ", align = "left"),
              tags$h4("Please save the clinical data before hit the close button",
                  style = "color:#E31616;"
              ),
@@ -2172,23 +2177,29 @@ output$Choose_visit_day <- shiny::renderUI({
                     hr(),
                     uiOutput('studyName'),
                     hr(),
-                    menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
+                   
+                    
+                    
+                    menuItem('Clinical Data',icon=icon('user'),
+					 tabName = "Clinical Info", startExpanded = TRUE,
+					actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")
+                            
+                    ),                   
+                    menuItem('Nonclinical Data',icon=icon('flask'),
+					tabName = 'Nonclinical Info', startExpanded = TRUE,
+                             actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study")
+                             
+                    ),
+
+
+                    hr(),
+
+					 menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
                              textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
                              textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
                              actionButton('save_units','Save Units',icon=icon('plus-circle')),
                              br()),
                     
-                    
-                    menuItem('Clinical Data',icon=icon('user'), tabName = "Clinical Info",
-					actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")
-                            
-                    ),                   
-                    menuItem('Nonclinical Data',icon=icon('flask'),tabName = 'Nonclinical Info',
-                             actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study")
-                             
-                    ),
-                    hr(),
-                    h6('* Indicates Required Fields'),
               hr(),
               menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
