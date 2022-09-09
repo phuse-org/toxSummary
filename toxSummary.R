@@ -12,6 +12,7 @@
 library("shiny")
 library("ggplot2")
 library("stringr")
+library("dplyr")
 library("htmltools")
 library("shinydashboard")
 library("shinycssloaders")
@@ -2232,7 +2233,7 @@ output$Choose_visit_day <- shiny::renderUI({
 
 
 # ui function ------
-ui <- dashboardPage(
+ui <- dashboardPage( skin = "blue",
   dashboardHeader(title="Nonclinical Summary Tool",titleWidth = 250),
   dashboardSidebar(width = 350,
                    sidebarMenuOutput('menu'),
