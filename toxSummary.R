@@ -547,7 +547,7 @@ server <- function(input, output, session) {
      updateActionButton(
          session = session,
          "get_from_db",
-         "Click me  to populate dose and pk from  database",
+         "Click me to populate dose and pk from  database",
          icon = icon("mouse-pointer")
      )
  })
@@ -2001,9 +2001,11 @@ data_modal <- function() {
         uiOutput("choose_auc"),
 		uiOutput("Choose_visit_day"),
 		actionButton("get_from_db", 
-		 "Click me  to populate dose and pk from  database", 
+		 "Click me to populate dose and pk from  database", 
 		icon  = icon("mouse-pointer"),
 		 style = "background-color:skyblue"),
+		 br(),
+		 br(),
         # checkboxInput(
         #     inputId = "get_from_database",
         #     label = "Populate from Database", value = FALSE
@@ -2290,7 +2292,7 @@ ui <- dashboardPage(
 						 min = 1, max = 15, value = 6)),
 				column(2,
 				sliderInput("text_width", "Adjust Text", 
-				min = 10, max = 60, value = 25 ))),
+				min = 10, max = 80, value = 60 ))),
                  br(),
                  #withSpinner(girafeOutput('figure')),
 				 uiOutput('renderFigure'),

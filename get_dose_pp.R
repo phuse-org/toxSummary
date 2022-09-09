@@ -21,6 +21,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
 
   visit_day <- as.integer(visit_day)
   }
+  print(studyid)
   studyid_list_all <- RSQLite::dbGetQuery(conn = conn,
   'SELECT DISTINCT STUDYID FROM TX')
   studyid_list_pp <- RSQLite::dbGetQuery(conn = conn,
