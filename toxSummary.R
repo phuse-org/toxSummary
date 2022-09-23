@@ -2228,7 +2228,7 @@ output$Choose_visit_day <- shiny::renderUI({
     withSpinner(girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
   })
     
-    runcodeServer()
+    # runcodeServer()
 }
 
 
@@ -2246,8 +2246,8 @@ ui <- dashboardPage( skin = "blue",
   dashboardBody(
 	  htmltools::includeCSS("www/modal_dialog.css"),
 	#   tags$head(tags$script(src = "button.js")),
-    useShinyjs(),
-    shinyjs::runcodeUI(),
+    # useShinyjs(),
+    # shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
