@@ -2177,33 +2177,37 @@ output$Choose_visit_day <- shiny::renderUI({
                              actionButton('deleteData','Delete',icon=icon('minus-circle')),
                              br()
                     ),
-                    hr(),
+                    # hr(),
                     uiOutput('studyName'),
-                    hr(),
+                    br(),
                    
                     
                     
-                    menuItem('Clinical Data',icon=icon('user'),
-					 tabName = "Clinical Info", startExpanded = TRUE,
-					actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")
+                    # menuItem('Clinical Data',icon=icon('user'),
+					#  tabName = "Clinical Info", startExpanded = TRUE,
+					
                             
-                    ),                   
-                    menuItem('Nonclinical Data',icon=icon('flask'),
-					tabName = 'Nonclinical Info', startExpanded = TRUE,
-                             actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study")
+                    # ),
+
+					actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")  ,                 
+                    # menuItem('Nonclinical Data',icon=icon('flask'),
+					# tabName = 'Nonclinical Info', startExpanded = TRUE,
                              
-                    ),
+                             
+                    # ),
+					br(),
+					actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study"),
 
 
-                    hr(),
+                    br(),
 
-					 menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
-                             textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
-                             textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
-                             actionButton('save_units','Save Units',icon=icon('plus-circle')),
-                             br()),
+					#  menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
+                    #          textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
+                    #          textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
+                    #          actionButton('save_units','Save Units',icon=icon('plus-circle')),
+                    #          br()),
                     
-              hr(),
+              br(),
               menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       }
