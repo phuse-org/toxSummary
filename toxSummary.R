@@ -385,7 +385,8 @@ server <- function(input, output, session) {
   # second save study button ----
 
     shiny::observeEvent(input$saveStudy_02, {
-      shinyjs::click("saveStudy")
+		session$sendCustomMessage("mymessage", "saveStudy")
+    #   shinyjs::click("saveStudy")
     })
   
 
@@ -2263,6 +2264,7 @@ ui <- dashboardPage( skin = "blue",
   ),
   dashboardBody(
 	  htmltools::includeCSS("www/modal_dialog.css"),
+	  htmltools::includeScript("www/button.js"),
 	#   tags$head(tags$script(src = "button.js")),
     # useShinyjs(),
     # shinyjs::runcodeUI(),
