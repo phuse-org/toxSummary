@@ -11,7 +11,8 @@
 	padding-right: 50px;
 }
 
-.modal-content {
+/* select modal-content */
+#nonclinicalModal > div > div > div {
 	overflow-y: auto;
 	height: 94vh;
 }

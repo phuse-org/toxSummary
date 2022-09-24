@@ -1944,7 +1944,11 @@ output$studyid_ui  <- shiny::renderUI({
 # nonclinical modal dialog ----
 
 data_modal <- function() {
+
+	tags$div(id = "nonclinicalModal",
     modalDialog(
+		
+		
 		size = "l",
 		htmltools::h4("Edit Nonclinical Data"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
@@ -2049,12 +2053,13 @@ data_modal <- function() {
             modalButton("Close")
         )
     )
+	)
 }
   
   observeEvent(eventExpr = input$edit_nonclinical, {
-    showModal(data_modal())
-
-	 
+      showModal(
+          data_modal()
+      )
   })
 
   observeEvent(input$edit_nonclinical, {
