@@ -10,3 +10,8 @@
 	padding-left: 50px;
 	padding-right: 50px;
 }
+
+.modal-content {
+	overflow-y: auto;
+	height: 94vh;
+}
