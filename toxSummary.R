@@ -416,7 +416,8 @@ server <- function(input, output, session) {
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
     showNotification("saved", duration = 3)
-	click('refreshPlot')
+	session$sendCustomMessage("save_clin_info", "refreshPlot")
+	# click('refreshPlot')
   })
   
 # click refresh button after save clinical information
@@ -445,7 +446,9 @@ server <- function(input, output, session) {
     saveRDS(Data,values$Application)
     studyList <- names(Data[['Nonclinical Information']])
     updateSelectInput(session,'selectStudy',choices=studyList,selected='New Study')
+	session$sendCustomMessage("confirm_study_remove", "refreshPlot")
     removeModal()
+	
   })
   
 # title 
