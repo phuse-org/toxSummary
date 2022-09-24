@@ -2147,6 +2147,17 @@ output$Choose_visit_day <- shiny::renderUI({
     )
 })
 
+
+help_menu_item <- function() {
+    shinydashboard::menuItem(
+        "Questions/Feedback",
+        menuSubItem(
+            text = "Email for help",
+            icon = icon("envelope-square"),
+            href = "mailto:kevin.snyder@fda.hhs.gov"
+        )
+    )
+}
   
   # output$menu function -----
   
@@ -2163,9 +2174,10 @@ output$Choose_visit_day <- shiny::renderUI({
                              actionButton('saveData','Submit',icon=icon('plus-circle')),
                              br()
                     ),
-                    hr(),
-                    menuItem('Questions/Feedback',icon=icon('envelope-square'),
-                             href = 'mailto:kevin.snyder@fda.hhs.gov')
+                    # hr(),
+					help_menu_item()
+                    # menuItem('Questions/Feedback',icon=icon('envelope-square'),
+                    #          href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       } else {
         sidebarMenu(id='menu',
@@ -2208,7 +2220,8 @@ output$Choose_visit_day <- shiny::renderUI({
                     #          br()),
                     
               br(),
-              menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+			  help_menu_item()
+            #   menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       }
     } else {
@@ -2222,7 +2235,8 @@ output$Choose_visit_day <- shiny::renderUI({
                            br()
                   ),
                   hr(),
-                  menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+				  help_menu_item()
+                #   menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
                   # tags$a(href='mailto:kevin.snyder@fda.hhs.gov?','Questions/Feedback')
       )
     }
