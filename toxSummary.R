@@ -2222,11 +2222,11 @@ help_menu_item <- function() {
 
                     br(),
 
-					#  menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
-                    #          textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
-                    #          textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
-                    #          actionButton('save_units','Save Units',icon=icon('plus-circle')),
-                    #          br()),
+					 menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
+                             textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
+                             textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
+                             actionButton('save_units','Save Units',icon=icon('plus-circle')),
+                             br()),
                     
               br(),
 			  help_menu_item()
