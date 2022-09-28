@@ -52,6 +52,14 @@ names(choices_sex) <- choices_sex
 choices_sex <- sort(choices_sex)
 ########
 
+
+
+
+
+# Server function started here (selectData) ----
+
+server <- function(input, output, session) {
+
 values <- reactiveValues()
 values$Application <- NULL
 values$SM <- NULL
@@ -59,12 +67,6 @@ values$selectData <- NULL
 values$tmpData <- NULL
 values$changeStudyFlag <- F
 values$Findings <- ''
-
-
-
-# Server function started here (selectData) ----
-
-server <- function(input, output, session) {
 
 # user folder  ----
   user <- reactive({
