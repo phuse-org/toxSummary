@@ -1972,6 +1972,7 @@ data_modal <- function() {
         br(),
         br(),
         htmltools::tags$hr(style = "border-top: 3px solid#1e9acd;"),
+		
         shiny::selectizeInput(
             inputId = "ind_id",
             label = tags$div(
@@ -1979,9 +1980,12 @@ data_modal <- function() {
              style = "color:#000000;font-size:18px;"></i> Select IND')
             ),
             selected = NULL,
-            choices = c(Choose = "", ind_number_list),
-            options = list(maxOptions = 1500)
+            choices = NULL
+                        # ind_number_list
+                        
+            # options = list(maxOptions = 2500)
         ),
+		
         br(),
         br(),
 		shiny::uiOutput("studyid_ui"),
@@ -2071,8 +2075,12 @@ data_modal <- function() {
       Data <- getData()
       studyList <- names(Data[["Nonclinical Information"]])
 	updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
+	updateSelectizeInput(session, inputId =  "ind_id",
+	                     choices = c(Choose = "", ind_number_list), server = TRUE)
 
   })
+  
+
 
 
   
