@@ -67,10 +67,18 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
  
   # select only required columns
   pp_domain <- data.table::as.data.table(pp_domain)
-  pp_domain <-  pp_domain[, .(STUDYID, DOMAIN, USUBJID,
-  POOLID, PPTESTCD,  PPTEST,
-  PPORRES, PPORRESU, PPSTRESC,
-  PPSTRESU, PPSTRESN,VISITDY, PPNOMDY)]
+  if ("PPNOMDY" %in% names(pp_domain)) {
+    pp_domain <-  pp_domain[, .(STUDYID, DOMAIN, USUBJID,
+                                POOLID, PPTESTCD,  PPTEST,
+                                PPORRES, PPORRESU, PPSTRESC,
+                                PPSTRESU, PPSTRESN,VISITDY, PPNOMDY)]
+
+  } else {
+    pp_domain <-  pp_domain[, .(STUDYID, DOMAIN, USUBJID,
+                                POOLID, PPTESTCD,  PPTEST,
+                                PPORRES, PPORRESU, PPSTRESC,
+                                PPSTRESU, PPSTRESN,VISITDY)]
+  }
 # if all USUBJID populated in PP domain
   if (nrow(pp_domain) == sum(pp_domain$USUBJID != "")) {
 	  print("first condition_ line 75")
