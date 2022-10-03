@@ -16,9 +16,8 @@ ind_table <- data.table::fread(ind_map_path,
 ind_table <- ind_table[application_type == "IND", .(IND_num, studyID)]
 # ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
 ind_number_list <- ind_table$IND_num
+ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
 
 ### extract studyid from database ----
 
 conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
-sd_id <- RSQLite::dbGetQuery(conn = conn, "SELECT DISTINCT STUDYID FROM TX")
-sd_id <- data.table::as.data.table(sd_id)
