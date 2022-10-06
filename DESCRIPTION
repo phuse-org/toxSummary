@@ -1,0 +1,17 @@
+Package: toxSummary
+Title: Visualize and Summarize Nonclinical Study Results
+Version: 0.0.0.9000
+Authors@R:
+ c(
+    person("Yousuf", "Ali", , "md.ali@fda.hhs.gov", role = c("aut", "cre"))
+    person("Kevin", "Snyder", , "kevin.snyder@fda.hhs.gov", role = c("aut")))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Imports: 
+    data.table,
+    ggplot2,
+    shiny,
+    shinydashboard
