@@ -34,7 +34,7 @@
 # source("get_dose_pp.R")
 
 
-# Server function started here (selectData) ----
+
 
 toxsummary_app <- function(database_path, save_file_path = NULL, where_to_run= "local") {
 
@@ -50,25 +50,29 @@ toxsummary_app <- function(database_path, save_file_path = NULL, where_to_run= "
 
  conn <- DBI::dbConnect(drv = RSQLite::SQLite(), paths$database_path)
 
-
+# Server function started here (selectData) ----
 server <- function(input, output, session) {
 
-	# Species Conversion ----
+# Species Conversion ----
 
-speciesConversion <- c(6.2,1.8,3.1,3.1
-                       ,12.3,1.1,4.6,7.4)
-names(speciesConversion) <- c('Rat','Dog','Monkey','Rabbit',
-                              'Mouse', 'Mini-pig', 'Guinea pig', 'Hamster')
+speciesConversion <- c(
+    6.2, 1.8, 3.1, 3.1,
+    12.3, 1.1, 4.6, 7.4
+)
+names(speciesConversion) <- c(
+    "Rat", "Dog", "Monkey", "Rabbit",
+    "Mouse", "Mini-pig", "Guinea pig", "Hamster"
+)
 
-## 
-clinDosingOptions <- c('Start Dose','MRHD','Custom Dose')
+## clinical  dosing  options
+clinDosingOptions <- c("Start Dose", "MRHD", "Custom Dose")
 
 choices_sex <- c("M", "F")
 names(choices_sex) <- choices_sex
 choices_sex <- sort(choices_sex)
 ########
 
-values <- reactiveValues()
+values <- shiny::reactiveValues()
 values$Application <- NULL
 values$SM <- NULL
 values$selectData <- NULL
@@ -77,10 +81,10 @@ values$changeStudyFlag <- F
 values$Findings <- ''
 
 # user folder  ----
-  user <- reactive({
+  user <- shiny::reactive({
       url_search <- session$clientData$url_search
       username <- unlist(strsplit(url_search, "user="))[2]
-      username <- str_to_lower(username)
+      username <- tolower(username)
       username <- paste0("Applications/", username)
       return(username)
   })
@@ -95,19 +99,19 @@ values$Findings <- ''
   })
 
   ###
-  output$selectData <- renderUI({
+  output$selectData <- shiny::renderUI({
       datasets <- c("blankData.rds", grep(".rds", list.files(user(),
           full.names = T
       ), value = T))
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
       names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
       if (is.null(values$selectData)) {
-          selectInput("selectData", "Select Application:",
+          shiny::selectInput("selectData", "Select Application:",
               datasets,
               selected = "blankData.rds"
           )
       } else {
-          selectInput("selectData", "Select Application:",
+          shiny::selectInput("selectData", "Select Application:",
               datasets,
               selected = values$selectData
           )
@@ -115,11 +119,11 @@ values$Findings <- ''
   })
   
   ### Study Name ----
-  output$studyName <- renderUI({
-      req(input$selectData)
+  output$studyName <- shiny::renderUI({
+      shiny::req(input$selectData)
       if (input$selectData != "blankData.rds") {
-          HTML(paste(
-              p(HTML(paste0(
+          htmltools::HTML(paste(
+              htmltools::p(htmltools::HTML(paste0(
                   '<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
                       <h4 style= "color:skyblue"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                   (basename(unlist(strsplit(input$selectData, ".rds")))), "</h4>"
@@ -130,15 +134,15 @@ values$Findings <- ''
   
 # getData ------
 
-  getData <- reactive({
+  getData <- shiny::reactive({
       input$refreshPlot
-      req(input$selectData)
+      shiny::req(input$selectData)
        input$selectStudy
       Data <- readRDS(input$selectData)
   })
   
-  observe({
-      req(input$selectData)
+  shiny::observe({
+      shiny::req(input$selectData)
       if (input$selectData == "blankData.rds") {
           values$Application <- paste0(user(), "/", input$newApplication, ".rds")
       } else {
@@ -147,7 +151,7 @@ values$Findings <- ''
   })
   
   # 
-  observeEvent(input$saveData, {
+  shiny::observeEvent(input$saveData, {
       Data <- getData()
       saveRDS(Data, values$Application)
       datasets <- c(
@@ -156,8 +160,8 @@ values$Findings <- ''
       )
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
       names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
-      selectInput("selectData", "Select Application:", datasets)
-      updateSelectInput(session, "selectData",
+      shiny::selectInput("selectData", "Select Application:", datasets)
+      shiny::updateSelectInput(session, "selectData",
           choices = datasets, selected = values$Application
       )
   })
@@ -165,19 +169,19 @@ values$Findings <- ''
   
 # delete application ----
 
-  observeEvent(input$deleteData, {
-      showModal(modalDialog(
+  shiny::observeEvent(input$deleteData, {
+      shiny::showModal(shiny::modalDialog(
           title = "Delete Application?",
-          footer = tagList(
-              modalButton("Cancel"),
-              actionButton("confirmDelete", "Delete")
+          footer = htmltools::tagList(
+              shiny::modalButton("Cancel"),
+              shiny::actionButton("confirmDelete", "Delete")
           )
       ))
   })
   
   
   # Confirm delete application ----
-  observeEvent(input$confirmDelete, {
+  shiny::observeEvent(input$confirmDelete, {
       file.remove(values$Application)
       datasets <- c(
           "blankData.rds",
@@ -185,27 +189,27 @@ values$Findings <- ''
       )
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
       names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
-      selectInput("selectData", "Select Application:", datasets)
-      updateSelectInput(session, "selectData",
+      shiny::selectInput("selectData", "Select Application:", datasets)
+      shiny::updateSelectInput(session, "selectData",
           choices = datasets, selected = "blankData.rds"
       )
 
-      removeModal()
+      shiny::removeModal()
   })
   
   # select study ----
-  output$selectStudy <- renderUI({
-      req(input$selectData)
+  output$selectStudy <- shiny::renderUI({
+      shiny::req(input$selectData)
       input$selectData
-      isolate(Data <- getData())
+      shiny::isolate(Data <- getData())
       studyList <- names(Data[["Nonclinical Information"]])
-      selectInput("selectStudy", "Select Study:", choices = studyList)
+      shiny::selectInput("selectStudy", "Select Study:", choices = studyList)
   })
   
 ############## Auto-Save Dose ######################
   
   # read data from disk into values$tmpData upon study selection
-  observeEvent(input$selectStudy,ignoreNULL=T,{
+  shiny::observeEvent(input$selectStudy,ignoreNULL=T,{
     values$changeStudyFlag <- F
     Data <- getData()
     values$tmpData <- Data[['Nonclinical Information']][[input$selectStudy]]
@@ -217,7 +221,7 @@ values$Findings <- ''
   })
   
   # Flip changeStudyFlag after "New Study" has loaded
-  observe({
+  shiny::observe({
     if (is.null(input$dose1)) {
       values$changeStudyFlag <- T
     } else if (is.na(input$dose1)) {
@@ -226,11 +230,11 @@ values$Findings <- ''
   })
   
   # Flip changeStudyFlag after study has loaded and update tmpData to match UI
-  observe({
-    req(input$nDoses)
-    req(input$dose1)
-    req(input$nFindings)
-    req(input[[paste0('Severity',input$nFindings,'_',input$nDoses)]])
+  shiny::observe({
+    shiny::req(input$nDoses)
+    shiny::req(input$dose1)
+    shiny::req(input$nFindings)
+    shiny::req(input[[paste0('Severity',input$nFindings,'_',input$nDoses)]])
     if (!is.na(input$dose1)) {
       if ((values$tmpData$Doses$Dose1$Dose == input$dose1)&(values$tmpData$nDoses == input$nDoses)&
           (values$tmpData$Findings$Finding1$Finding == input$Finding1)&(values$tmpData$nFindings == input$nFindings)&
@@ -256,7 +260,7 @@ values$Findings <- ''
   
  # Add findings to the list
           
-  observeEvent(input$selectData, ignoreNULL = T, {
+  shiny::observeEvent(input$selectData, ignoreNULL = T, {
       Data <- getData()
       for (Study in names(Data[["Nonclinical Information"]])) {
           if (Study != "New Study") {
@@ -274,9 +278,9 @@ values$Findings <- ''
 
   ########### Auto-save findings ###############
   
-  observe({
-    req(input$nFindings)
-    req(input$Finding1)
+  shiny::observe({
+    shiny::req(input$nFindings)
+    shiny::req(input$Finding1)
     if (values$changeStudyFlag==T) {
       for (i in seq(input$nFindings)) {
         if (!is.null(input[[paste0('Finding',i)]])) {
@@ -305,36 +309,36 @@ values$Findings <- ''
   
   # Clinical information -----
   
-  observeEvent(input$selectData,ignoreNULL = T,{
+  shiny::observeEvent(input$selectData,ignoreNULL = T,{
 	 Data <- getData()
     #update units for Cmax/AUC
-    updateTextInput(session, "cmax_unit", value=Data[["CmaxUnit"]])
-    updateTextInput(session, "auc_unit", value=Data[["AUCUnit"]])
+    shiny::updateTextInput(session, "cmax_unit", value=Data[["CmaxUnit"]])
+    shiny::updateTextInput(session, "auc_unit", value=Data[["AUCUnit"]])
    
   })
   
 # Nonclinical data update ------
   
-  observeEvent(input$selectStudy, ignoreNULL = T, {
+  shiny::observeEvent(input$selectStudy, ignoreNULL = T, {
       Data <- getData()
       studyData <- Data[["Nonclinical Information"]][[input$selectStudy]]
 	#  print(studyData$studyid_name)
 	#   names(studyData$studyid_name) <- paste0("\U25FC ", studyData$studyid_name)
 	#   print(studyData$studyid_name)
-	  updateSelectizeInput(session, "ind_id", selected = studyData$IND_number)
+	  shiny::updateSelectizeInput(session, "ind_id", selected = studyData$IND_number)
 	#   updateSelectizeInput(session, "study_id", selected = studyData$studyid_name)
-      updateSelectInput(session, "Species", selected = studyData$Species)
-      updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
-      updateTextInput(session, "Duration", value = studyData$Duration)
-      updateNumericInput(session, "nDoses", value = studyData$nDoses)
-      updateNumericInput(session, "nFindings", value = studyData$nFindings)
-      updateCheckboxInput(session, "notes", value = studyData$check_note)
+      shiny::updateSelectInput(session, "Species", selected = studyData$Species)
+      shiny::updateCheckboxGroupInput(session, "which_sex", selected = studyData$Sex_include)
+      shiny::updateTextInput(session, "Duration", value = studyData$Duration)
+      shiny::updateNumericInput(session, "nDoses", value = studyData$nDoses)
+      shiny::updateNumericInput(session, "nFindings", value = studyData$nFindings)
+      shiny::updateCheckboxInput(session, "notes", value = studyData$check_note)
   })
   
   
 # first save study button ----
   
-  observeEvent(eventExpr = input$saveStudy, {
+  shiny::observeEvent(eventExpr = input$saveStudy, {
     doseList <- as.list(seq(input$nDoses))
     names(doseList) <- paste0('Dose',seq(input$nDoses))
     for (i in seq(input$nDoses)) {
@@ -386,9 +390,9 @@ values$Findings <- ''
       
     )
     saveRDS(Data,values$Application)
-    showNotification("Saved", duration = 3)
+    shiny::showNotification("Saved", duration = 3)
     studyList <- names(Data[['Nonclinical Information']])
-    updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
+    shiny::updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
     input$refreshPlot
   })
   
@@ -402,7 +406,7 @@ values$Findings <- ''
 
 ## save clinical information ---- 
   
-  observeEvent(input$saveClinicalInfo, {
+  shiny::observeEvent(input$saveClinicalInfo, {
     Data <- getData()
     clinData <- Data[['Clinical Information']]
     if (input$MgKg==F) {
@@ -425,7 +429,7 @@ values$Findings <- ''
     }
     Data[['Clinical Information']] <- clinData
     saveRDS(Data,values$Application)
-    showNotification("saved", duration = 3)
+    shiny::showNotification("saved", duration = 3)
 	session$sendCustomMessage("save_clin_info", "refreshPlot")
 	# click('refreshPlot')
   })
@@ -436,18 +440,18 @@ values$Findings <- ''
 #   })
   
   ## delete study ---- 
-  observeEvent(input$deleteStudy, {
-    showModal(modalDialog(
+  shiny::observeEvent(input$deleteStudy, {
+    shiny::showModal(shiny::modalDialog(
       title="Delete Study?",
-      footer = tagList(modalButton("Cancel"),
-                       actionButton("confirmRemove", "Delete")
+      footer = htmltools::tagList(shiny::modalButton("Cancel"),
+                       shiny::actionButton("confirmRemove", "Delete")
       )
     ))
   })
  
   # confirm delete study 
   
-  observeEvent(input$confirmRemove, {
+  shiny::observeEvent(input$confirmRemove, {
     Data <- getData()
     studyIndex <- which(names(Data[['Nonclinical Information']])==input$selectStudy)
     restIndex <- seq(length(names(Data[['Nonclinical Information']])))[-studyIndex]
@@ -455,28 +459,28 @@ values$Findings <- ''
     Data[['Nonclinical Information']] <- Data[['Nonclinical Information']][restNames]
     saveRDS(Data,values$Application)
     studyList <- names(Data[['Nonclinical Information']])
-    updateSelectInput(session,'selectStudy',choices=studyList,selected='New Study')
+    shiny::updateSelectInput(session,'selectStudy',choices=studyList,selected='New Study')
 	session$sendCustomMessage("confirm_study_remove", "refreshPlot")
-    removeModal()
+    shiny::removeModal()
 	
   })
   
 # title 
-  output$studyTitle <- renderText({
+  output$studyTitle <- shiny::renderText({
     paste(input$Species,input$Duration,sep=': ')
   })
   
   # display Studies ----
   
-  output$displayStudies <- renderUI({
-    req(input$clinDosing)
+  output$displayStudies <- shiny::renderUI({
+    shiny::req(input$clinDosing)
     input$selectData
     input$selectStudy
-    isolate(Data <- getData())
+    shiny::isolate(Data <- getData())
     studyList <- names(Data[['Nonclinical Information']])
     studyList <- studyList[-which(studyList=='New Study')]
-    studyList <- str_sort(studyList, numeric = T)
-    addUIDep(selectizeInput("displayStudies",
+    studyList <- stringr::str_sort(studyList, numeric = T)
+    addUIDep(shiny::selectizeInput("displayStudies",
         label = "Select and Order Studies to Display:", choices = studyList,
         selected = studyList,
         multiple = TRUE,
@@ -486,15 +490,15 @@ values$Findings <- ''
   
   ## display findings ----
   
-  output$displayFindings <- renderUI({
-      req(input$clinDosing)
+  output$displayFindings <- shiny::renderUI({
+      shiny::req(input$clinDosing)
       input$selectData
       input$selectStudy
       data <- getPlotData()
       find_fact <- as.factor(data$Findings)
       findings <- unique(find_fact)
-      findings <- str_sort(findings, numeric = T)
-      addUIDep(selectizeInput("displayFindings",
+      findings <- stringr::str_sort(findings, numeric = T)
+      addUIDep(shiny::selectizeInput("displayFindings",
           label = "Select and Order Findings to Display:",
           choice = findings, selected = findings,
           multiple = TRUE, width = "100%",
@@ -525,23 +529,23 @@ values$Findings <- ''
 #   })
 
     shiny::observeEvent(input$get_from_db,{
-      req(input$selectStudy)
-	  req(input$ind_id)
-	  req(input$study_id)
+      shiny::req(input$selectStudy)
+	  shiny::req(input$ind_id)
+	  shiny::req(input$study_id)
       
           df <- get_dose_pk_for_study()
           n_dose <- length(unique(df[, TRTDOS]))
 
-          updateNumericInput(session, "nDoses", value = n_dose)
+          shiny::updateNumericInput(session, "nDoses", value = n_dose)
       
   })
 
 #### toggle button ----
     toggle <- shiny::reactiveValues(db = "no run")
 
- observeEvent(input$get_from_db, {
+ shiny::observeEvent(input$get_from_db, {
      toggle$db <- "run"
-     updateActionButton(
+     shiny::updateActionButton(
          session = session,
          "get_from_db", "Clicked: Data updated  from database",
          icon = icon("mouse-pointer")
@@ -550,20 +554,20 @@ values$Findings <- ''
 
 # update toggle to "no run" when ind, studyid changes 
 
- observe({
+ shiny::observe({
      input$ind_id
      input$study_id
      input$selectStudy
-     req(input$ind_id)
-     req(input$study_id)
+     shiny::req(input$ind_id)
+     shiny::req(input$study_id)
 
      toggle$db <- "no run"
 
-     updateActionButton(
+     shiny::updateActionButton(
          session = session,
          "get_from_db",
          "Click me to populate dose and pk from  database",
-         icon = icon("mouse-pointer")
+         icon = shiny::icon("mouse-pointer")
      )
  })
 
@@ -571,10 +575,10 @@ values$Findings <- ''
   
   ## output$Doses -----
   
-  output$Doses <- renderUI({
-    req(input$selectStudy)
+  output$Doses <- shiny::renderUI({
+    shiny::req(input$selectStudy)
     if (toggle$db == "run") {
-		req(input$study_id)
+		shiny::req(input$study_id)
       
       df <- get_dose_pk_for_study()
       n_dose <-   length(unique(df[,TRTDOS]))
@@ -587,22 +591,22 @@ values$Findings <- ''
         I <- ceiling(i/4)
         #doseName <- names(studyData$Doses)[I]
         if (i %% 4 == 1) {
-          div(hr(style = "border-top: 1px dashed skyblue"),
-              numericInput(paste0('dose',I),paste0('*Dose ',I,  " ",cmax[I, .(TRTDOSU)], ":"),
+          htmltools::div(htmltools::hr(style = "border-top: 1px dashed skyblue"),
+              shiny::numericInput(paste0('dose',I),paste0('*Dose ',I,  " ",cmax[I, .(TRTDOSU)], ":"),
 			   min=0, value = cmax[I, .(TRTDOS)]))
         } else if (i %% 4 == 2) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0('Cmax',I),paste0('Cmax ',I, " ", cmax[I, .(PPSTRESU)], ":"),
+          htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
+              shiny::numericInput(paste0('Cmax',I),paste0('Cmax ',I, " ", cmax[I, .(PPSTRESU)], ":"),
 			   min=0, value=cmax[I, .(mean)]))
         }
         else if (i %% 4 == 3) {
-          div(style="display: inline-block;vertical-align:top; width: 115px;",
-              numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"),
+          htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
+              shiny::numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"),
 			   min=0, value=auc[I, .(mean)]))
           
         }
         else {
-          div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value= F))
+          htmltools::div(shiny::checkboxInput(paste0('NOAEL',I),'NOAEL?',value= F))
         }
       })
       
@@ -615,28 +619,28 @@ values$Findings <- ''
       I <- ceiling(i/4)
       doseName <- names(studyData$Doses)[I]
       if (i %% 4 == 1) {
-        div(hr(style = "border-top: 1px dashed skyblue"),
-            numericInput(paste0('dose',I),paste0('*Dose ',I,' (mg/kg/day):'),
+        htmltools::div(htmltools::hr(style = "border-top: 1px dashed skyblue"),
+            shiny::numericInput(paste0('dose',I),paste0('*Dose ',I,' (mg/kg/day):'),
 			 min=0, value =studyData$Doses[[doseName]][['Dose']]))
       } else if (i %% 4 == 2) {
-        div(style="display: inline-block;vertical-align:top; width: 115px;",
-            numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), 
+        htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
+            shiny::numericInput(paste0('Cmax',I),paste0('Dose ',I, cmax_unit), 
 			min=0, value=studyData$Doses[[doseName]][['Cmax']]))
       }
       else if (i %% 4 == 3) {
-        div(style="display: inline-block;vertical-align:top; width: 115px;",
-            numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),
+        htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
+            shiny::numericInput(paste0('AUC',I),paste0('Dose ',I, auc_unit),
 			 min=0, value=studyData$Doses[[doseName]][['AUC']]))
         
       } else {
-        div(checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
+        htmltools::div(shiny::checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
       }
     })}
   })
   
   #  Findings -----
   
-  output$Findings <- renderUI({
+  output$Findings <- shiny::renderUI({
     req(input$selectStudy)
       studyData <- values$tmpData
       if (input$nFindings>0) {
@@ -644,14 +648,14 @@ values$Findings <- ''
         lapply(1:(numerator*input$nFindings), function(i) {
           I <- ceiling(i/numerator)
           if (i %% numerator == 1) {
-            findings <- str_sort(unique(values$Findings))
-            div(
-              hr(style = "border-top: 1px dashed skyblue"),
-              selectizeInput(paste0('Finding',I),paste0('*Finding ',I,':'), choices= findings,
+            findings <- stringr::str_sort(unique(values$Findings))
+            htmltools::div(
+              htmltools::hr(style = "border-top: 1px dashed skyblue"),
+              shiny::selectizeInput(paste0('Finding',I),paste0('*Finding ',I,':'), choices= findings,
                              selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
                              options = list(create = TRUE)))
           } else if (i %% numerator == 2) {
-            radioButtons(paste0('Reversibility',I),'Reversibility:',
+            shiny::radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
                                        'Partially Reversible [PR]','Not Assessed'),
                          choiceValues=c('[Rev]','[NR]','[PR]',''),
@@ -659,7 +663,7 @@ values$Findings <- ''
           } else {
             lapply(1:input$nDoses, function(j) {
               if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
-                selectInput(inputId = paste0('Severity',I,'_',j),
+                shiny::selectInput(inputId = paste0('Severity',I,'_',j),
                             label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
                             choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'),
                             selected=studyData$Findings[[paste0('Finding',I)]]$Severity[[paste0('Dose',j)]])
@@ -674,19 +678,19 @@ values$Findings <- ''
   
   ### add note for study ----
   
-  output$study_note <- renderUI({
-    req(input$selectStudy)
+  output$study_note <- shiny::renderUI({
+    shiny::req(input$selectStudy)
     Data <- getData()
     studyData <- Data[['Nonclinical Information']][[input$selectStudy]]
     
     if (input$selectStudy=='New Study') {
       if (input$notes ==T) {
-        textAreaInput("note_text", "Notes:", 
+        shiny::textAreaInput("note_text", "Notes:", 
 		placeholder = "Enter Note here for this Study", height = "100px")
       }
     } else{
         if (input$notes==T) {
-          textAreaInput("note_text", "Notes:",
+          shiny::textAreaInput("note_text", "Notes:",
 		   value = studyData$Notes, height = "100px")
         }
       }
@@ -695,7 +699,7 @@ values$Findings <- ''
   
   # Create PlotData (changed) -----
   
- getPlotData <- reactive({
+ getPlotData <- shiny::reactive({
   Data <- getData()
   plotData <- data.frame(matrix(ncol = 17 ))
   column_names <- c("Study", "Dose", 
@@ -759,8 +763,8 @@ values$Findings <- ''
  
 ## human dose ----
   
-  output$humanDosing <- renderUI({
-    req(input$clinDosing)
+  output$humanDosing <- shiny::renderUI({
+    shiny::req(input$clinDosing)
     Data <- getData()
     clinDosingNames <- input$clinDosing
     names(clinDosingNames) <- clinDosingNames
@@ -775,12 +779,12 @@ values$Findings <- ''
         }
       }
     }
-    selectInput('humanDosing','Select Human Dose:',choices=clinDosingNames)
+    shiny::selectInput('humanDosing','Select Human Dose:',choices=clinDosingNames)
   })
   
   ##  filter NOAEL data preparation ----
   
-  filter_NOAEL <- reactive({
+  filter_NOAEL <- shiny::reactive({
     df_plot <- getPlotData()
     count <- 0
     for (i in unique(df_plot$Study)){
@@ -814,7 +818,7 @@ values$Findings <- ''
   
 # ## calculate safety margin (SM) ------
 #
-  calculateSM <- reactive({
+  calculateSM <- shiny::reactive({
     Data <- getData()
     plotData <- filter_NOAEL()
     if (nrow(plotData)>0) {
@@ -899,10 +903,10 @@ values$Findings <- ''
   
 # table 01 ----
   
-  dt_01 <- reactive({
+  dt_01 <- shiny::reactive({
     plotData_tab <- calculateSM()
     plotData_tab <- plotData_tab %>% 
-      mutate(Findings = as.factor(Findings),
+      dplyr::mutate(Findings = as.factor(Findings),
              Rev = as.factor(Rev),
              Study = as.factor(Study),
              Dose = as.numeric(Dose),
@@ -910,27 +914,27 @@ values$Findings <- ''
              Severity = as.factor(Severity))
     
     plotData_tab <- plotData_tab %>% 
-      select( Findings,Rev, Study, Dose, SM, Severity) %>%
-      filter(Severity != "Absent") %>% 
-      select(-Severity) %>% 
-      rename(Reversibility = Rev,
+      dplyr::select( Findings,Rev, Study, Dose, SM, Severity) %>%
+      dplyr::filter(Severity != "Absent") %>% 
+      dplyr::select(-Severity) %>% 
+      dplyr::rename(Reversibility = Rev,
              "Clinical Exposure Margin" = SM,
              "Dose (mg/kg/day)" = Dose)
     
     plotData_tab$Findings <- factor(plotData_tab$Findings,levels= input$displayFindings)
     plotData_tab <- plotData_tab %>%
-      arrange(Findings)
+      dplyr::arrange(Findings)
     plotData_tab
   })
   
 
   # table 01 UI side
-  output$table_01 <- renderDT({
+  output$table_01 <- DT::renderDT({
     data <- getData()
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_tab <- dt_01()
-    plotData_tab <- datatable(plotData_tab, rownames = FALSE,
+    plotData_tab <- DT::datatable(plotData_tab, rownames = FALSE,
                               class = "cell-border stripe",
                               filter = list(position = 'top'),
                               extensions = list("Buttons" = NULL,
@@ -946,12 +950,12 @@ values$Findings <- ''
                                 scrollY = TRUE,
                                 pageLength = 25,
                                 columnDefs = list(list(className = "dt-center", targets = "_all")),
-                                initComplete = JS(
+                                initComplete = DT::JS(
                                   "function(settings, json) {",
                                   "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
                                   "}"),
                                 rowsGroup = list(0,1,2))) %>%
-      formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
+      DT::formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
     path <- "DT_extension" # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
@@ -962,78 +966,78 @@ values$Findings <- ''
   }})
   
   # DT table to flex table
-  filtered_tab_01 <- reactive({
-    req(input$table_01_rows_all)
+  filtered_tab_01 <- shiny::reactive({
+    shiny::req(input$table_01_rows_all)
     data <- dt_01()
     data[input$table_01_rows_all, ]
   })
 
 
 # Flextable for docx file
-  dt_to_flex_01 <- reactive({
+  dt_to_flex_01 <- shiny::reactive({
     plotData_tab <- filtered_tab_01()
     plotData_tab <- plotData_tab %>%
       dplyr::arrange(Findings, Reversibility, Study) %>%
-      flextable() %>%
-      merge_v(j = ~ Findings + Reversibility + Study) %>%
+      flextable::flextable() %>%
+      flextable::merge_v(j = ~ Findings + Reversibility + Study) %>%
       flextable::autofit() %>%
-      add_header_row(values = c("Nonclinical Findings of Potential Clinical Relevance"), colwidths = c(5)) %>%
-      theme_box()
+      flextable::add_header_row(values = c("Nonclinical Findings of Potential Clinical Relevance"), colwidths = c(5)) %>%
+      flextable::theme_box()
     plotData_tab
   })
 
 # download table 01 
-  output$down_01_doc <- downloadHandler(
+  output$down_01_doc <- shiny::downloadHandler(
     filename = function() {
       Sys.sleep(2)
       paste0("clinical_relevance", ".docx")
     },
     content = function(file) {
-      save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))
+      flextable::save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))
       file.copy(paste0(user(),"/clinical_relevance.docx"), file)
     }
   )
 
   #### table 02 ----
   
-  dt_02 <- reactive({
+  dt_02 <- shiny::reactive({
     plotData_tab <- calculateSM()
     plotData_tab <- plotData_tab %>% 
       dplyr::select(Study, Dose, NOAEL, Cmax, AUC, SM) %>% 
-             filter(NOAEL == TRUE) %>% 
+             dplyr::filter(NOAEL == TRUE) %>% 
              dplyr::select(-NOAEL) %>%
              dplyr::arrange(Study, Dose)
     plotdata_finding <- calculateSM()
     greater_than_noeal <- plotdata_finding[which(plotdata_finding$Dose>plotdata_finding$noael_value),]
     greater_than_noeal <- greater_than_noeal %>% 
-      select(Study, Findings) %>% 
-      distinct() 
+      dplyr::select(Study, Findings) %>% 
+      dplyr::distinct() 
     cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0("AUC (", input$auc_unit, ")")
-    plotData_tab <- full_join(plotData_tab, greater_than_noeal, by="Study") %>% 
-      arrange(Study,Dose,Cmax,AUC,SM,Findings) %>% 
-      rename(
+    plotData_tab <- dplyr::full_join(plotData_tab, greater_than_noeal, by="Study") %>% 
+      dplyr::arrange(Study,Dose,Cmax,AUC,SM,Findings) %>% 
+      dplyr::rename(
         "NOAEL (mg/kg/day)" = Dose,
         "Safety Margin" = SM,
         "Findings at Greater than NOAEL for the Study" = Findings
       ) %>% 
-      mutate(Study = as.factor(Study))
+      dplyr::mutate(Study = as.factor(Study))
     
     names(plotData_tab)[names(plotData_tab)=="Cmax"] <- cmax_unit
     names(plotData_tab)[names(plotData_tab)=="AUC"] <- auc_unit
     plotData_tab$Study <- factor(plotData_tab$Study,levels= input$displayStudies)
     plotData_tab <- plotData_tab %>%
-      arrange(Study)
+      dplyr::arrange(Study)
     plotData_tab
   })
   
 # make column name same as flextable (add unit in DT table)
-  output$table_02 <- renderDT({
+  output$table_02 <- DT::renderDT({
     data <- getData()
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_tab <- dt_02()
-    plotData_tab <- datatable(plotData_tab, rownames = FALSE, class = "cell-border stripe",
+    plotData_tab <- DT::datatable(plotData_tab, rownames = FALSE, class = "cell-border stripe",
                               filter = list(position = 'top'),
                               extensions = list("Buttons" = NULL),
                               caption = htmltools::tags$caption(
@@ -1046,12 +1050,12 @@ values$Findings <- ''
                                 dom = "lfrtipB",
                                 buttons = c("csv", "excel", "copy", "print"),
                                 columnDefs = list(list(className = "dt-center", targets = "_all")),
-                                initComplete = JS(
+                                initComplete = DT::JS(
                                   "function(settings, json) {",
                                   "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
                                   "}"),
                                 rowsGroup = list(0,1,2,3,4,5))) %>%
-      formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
+      DT::formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
     path <- "DT_extension" # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
@@ -1063,19 +1067,19 @@ values$Findings <- ''
   
   
   # get data from DT for flextable
-  filtered_tab_02 <- reactive({
-    req(input$table_02_rows_all)
+  filtered_tab_02 <- shiny::reactive({
+    shiny::req(input$table_02_rows_all)
     data <- dt_02()
     data[input$table_02_rows_all, ]
   })
   
   # flextable 02
-  dt_to_flex_02 <- reactive({
+  dt_to_flex_02 <- shiny::reactive({
     cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0("AUC (", input$auc_unit, ")")
     plotData_tab <- filtered_tab_02()
     plotData_tab <- plotData_tab %>% 
-      rename(
+      dplyr::rename(
          "Dose" ="NOAEL (mg/kg/day)",
          "SM"= "Safety Margin",
          "Findings" = "Findings at Greater than NOAEL for the Study"
@@ -1083,44 +1087,44 @@ values$Findings <- ''
     colnames(plotData_tab)[3] <- "Cmax"
     colnames(plotData_tab)[4] <- "AUC"
     plotData_tab <- plotData_tab %>%
-      flextable() %>% 
-          merge_v(j = ~ Study + Dose + Cmax+ AUC +SM+Findings) %>%
+      flextable::flextable() %>% 
+          flextable::merge_v(j = ~ Study + Dose + Cmax+ AUC +SM+Findings) %>%
           flextable::autofit() %>% 
-          set_header_labels("Dose" = "NOAEL (mg/kg/day)",
+          flextable::set_header_labels("Dose" = "NOAEL (mg/kg/day)",
                         "Cmax" = cmax_unit,
                         "AUC" = auc_unit,
                         "Findings" = "Findings at Greater than NOAEL for the Study",
                         "SM" = "Safety Margin") %>% 
-      add_header_row(values = c("Key Study Findings"), colwidths = c(6)) %>%
-          theme_box()
+      flextable::add_header_row(values = c("Key Study Findings"), colwidths = c(6)) %>%
+          flextable::theme_box()
     plotData_tab
     
   })
   
   # download table 02
   
-  output$down_02_doc <- downloadHandler(
+  output$down_02_doc <- shiny::downloadHandler(
     filename = function() {
       paste0("key_findings", ".docx")
     },
     content = function(file) {
-      save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))
+      flextable::save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))
       file.copy(paste0(user(), "/key_findings.docx"), file)
     }
   )
 
   ## table 03 ----
   
-  dt_03 <- reactive({
+  dt_03 <- shiny::reactive({
     cmax_unit <- paste0("Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0("AUC (", input$auc_unit, ")")
     plotData_03 <- calculateSM()
     plotData_03 <- plotData_03 %>% 
-      select( Study,NOAEL, Dose, HED_value, Cmax, AUC , SM_start_dose, SM_MRHD) %>% 
-      mutate(Study = as.factor(Study)) %>% 
+      dplyr::select( Study,NOAEL, Dose, HED_value, Cmax, AUC , SM_start_dose, SM_MRHD) %>% 
+      dplyr::mutate(Study = as.factor(Study)) %>% 
       unique() %>% 
-      filter(NOAEL == TRUE) %>% 
-      select(-NOAEL) %>% 
+      dplyr::filter(NOAEL == TRUE) %>% 
+      dplyr::select(-NOAEL) %>% 
       dplyr::rename("NOAEL (mg/kg/day)" = Dose,
                      "Safety Margin at Starting Dose" = SM_start_dose,
                      "Safety Margin at MRHD" = SM_MRHD)
@@ -1130,24 +1134,24 @@ values$Findings <- ''
     
     if (input$MgKg==F) {
       plotData_03 <- plotData_03 %>% 
-        rename("HED (mg/day)" = HED_value)
+        dplyr::rename("HED (mg/day)" = HED_value)
     } else {plotData_03 <- plotData_03 %>% 
-      rename("HED (mg/kg/day)" = HED_value)
+      dplyr::rename("HED (mg/kg/day)" = HED_value)
     }
    ## 
     plotData_03$Study <- factor(plotData_03$Study,levels= input$displayStudies)
     plotData_03 <- plotData_03 %>%
-      arrange(Study)
+      dplyr::arrange(Study)
     plotData_03
   })
   
   # table 03 DT
-  output$table_03 <- renderDT({
+  output$table_03 <- DT::renderDT({
     data <- getData()
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_03 <- dt_03()
-    plotData_03 <- datatable(plotData_03,rownames = FALSE, 
+    plotData_03 <- DT::datatable(plotData_03,rownames = FALSE, 
                              extensions = list("Buttons" = NULL,
                                                "ColReorder" = NULL),
                              class = "cell-border stripe",
@@ -1163,62 +1167,62 @@ values$Findings <- ''
                                pageLength = 10,
                                columnDefs = list(list(className = "dt-center", targets = "_all")),
                                scrollY = TRUE,
-                               initComplete = JS(
+                               initComplete = DT::JS(
                                  "function(settings, json) {",
                                  "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
                                  "}"))) %>% 
-      formatStyle(columns = colnames(plotData_03), `font-size` = "18px")
+      DT::formatStyle(columns = colnames(plotData_03), `font-size` = "18px")
 
     plotData_03
   }})
   
   # get data from DT table
-  filtered_tab_03 <- reactive({
-    req(input$table_03_rows_all)
+  filtered_tab_03 <- shiny::reactive({
+    shiny::req(input$table_03_rows_all)
     data <- dt_03()
     data[input$table_03_rows_all, ]
   })
   
   # flextable for docx file
-  dt_to_flex_03 <- reactive({
+  dt_to_flex_03 <- shiny::reactive({
     plotData_tab <- filtered_tab_03() %>% 
-      flextable() %>%
-      add_header_row(values = c("Nonclinical", "Clinical Exposure Margins"), colwidths = c(5,2)) %>%
-      add_header_row(values = c("Safety Margins Based on NOAEL from Pivotal Toxicology Studies"), colwidths = c(7)) %>%
-      theme_box()
+      flextable::flextable() %>%
+      flextable::add_header_row(values = c("Nonclinical", "Clinical Exposure Margins"), colwidths = c(5,2)) %>%
+      flextable::add_header_row(values = c("Safety Margins Based on NOAEL from Pivotal Toxicology Studies"), colwidths = c(7)) %>%
+      flextable::theme_box()
     plotData_tab
   })
   
 
 # download table 03
-  output$down_03_doc <- downloadHandler(
+  output$down_03_doc <- shiny::downloadHandler(
     filename = function() {
       paste0("safety_margin", ".docx")
     },
     content = function(file) {
-      save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )
+      flextable::save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )
       file.copy(paste0(user(), "/safety_margin.docx"), file)
     }
   )
   
   
   ## download all table
-   download_all <- reactive({
+   download_all <- shiny::reactive({
      doc <- read_docx()
-     doc_02 <-  body_add_flextable(doc, dt_to_flex_01()) %>%
-       body_add_par("   ") %>%
-       body_add_par("   ") %>%
-       body_add_par("   ") %>%
-       body_add_flextable( dt_to_flex_02()) %>%
-       body_add_par("   ") %>%
-       body_add_par("   ") %>%
-       body_add_par("   ") %>%
-       body_add_flextable(dt_to_flex_03())
+     doc_02 <-  flextable::body_add_flextable(doc, dt_to_flex_01()) %>%
+       officer::body_add_par("   ") %>%
+       officer::body_add_par("   ") %>%
+       officer::body_add_par("   ") %>%
+       flextable::body_add_flextable( dt_to_flex_02()) %>%
+       officer::body_add_par("   ") %>%
+       officer::body_add_par("   ") %>%
+       officer::body_add_par("   ") %>%
+       flextable::body_add_flextable(dt_to_flex_03())
 
      doc_02
    })
 ##
-   output$down_all <- downloadHandler(
+   output$down_all <- shiny::downloadHandler(
      filename = function() {
        paste0("table_all", ".docx")
      },
@@ -1231,22 +1235,22 @@ values$Findings <- ''
    )
   
   # craete notes table ----
-   all_study_notes <- reactive({
+   all_study_notes <- shiny::reactive({
      plotData_tab <- calculateSM()
      plotData_tab <- plotData_tab %>%
        dplyr::select(Study_note, Study) %>%
        dplyr::rename(Notes = Study_note)
      plotData_tab$Study <- factor(plotData_tab$Study,levels= input$displayStudies)
      plotData_tab <- plotData_tab %>%
-       distinct() %>%
-       arrange(Study)
+       dplyr::distinct() %>%
+       dplyr::arrange(Study)
      plotData_tab
    })
    
  
 # output table for notes  ----
    
-   output$table_note <- renderTable({
+   output$table_note <- shiny::renderTable({
      data <- getData()
      clin_dose <- clin_data(data)
      if (clin_dose>0) {
@@ -1257,28 +1261,29 @@ values$Findings <- ''
                              width = '100%', align = 'lr')
  
 ## download notes table
-   table_note_to_flex <- reactive({
+   table_note_to_flex <- shiny::reactive({
      note_table <- all_study_notes() %>%
-       flextable() %>%
-       add_header_row(values = c("Note for Studies"), colwidths = c(2)) %>%
-       theme_box()
+       flextable::flextable() %>%
+       flextable::add_header_row(values = c("Note for Studies"), colwidths = c(2)) %>%
+       flextable::theme_box()
      note_table
    })
    
  # download notes table
-   output$down_notes <- downloadHandler(
+   output$down_notes <- shiny::downloadHandler(
      filename = function() {
        paste0("note_table", ".docx")
      },
      content = function(file) {
-       save_as_docx(table_note_to_flex(), path = paste0(user(), "/note_table.docx"))
+       flextable::save_as_docx(table_note_to_flex(),
+	    path = paste0(user(), "/note_table.docx"))
        file.copy(paste0(user(), "/note_table.docx"), file)
      }
    )
    
 ## filter NOAEL reactive ----
    
-  filtered_plot <- reactive({
+  filtered_plot <- shiny::reactive({
     if (input$NOAEL_choices == "ALL") {
       plot_data <- calculateSM()
     } else if (input$NOAEL_choices == "Less than or equal to NOAEL") {
@@ -1296,7 +1301,7 @@ values$Findings <- ''
   })
 
   # plotheight ----
-   plotHeight <- reactive({
+   plotHeight <- shiny::reactive({
      plotData <- calculateSM()
      nStudies <- length(unique(plotData$Study))
      plot_height <- (input$plotheight) * (nStudies)
@@ -1308,8 +1313,8 @@ values$Findings <- ''
   
 ## figure -----
   
-  output$figure <- renderGirafe({
-    req(input$clinDosing)
+  output$figure <- ggiraph::renderGirafe({
+    shiny::req(input$clinDosing)
     input$selectData
     data <- getData()
     clin_dose <- clin_data(data)
@@ -1340,7 +1345,7 @@ values$Findings <- ''
  ## plotdata for p plot (changed) ----
     plotData_p <- plotData
     plotData_p <- plotData_p %>% 
-      select(Study, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
+      dplyr::select(Study, Dose, SM, Value, NOAEL, Value_order, Study_note) %>% 
       unique()
     plotData_p$SM <- lapply(plotData_p$SM, roundSigfigs)
     plotData_p$SM <- as.numeric(plotData_p$SM)
@@ -1360,7 +1365,7 @@ values$Findings <- ''
 								   decreasing=F))])
       maxFindings <- 1
       for (doseFinding in plotData$doseFindings) {
-        nFindings <- str_count(doseFinding,'\n')
+        nFindings <- stringr::str_count(doseFinding,'\n')
         if (nFindings > maxFindings) {
           maxFindings <- nFindings
         }
@@ -1387,8 +1392,8 @@ values$Findings <- ''
       tooltip_css <- "background-color:#3DE3D8;color:black;padding:2px;border-radius:5px;"
       if (input$dose_sm==1) {
         
-          plot_p_label <- ggplot(plotData_p)+
-          geom_label_interactive(aes(x = SM, y = Value_order,
+          plot_p_label <- ggplot2::ggplot(plotData_p)+
+          ggiraph::geom_label_interactive(ggplot2::aes(x = SM, y = Value_order,
                                      label = paste0(Dose, " mg/kg/day"),
                                      
                                      tooltip =paste0(SM, "x")), #DoseLabel changed
@@ -1396,107 +1401,107 @@ values$Findings <- ''
                                  fontface = "bold",
                                  size = 6,
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
-                                 label.padding = unit(0.6, "lines")
+                                 label.padding = ggplot2::unit(0.6, "lines")
           )
       } else if (input$dose_sm==2) {
-        plot_p_label <- ggplot(plotData_p)+
-          geom_label_interactive(aes(x = SM, y = Value_order,
+        plot_p_label <- ggplot2::ggplot(plotData_p)+
+          ggiraph::geom_label_interactive(ggplot2::aes(x = SM, y = Value_order,
                                      label = paste0(Dose, " mg/kg/day", "\n", SM, "x"),
                                      tooltip =paste0(Study_note)), #DoseLabel changed
                                  color = "white",
                                  fontface = "bold",
                                  size = 6,
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
-                                 label.padding = unit(0.6, "lines"))
+                                 label.padding = ggplot2::unit(0.6, "lines"))
       } else {
-        plot_p_label <- ggplot(plotData_p)+
-          geom_label_interactive(aes(x = SM, y = Value_order,
+        plot_p_label <- ggplot2::ggplot(plotData_p)+
+          ggiraph::geom_label_interactive(ggplot2::aes(x = SM, y = Value_order,
                                      label = paste0(Dose, " mg/kg/day", "\n", SM, "x"),
                                      tooltip =paste0(Study_note)), #DoseLabel changed
                                  color = "white",
                                  fontface = "bold",
                                  size = 6,
                                  fill= ifelse(plotData_p$NOAEL == TRUE, "#239B56", "black"),
-                                 label.padding = unit(0.6, "lines")
+                                 label.padding = ggplot2::unit(0.6, "lines")
           )+
-          geom_text(data=plotData_p ,aes(x = 0.5*(SM_max), y=0.3 , label= Study_note),
+          ggplot2::geom_text(data=plotData_p ,ggplot2::aes(x = 0.5*(SM_max), y=0.3 , label= Study_note),
                     color = "black",
                     size= 6)
       }
       
       p <- plot_p_label +
-        scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
+        ggplot2::scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
         #scale_fill_manual(values = color_NOAEL)+
-        ylim(0,y_max)+
-        facet_grid( Study ~ ., labeller = label_wrap_gen(width = input$text_width))+
-        labs( title = "      Summary of Toxicology Studies", x = "Exposure Margin")+
-        theme_bw(base_size=12)+
-        theme(
-          axis.title.y = element_blank(),
-              axis.ticks.y= element_blank(),
-              axis.text.y = element_blank(),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              plot.title = element_text(size= 20, hjust = 1),
-              axis.title.x = element_text(size = 18, vjust = -0.9),
-              axis.text.x = element_text(size = 16),
+        ggplot2::ylim(0,y_max)+
+        ggplot2::facet_grid( Study ~ ., labeller = ggplot2::label_wrap_gen(width = input$text_width))+
+        ggplot2::labs( title = "      Summary of Toxicology Studies", x = "Exposure Margin")+
+        ggplot2::theme_bw(base_size=12)+
+        ggplot2::theme(
+          axis.title.y = ggplot2::element_blank(),
+              axis.ticks.y= ggplot2::element_blank(),
+              axis.text.y = ggplot2::element_blank(),
+              panel.grid.major = ggplot2::element_blank(),
+              panel.grid.minor = ggplot2::element_blank(),
+              plot.title = ggplot2::element_text(size= 20, hjust = 1),
+              axis.title.x = ggplot2::element_text(size = 18, vjust = -0.9),
+              axis.text.x = ggplot2::element_text(size = 16),
               legend.position = "none",
-              strip.text.y = element_text(size=14, color="#000000", hjust = 0),
-              strip.background = element_rect( fill = "white"))
+              strip.text.y = ggplot2::element_text(size=14, color="#000000", hjust = 0),
+              strip.background = ggplot2::element_rect( fill = "white"))
       
 # findings plot ----
       
       q <- ggplot(plotData)+
-        geom_col_interactive(aes(x= Findings, y = Value, fill = Severity, group = Dose,  tooltip = Findings),
-                 position = position_stack(reverse = TRUE),
+        ggiraph::geom_col_interactive(ggplot2::aes(x= Findings, y = Value, fill = Severity, group = Dose,  tooltip = Findings),
+                 position = ggplot2::position_stack(reverse = TRUE),
                  color = 'transparent',
                  width = q_col_width)+
-        geom_text_interactive(aes(x = Findings, y = Value, label = Dose, group = Dose,  tooltip = Findings),
+        ggiraph::geom_text_interactive(ggplot2::aes(x = Findings, y = Value, label = Dose, group = Dose,  tooltip = Findings),
                   size = q_text_size,
                   color = 'white',
                   fontface = 'bold',
                   position = position_stack(vjust = 0.5, reverse = TRUE))+
         #scale_y_discrete(position = 'right')+
-        ylim(0, q_y_max)+
-        scale_fill_manual(values = color_manual)+
-        facet_grid(Study ~ ., scales = 'free')+
-        theme_bw(base_size=12)+
-        theme(axis.title.y = element_blank(),
-              strip.text.y = element_blank(),
-              axis.ticks.y = element_blank(),
-              axis.text.y  = element_blank(),
-              axis.title.x = element_blank(),
-              axis.text.x  = element_text(size= 16, angle = 90), #need to work
+        ggplot2::ylim(0, q_y_max)+
+        ggplot2::scale_fill_manual(values = color_manual)+
+        ggplot2::facet_grid(Study ~ ., scales = 'free')+
+        ggplot2::theme_bw(base_size=12)+
+        ggplot2::theme(axis.title.y = element_blank(),
+              strip.text.y = ggplot2::element_blank(),
+              axis.ticks.y = ggplot2::element_blank(),
+              axis.text.y  = ggplot2::element_blank(),
+              axis.title.x = ggplot2::element_blank(),
+              axis.text.x  = ggplot2::element_text(size= 16, angle = 90), #need to work
               #plot.title = element_text(size=20,hjust = 0.5),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank(),
-              panel.grid.major.x = element_line(),
-              panel.grid.minor.x = element_blank(),
-              legend.text  = element_text(size = 14),
-              legend.title = element_text(size = 16),
+              panel.grid.major.y = ggplot2::element_blank(),
+              panel.grid.minor.y = ggplot2::element_blank(),
+              panel.grid.major.x = ggplot2::element_line(),
+              panel.grid.minor.x = ggplot2::element_blank(),
+              legend.text  = ggplot2::element_text(size = 14),
+              legend.title = ggplot2::element_text(size = 16),
               legend.justification = "top")+
         #labs(title = '' )+
-        guides(fill = guide_legend(override.aes = aes(label = "")))
-      girafe(code = print(p+q+plot_layout(ncol = 2, widths = c(3,1))),
-             options = list(opts_tooltip(css = tooltip_css)),
+        ggplot2::guides(fill = ggplot2::guide_legend(override.aes = ggplot2::aes(label = "")))
+      ggiraph::girafe(code = print(p+q+ patchwork::plot_layout(ncol = 2, widths = c(3,1))),
+             options = list(ggiraph::opts_tooltip(css = tooltip_css)),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
     }}
   })
 
-  observe({
-    req(input$selectData)
+  shiny::observe({
+    shiny::req(input$selectData)
     values$selectData <- input$selectData
   })
   
   ## download rds file
-  output$download_rds <- renderUI({
+  output$download_rds <- shiny::renderUI({
     datasets <- c(grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    selectInput("downloadRDS", "Select to Download an Application:", choices = datasets, selected = NULL)
+    shiny::selectInput("downloadRDS", "Select to Download an Application:", choices = datasets, selected = NULL)
   })
   
-  output$down_btn <- downloadHandler(
+  output$down_btn <- shiny::downloadHandler(
     filename = function() {
       app_name <- basename(input$downloadRDS)
       app_name
@@ -1508,19 +1513,19 @@ values$Findings <- ''
   
   ## upload file rds
   
-  observe({
+  shiny::observe({
     if (is.null(input$upload_rds)) return()
     file.copy(input$upload_rds$datapath,   paste0(user(), "/",  input$upload_rds$name))
     datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
     names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    selectInput('selectData','Select Application:',datasets)
-    updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
+    shiny::selectInput('selectData','Select Application:',datasets)
+    shiny::updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
   })
   
   # download tar file ----
 
-  output$tar_file <- downloadHandler(
+  output$tar_file <- shiny::downloadHandler(
     filename = function() {
       "all_file.tar"
     },
@@ -1530,19 +1535,19 @@ values$Findings <- ''
     }
   )
 ####
-  output$Admin_toggle <- renderUI({
+  output$Admin_toggle <- shiny::renderUI({
     if (basename(user()) == "md.ali@fda.hhs.gov") {
 "Admin"
     }
   })
   ###
-  output$download_tar_file <- renderMenu({
+  output$download_tar_file <- shinydashboard::renderMenu({
     if (input$pass_admin == "HeLLo_aDMiN_PT") {
-      downloadButton("tar_file", "Download all file")
+      shiny::downloadButton("tar_file", "Download all file")
     }
   })
   ####
-  output$show_file_table <- renderMenu({
+  output$show_file_table <- shinydashboard::renderMenu({
     if (input$pass_admin == "HeLLo_aDMiN_PT") {
       DT::dataTableOutput("dir_list")
     }
@@ -1550,12 +1555,12 @@ values$Findings <- ''
   
   
   #####
-  dir_to_df <- reactive({
+  dir_to_df <- shiny::reactive({
     
     df_files <- data.frame(matrix(ncol = 2))
     colnames(df_files) <- c("user", "files")
     folder_list <- basename(list.dirs("Applications/"))
-    folder_list <- tail(folder_list, -1)
+    folder_list <- utils::tail(folder_list, -1)
     count <- 1
     for (folder in folder_list) {
       
@@ -1568,15 +1573,15 @@ values$Findings <- ''
         }
     }
     df_files <- df_files %>% 
-      arrange(user, files)
+      dplyr::arrange(user, files)
     df_files
   })
   
 ###
   
-  output$dir_list <- renderDT({
+  output$dir_list <- DT::renderDT({
     dir_tab <- dir_to_df()
-    dir_tab <- datatable(dir_tab, rownames = FALSE, class = "cell-border stripe",
+    dir_tab <- DT::datatable(dir_tab, rownames = FALSE, class = "cell-border stripe",
                               filter = list(position = 'top'),
                               extensions = list("Buttons" = NULL),
                               caption = htmltools::tags$caption(
@@ -1589,12 +1594,12 @@ values$Findings <- ''
                                 dom = "lfrtipB",
                                 buttons = c("csv", "excel", "copy", "print"),
                                 columnDefs = list(list(className = "dt-center", targets = "_all")),
-                                initComplete = JS(
+                                initComplete = DT::JS(
                                   "function(settings, json) {",
                                   "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
                                   "}"),
                                 rowsGroup = list(0))) %>%
-      formatStyle(columns = colnames(dir_tab), `font-size` = "18px")
+      DT::formatStyle(columns = colnames(dir_tab), `font-size` = "18px")
     
     path <- "DT_extension" # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
@@ -1607,143 +1612,148 @@ values$Findings <- ''
   
   ## save units for Cmax and AUC ----
   
-  observeEvent(input$save_units, {
+  shiny::observeEvent(input$save_units, {
     Data <- getData()
     Data[["CmaxUnit"]] <- input$cmax_unit
     Data[["AUCUnit"]] <- input$auc_unit
     saveRDS(Data,values$Application)
-    showNotification("saved", duration = 3)
+    shiny::showNotification("saved", duration = 3)
   })
   
-  five_space <- paste0(HTML('&nbsp;'), HTML('&nbsp;'), HTML('&nbsp;'),
-                       HTML('&nbsp;'), HTML('&nbsp;'))
+  five_space <- paste0(
+      htmltools::HTML("&nbsp;"),
+      htmltools::HTML("&nbsp;"),
+      htmltools::HTML("&nbsp;"),
+      htmltools::HTML("&nbsp;"),
+      htmltools::HTML("&nbsp;")
+  )
   ## start dose cmax and auc untis
-  output$start_cmax <- renderUI({
+  output$start_cmax <- shiny::renderUI({
     cmax <- paste0("Start Dose Cmax ", "(", input$cmax_unit, "):")
-    HTML(paste0(five_space, strong(cmax)))
+    htmltools::HTML(paste0(five_space, htmltools::strong(cmax)))
   })
   
-  output$start_auc <- renderUI({
+  output$start_auc <- shiny::renderUI({
     auc <- paste0("Start Dose AUC ", "(", input$auc_unit, "):")
-    HTML(paste0(five_space, strong(auc)))
+    htmltools::HTML(paste0(five_space, htmltools::strong(auc)))
   })
   
  ## MRHD dose cmax and auc unit
-  output$MRHD_cmax <- renderUI({
+  output$MRHD_cmax <- shiny::renderUI({
     cmax <- paste0("MRHD Dose Cmax ", "(", input$cmax_unit, "):")
-    HTML(paste0(five_space, strong(cmax)))
+    htmltools::HTML(paste0(five_space, htmltools::strong(cmax)))
   })
   
-  output$MRHD_auc <- renderUI({
+  output$MRHD_auc <- shiny::renderUI({
     auc <- paste0("MRHD Dose AUC ", "(", input$auc_unit, "):")
-    HTML(paste0(five_space, strong(auc)))
+    htmltools::HTML(paste0(five_space, htmltools::strong(auc)))
   })
   
   ## custom dose 
-  output$custom_cmax <- renderUI({
+  output$custom_cmax <- shiny::renderUI({
     cmax <- paste0("Custom Dose Cmax ", "(", input$cmax_unit, "):")
-    HTML(paste0(five_space, strong(cmax)))
+    htmltools::HTML(paste0(five_space, htmltools::strong(cmax)))
   })
   
-  output$custom_auc <- renderUI({
+  output$custom_auc <- shiny::renderUI({
     auc <- paste0("Custom Dose AUC ", "(", input$auc_unit, "):")
-    HTML(paste0(five_space, strong(auc)))
+    htmltools::HTML(paste0(five_space, htmltools::strong(auc)))
   })
   
 # clinical data modal function ----
   clinical_data_modal <- function() {
-     modalDialog(
+     shiny::modalDialog(
 		 size = "l",
 		 htmltools::h4("Edit Clinical Data"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
 		 htmltools::br(),
         
-         checkboxGroupInput(
+         shiny::checkboxGroupInput(
              "clinDosing", "Clinical Dosing:",
              clinDosingOptions
          ),
-         conditionalPanel(
+         shiny::conditionalPanel(
              "condition=input.MgKg==false",
-             numericInput("HumanWeight", "*Human Weight (kg):",
+             shiny::numericInput("HumanWeight", "*Human Weight (kg):",
                  value = 60, min = 0
              )
          ),
-         checkboxInput("MgKg", "Dosing in mg/kg?", value = F),
-         conditionalPanel(
+         shiny::checkboxInput("MgKg", "Dosing in mg/kg?", value = F),
+         shiny::conditionalPanel(
              condition = 'input.clinDosing.includes("Start Dose")',
              htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-             h4("Start Dose Information:"),
-             conditionalPanel(
+             htmltools::h4("Start Dose Information:"),
+             shiny::conditionalPanel(
                  condition = "input.MgKg==true",
-                 numericInput("StartDoseMgKg", "*Start Dose (mg/kg/day):",
+                 shiny::numericInput("StartDoseMgKg", "*Start Dose (mg/kg/day):",
                      value = NULL, min = 0
                  )
              ),
-             conditionalPanel(
+             shiny::conditionalPanel(
                  condition = "input.MgKg==false",
-                 numericInput("StartDose", "*Start Dose (mg/day):",
+                 shiny::numericInput("StartDose", "*Start Dose (mg/day):",
                      value = NULL, min = 0
                  )
              ),
-             uiOutput("start_cmax"),
-             numericInput("StartDoseCmax", NULL, value = NULL, min = 0),
-             uiOutput("start_auc"),
-             numericInput("StartDoseAUC", NULL, value = NULL, min = 0)
+             shiny::uiOutput("start_cmax"),
+             shiny::numericInput("StartDoseCmax", NULL, value = NULL, min = 0),
+             shiny::uiOutput("start_auc"),
+             shiny::numericInput("StartDoseAUC", NULL, value = NULL, min = 0)
          ),
-         conditionalPanel(
+         shiny::conditionalPanel(
              condition = 'input.clinDosing.includes("MRHD")',
             htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-             h4("MRHD Information:"),
-             conditionalPanel(
+             htmltools::h4("MRHD Information:"),
+             shiny::conditionalPanel(
                  condition = "input.MgKg==true",
-                 numericInput("MRHDMgKg", "*MRHD (mg/kg):",
+                 shiny::numericInput("MRHDMgKg", "*MRHD (mg/kg):",
                      value = NULL, min = 0
                  )
              ),
-             conditionalPanel(
+             shiny::conditionalPanel(
                  condition = "input.MgKg==false",
-                 numericInput("MRHD", "*MRHD (mg):", value = NULL, min = 0)
+                 shiny::numericInput("MRHD", "*MRHD (mg):", value = NULL, min = 0)
              ),
-             uiOutput("MRHD_cmax"),
-             numericInput("MRHDCmax", NULL, value = NULL, min = 0),
-             uiOutput("MRHD_auc"),
-             numericInput("MRHDAUC", NULL, value = NULL, min = 0)
+             shiny::uiOutput("MRHD_cmax"),
+             shiny::numericInput("MRHDCmax", NULL, value = NULL, min = 0),
+             shiny::uiOutput("MRHD_auc"),
+             shiny::numericInput("MRHDAUC", NULL, value = NULL, min = 0)
          ),
-         conditionalPanel(
+         shiny::conditionalPanel(
              condition = 'input.clinDosing.includes("Custom Dose")',
              htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-             h4("Custom Dose Information:"),
-             conditionalPanel(
+             htmltools::h4("Custom Dose Information:"),
+             shiny::conditionalPanel(
                  condition = "input.MgKg==true",
-                 numericInput("CustomDoseMgKg", "*Custom Dose (mg/kg):",
+                 shiny::numericInput("CustomDoseMgKg", "*Custom Dose (mg/kg):",
                      value = NULL, min = 0
                  )
              ),
-             conditionalPanel(
+             shiny::conditionalPanel(
                  condition = "input.MgKg==false",
-                 numericInput("CustomDose", "*Custom Dose (mg):",
+                 shiny::numericInput("CustomDose", "*Custom Dose (mg):",
                      value = NULL, min = 0
                  )
              ),
-             uiOutput("custom_cmax"),
-             numericInput("CustomDoseCmax", NULL, value = NULL, min = 0),
-             uiOutput("custom_auc"),
-             numericInput("CustomDoseAUC", NULL, value = NULL, min = 0)
+             shiny::uiOutput("custom_cmax"),
+             shiny::numericInput("CustomDoseCmax", NULL, value = NULL, min = 0),
+             shiny::uiOutput("custom_auc"),
+             shiny::numericInput("CustomDoseAUC", NULL, value = NULL, min = 0)
          ),
-         actionButton("saveClinicalInfo", "Save Clinical Information",
-             icon = icon("plus-circle"),
+         shiny::actionButton("saveClinicalInfo", "Save Clinical Information",
+             icon = shiny::icon("plus-circle"),
 			 style = "background-color: white;
             border: 2px solid #4CAF50;"
 
          ),
-         br(),
-		 br(),
-         footer = tagList(
-			tags$h4("* Indicates Required Fields ", align = "left"),
-             tags$h4("Please save the clinical data before hit the close button",
+         htmltools::br(),
+		 htmltools::br(),
+         footer = htmltools::tagList(
+			htmltools::tags$h4("* Indicates Required Fields ", align = "left"),
+             htmltools::tags$h4("Please save the clinical data before hit the close button",
                  style = "color:#E31616;"
              ),
-             modalButton("Close")
+             shiny::modalButton("Close")
          )
      )
  }
@@ -1751,15 +1761,15 @@ values$Findings <- ''
  #  call clinical data Modal function ---- 
  
   
-   observeEvent(eventExpr = input$edit_clinical, {
-    showModal(clinical_data_modal())
+   shiny::observeEvent(eventExpr = input$edit_clinical, {
+    shiny::showModal(clinical_data_modal())
 	 Data <- getData()
 
     # update clinical information
     clinData <- Data[['Clinical Information']]
     if (clinData$MgKg==F) {
-      updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
-    } else { updateCheckboxInput(session, "MgKg", value = T)}
+      shiny::updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
+    } else { shiny::updateCheckboxInput(session, "MgKg", value = T)}
     
     clinDosing <- NULL
     for (dose in clinDosingOptions) {
@@ -1769,17 +1779,17 @@ values$Findings <- ''
         clinDosing <- c(clinDosing,dose)
       }
     }
-    updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
+    shiny::updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
     
     for (dose in clinDosing) {
       doseName <- gsub(' ','',dose)
       if (clinData$MgKg==F) {
-        updateNumericInput(session,doseName,value = clinData[[dose]][[doseName]])
+        shiny::updateNumericInput(session,doseName,value = clinData[[dose]][[doseName]])
       } else {
-        updateNumericInput(session,paste0(doseName,'MgKg'),value = clinData[[dose]][[paste0(doseName,'MgKg')]])
+        shiny::updateNumericInput(session,paste0(doseName,'MgKg'),value = clinData[[dose]][[paste0(doseName,'MgKg')]])
       }
-      updateNumericInput(session,paste0(doseName,'Cmax'),value = clinData[[dose]][[paste0(doseName,'Cmax')]])
-      updateNumericInput(session,paste0(doseName,'AUC'),value = clinData[[dose]][[paste0(doseName,'AUC')]])
+      shiny::updateNumericInput(session,paste0(doseName,'Cmax'),value = clinData[[dose]][[paste0(doseName,'Cmax')]])
+      shiny::updateNumericInput(session,paste0(doseName,'AUC'),value = clinData[[dose]][[paste0(doseName,'AUC')]])
     }
   })
   
@@ -1788,7 +1798,7 @@ values$Findings <- ''
    #### get studyID from IND selection
   
 
-  get_studyid <- reactive({
+  get_studyid <- shiny::reactive({
       # req(input$ind_id)
       df <- ind_table
       df <- df[IND_num == input$ind_id, studyID]
@@ -1798,9 +1808,9 @@ values$Findings <- ''
   #### get information about studyid
   
   studyid_info <- shiny::reactive({
-	  req(input$ind_id)
+	  shiny::req(input$ind_id)
 	  st_id <- get_studyid()
-	  st_id_df <- RSQLite::dbGetQuery(conn=conn,
+	  st_id_df <- DBI::dbGetQuery(conn=conn,
 	'SELECT STUDYID,  TSPARMCD,TSPARM, TSVAL 
 FROM TS WHERE 
 STUDYID IN (:x)
@@ -1820,7 +1830,7 @@ TSPARMCD IN ("SDESIGN",
   
   #### studyid options
   
-  studyid_option <- reactive({
+  studyid_option <- shiny::reactive({
 	  df <- studyid_info()
 
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
@@ -1840,7 +1850,7 @@ output$studyid_ui  <- shiny::renderUI({
 	 
 	 shiny::selectizeInput(
             inputId = "study_id",
-            label = tags$div(HTML('<i class="fa fa-database"
+            label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-database"
            style = "color:#000000;font-size:18px;"></i> Select StudyID')),
             selected = NULL,
             # choices =  setNames(st_id_option, paste0("\U25FC ", st_id_option))
@@ -1893,7 +1903,7 @@ output$studyid_ui  <- shiny::renderUI({
   # update from database
   get_sex_from_studyid <- shiny::reactive({
       st_selected <- studyid_selected()
-      df <- RSQLite::dbGetQuery(
+      df <- DBI::dbGetQuery(
           conn = conn,
           "SELECT DISTINCT SEX FROM DM WHERE STUDYID==:x",
           params = list(x = st_selected)
@@ -1922,7 +1932,7 @@ output$studyid_ui  <- shiny::renderUI({
 	  st_selected <- studyid_selected()
 	  df <- studyid_info()
 	  df_species <- df[STUDYID==st_selected, ][TSPARMCD=="SPECIES"][!duplicated(STUDYID)][, TSVAL]
-	  df_species <- stringr::str_to_title(df_species)
+	  df_species <- tools::toTitleCase(tolower(df_species))
 	  df_duration <- df[STUDYID==st_selected, ][TSPARMCD=="STITLE"][!duplicated(STUDYID)][,  TSVAL]
 
 
@@ -1958,8 +1968,8 @@ output$studyid_ui  <- shiny::renderUI({
 
 data_modal <- function() {
 
-	tags$div(id = "nonclinicalModal",
-    modalDialog(
+	htmltools::tags$div(id = "nonclinicalModal",
+    shiny::modalDialog(
 		
 		
 		size = "l",
@@ -1967,26 +1977,26 @@ data_modal <- function() {
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
 		htmltools::br(),
         
-        uiOutput("selectStudy"),
-        br(),
-        actionButton("saveStudy", "Save Study",
-            icon = icon("plus-circle"),
+        shiny::uiOutput("selectStudy"),
+        htmltools::br(),
+        shiny::actionButton("saveStudy", "Save Study",
+            icon = shiny::icon("plus-circle"),
             style = "background-color: white;
             border: 2px solid #4CAF50;"
         ),
-        actionButton("deleteStudy", "Delete Study",
-            icon = icon("minus-circle"),
+        shiny::actionButton("deleteStudy", "Delete Study",
+            icon = shiny::icon("minus-circle"),
             style = "background-color: white;
                     border: 2px solid #FF0000;"
         ),
-        br(),
-        br(),
+        htmltools::br(),
+        htmltools::br(),
         htmltools::tags$hr(style = "border-top: 3px solid#1e9acd;"),
 		
         shiny::selectizeInput(
             inputId = "ind_id",
-            label = tags$div(
-                HTML('<i class="fa fa-folder-open"
+            label = htmltools::tags$div(
+                htmltools::HTML('<i class="fa fa-folder-open"
              style = "color:#000000;font-size:18px;"></i> Select IND')
             ),
             selected = NULL,
@@ -1996,39 +2006,39 @@ data_modal <- function() {
             # options = list(maxOptions = 2500)
         ),
 		
-        br(),
-        br(),
+        htmltools::br(),
+        htmltools::br(),
 		shiny::uiOutput("studyid_ui"),
-        br(),
-        br(),
-        selectInput("Species",
-            label = tags$div(HTML('<i class="fa fa-dog"
+        htmltools::br(),
+        htmltools::br(),
+        shiny::selectInput("Species",
+            label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-dog"
             style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
             choices = names(speciesConversion)
         ),
-        br(),
-        br(),
+        htmltools::br(),
+        htmltools::br(),
 		shiny::checkboxGroupInput("which_sex",
-            label = tags$div(HTML('<i class="fa fa-venus"
+            label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-venus"
             style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
             choices = choices_sex,
 			selected = choices_sex,
 			inline  = TRUE
             # choices = c("ALL", "M", "F")
         ),
-        textAreaInput("Duration", "*Study Duration/Description:",
+        shiny::textAreaInput("Duration", "*Study Duration/Description:",
          height = "100px"),
-        h4("Study Name:"),
-        verbatimTextOutput("studyTitle"),
-        hr(style = "border-top: 3px solid#1e9acd;"),
-        uiOutput("choose_auc"),
-		uiOutput("Choose_visit_day"),
-		actionButton("get_from_db", 
+        htmltools::h4("Study Name:"),
+        shiny::verbatimTextOutput("studyTitle"),
+        htmltools::hr(style = "border-top: 3px solid#1e9acd;"),
+        shiny::uiOutput("choose_auc"),
+		shiny::uiOutput("Choose_visit_day"),
+		shiny::actionButton("get_from_db", 
 		 "Click me to populate dose and pk from  database", 
-		icon  = icon("mouse-pointer"),
+		icon  = shiny::icon("mouse-pointer"),
 		 style = "background-color:skyblue"),
-		 br(),
-		 br(),
+		 htmltools::br(),
+		 htmltools::br(),
         # checkboxInput(
         #     inputId = "get_from_database",
         #     label = "Populate from Database", value = FALSE
@@ -2040,52 +2050,52 @@ data_modal <- function() {
         #   border: 2px solid #4CAF50;"),
 
 
-        numericInput("nDoses",
-            label = tags$div(HTML('<i class="fa fa-syringe"
+        shiny::numericInput("nDoses",
+            label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-syringe"
 			style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
             value = 1, step = 1, min = 1
         ),
         # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
-        uiOutput("Doses"),
-        hr(style = "border-top: 3px solid#1e9acd;"),
-        numericInput("nFindings",
-            label = tags$div(HTML('<i class="fa fa-microscope"
+        shiny::uiOutput("Doses"),
+        htmltools::hr(style = "border-top: 3px solid#1e9acd;"),
+        shiny::numericInput("nFindings",
+            label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-microscope"
 			style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
             value = 1, step = 1, min = 1
         ),
-        uiOutput("Findings"),
+        shiny::uiOutput("Findings"),
         htmltools::tags$hr(style = "border-top: 2px solid#1e9acd;"),
-        checkboxInput("notes", "Notes for Study?", value = FALSE),
-        uiOutput("study_note"),
-        actionButton("saveStudy_02", "Save Study",
-            icon = icon("plus-circle"),
+        shiny::checkboxInput("notes", "Notes for Study?", value = FALSE),
+        shiny::uiOutput("study_note"),
+        shiny::actionButton("saveStudy_02", "Save Study",
+            icon = shiny::icon("plus-circle"),
             style = "
                    background-color: white;
                    border: 2px solid #4CAF50;"
         ),
-        footer = tagList(
-            tags$h4("Please save the study before close",
+        footer = htmltools::tagList(
+            htmltools::tags$h4("Please save the study before close",
                 style = "color:#E31616;"
             ),
-            modalButton("Close")
+            shiny::modalButton("Close")
         )
     )
 	)
 }
   
-  observeEvent(eventExpr = input$edit_nonclinical, {
-      showModal(
+  shiny::observeEvent(eventExpr = input$edit_nonclinical, {
+      shiny::showModal(
           data_modal()
       )
   })
 
-  observeEvent(input$edit_nonclinical, {
-	  req(input$selectData)
+  shiny::observeEvent(input$edit_nonclinical, {
+	  shiny::req(input$selectData)
       input$selectData
       Data <- getData()
       studyList <- names(Data[["Nonclinical Information"]])
-	updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
-	updateSelectizeInput(session, inputId =  "ind_id",
+	shiny::updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
+	shiny::updateSelectizeInput(session, inputId =  "ind_id",
 	                     choices = c(Choose = "", ind_number_list), server = TRUE)
 
   })
@@ -2099,7 +2109,7 @@ data_modal <- function() {
   output$choose_auc <- shiny::renderUI({
 	  study <- studyid_selected()
     
-    auc_list <- RSQLite::dbGetQuery(conn=conn,
+    auc_list <- DBI::dbGetQuery(conn=conn,
 	 'SELECT DISTINCT PPTESTCD,PPTEST FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
 	 params=list(x=study))
   
@@ -2110,13 +2120,13 @@ data_modal <- function() {
 		shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
                           selected= "AUCLST",
-                          choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
+                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option))
 
 	} else {
     
     shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
-                          choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
+                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option))
 	}
 
 	# if(length(auc_list$PPTESTCD) < 1) {
@@ -2143,7 +2153,7 @@ data_modal <- function() {
   #### group by visit day ----
 output$Choose_visit_day <- shiny::renderUI({
     study <- studyid_selected()
-    pp_df <- RSQLite::dbGetQuery(
+    pp_df <- DBI::dbGetQuery(
         conn = conn,
         "SELECT * FROM PP WHERE STUDYID=:x",
         params = list(x = study)
@@ -2178,9 +2188,9 @@ output$Choose_visit_day <- shiny::renderUI({
 help_menu_item <- function() {
     shinydashboard::menuItem(
         "Questions/Feedback",
-        menuSubItem(
+        shinydashboard::menuSubItem(
             text = "Email for help",
-            icon = icon("envelope-square"),
+            icon = shiny::icon("envelope-square"),
             href = "mailto:kevin.snyder@fda.hhs.gov"
         )
     )
@@ -2188,18 +2198,18 @@ help_menu_item <- function() {
   
   # output$menu function -----
   
-  output$menu <- renderMenu({
+  output$menu <- shinydashboard::renderMenu({
 
     if (!is.null(input$selectData)) {
       if (input$selectData=='blankData.rds') {
-        sidebarMenu(id='menu',
-                    menuItem('Data Selection',icon=icon('database'),startExpanded = T,
-                             uiOutput('selectData'),
-                             conditionalPanel('input.selectData=="blankData.rds"',
-                                              textInput('newApplication','Enter New Application Number:')
+        shinydashboard::sidebarMenu(id='menu',
+                    shinydashboard::menuItem('Data Selection',icon=shiny::icon('database'),startExpanded = T,
+                             shiny::uiOutput('selectData'),
+                             shiny::conditionalPanel('input.selectData=="blankData.rds"',
+                                              shiny::textInput('newApplication','Enter New Application Number:')
                              ),
-                             actionButton('saveData','Submit',icon=icon('plus-circle')),
-                             br()
+                             shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
+                             htmltools::br()
                     ),
                     # hr(),
 					help_menu_item()
@@ -2207,18 +2217,18 @@ help_menu_item <- function() {
                     #          href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       } else {
-        sidebarMenu(id='menu',
-                    menuItem('Data Selection',icon=icon('database'),startExpanded = T,
-                             uiOutput('selectData'),
-                             conditionalPanel('input.selectData=="blankData.rds"',
-                                              textInput('newApplication','Enter New Application Number:')
+        shinydashboard::sidebarMenu(id='menu',
+                    shinydashboard::menuItem('Data Selection',icon=shiny::icon('database'),startExpanded = T,
+                             shiny::uiOutput('selectData'),
+                             shiny::conditionalPanel('input.selectData=="blankData.rds"',
+                                              shiny::textInput('newApplication','Enter New Application Number:')
                              ),
-                             actionButton('deleteData','Delete',icon=icon('minus-circle')),
-                             br()
+                             shiny::actionButton('deleteData','Delete',icon=shiny::icon('minus-circle')),
+                             htmltools::br()
                     ),
                     # hr(),
-                    uiOutput('studyName'),
-                    br(),
+                    shiny::uiOutput('studyName'),
+                    htmltools::br(),
                    
                     
                     
@@ -2228,40 +2238,40 @@ help_menu_item <- function() {
                             
                     # ),
 
-					actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")  ,                 
+					shiny::actionButton(inputId = "edit_clinical", label = "Edit Clinical  Data")  ,                 
                     # menuItem('Nonclinical Data',icon=icon('flask'),
 					# tabName = 'Nonclinical Info', startExpanded = TRUE,
                              
                              
                     # ),
-					br(),
-					actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study"),
+					htmltools::br(),
+					shiny::actionButton(inputId = "edit_nonclinical", label = "Edit Nonclinical Study"),
 
 
-                    br(),
+                    htmltools::br(),
 
-					 menuItem("Units for Cmax/AUC", icon = icon("balance-scale"),
-                             textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
-                             textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
-                             actionButton('save_units','Save Units',icon=icon('plus-circle')),
-                             br()),
+					 shinydashboard::menuItem("Units for Cmax/AUC", icon = shiny::icon("balance-scale"),
+                             shiny::textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
+                             shiny::textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
+                             shiny::actionButton('save_units','Save Units',icon= shiny::icon('plus-circle')),
+                             htmltools::br()),
                     
-              br(),
+              htmltools::br(),
 			  help_menu_item()
             #   menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       }
     } else {
-      sidebarMenu(id='menu',
-                  menuItem('Data Selection',icon=icon('database'),startExpanded = T,
-                           uiOutput('selectData'),
-                           conditionalPanel('input.selectData=="blankData.rds"',
-                                            textInput('newApplication','Enter New Application Number:')
+      shinydashboard::sidebarMenu(id='menu',
+                  shinydashboard::menuItem('Data Selection',icon= shiny::icon('database'),startExpanded = T,
+                           shiny::uiOutput('selectData'),
+                           shiny::conditionalPanel('input.selectData=="blankData.rds"',
+                                            shiny::textInput('newApplication','Enter New Application Number:')
                            ),
-                           actionButton('saveData','Submit',icon=icon('plus-circle')),
-                           br()
+                           actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
+                           htmltools::br()
                   ),
-                  hr(),
+                  htmltools::hr(),
 				  help_menu_item()
                 #   menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
                   # tags$a(href='mailto:kevin.snyder@fda.hhs.gov?','Questions/Feedback')
@@ -2269,8 +2279,9 @@ help_menu_item <- function() {
     }
   })
   
-    output$renderFigure <- renderUI({
-    withSpinner(girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
+    output$renderFigure <- shiny::renderUI({
+    shinycssloaders::withSpinner(
+		ggiraph::girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
   })
     
     # runcodeServer()
@@ -2278,17 +2289,17 @@ help_menu_item <- function() {
 
 
 # ui function ------
-ui <- dashboardPage( skin = "blue",
-  dashboardHeader(title="Nonclinical Summary Tool",titleWidth = 250),
-  dashboardSidebar(width = 350,
-                   sidebarMenuOutput('menu'),
-                   tags$head(
-                     tags$style(
-                       HTML(".sidebar {height: 94vh; overflow-y: auto;}")
+ui <- shinydashboard::dashboardPage( skin = "blue",
+  shinydashboard::dashboardHeader(title="Nonclinical Summary Tool",titleWidth = 250),
+  shinydashboard::dashboardSidebar(width = 350,
+                   shinydashboard::sidebarMenuOutput('menu'),
+                   htmltools::ags$head(
+                     htmltools::tags$style(
+                       htmltools::HTML(".sidebar {height: 94vh; overflow-y: auto;}")
                      )
                    )
   ),
-  dashboardBody(
+  shinydashboard::dashboardBody(
 	  htmltools::includeCSS("www/modal_dialog.css"),
 	  htmltools::includeScript("www/button.js"),
 	#   tags$head(tags$script(src = "button.js")),
@@ -2298,117 +2309,117 @@ ui <- dashboardPage( skin = "blue",
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
 
-    fluidRow(
-      column(2,
-             uiOutput('humanDosing')
+    shiny::fluidRow(
+      shiny::column(2,
+             shiny::uiOutput('humanDosing')
       ),
-      column(2,
-             conditionalPanel(
+      shiny::column(2,
+             shiny::conditionalPanel(
                'input.clinDosing != null && input.clinDosing != ""',
-               selectInput('SMbasis','Base Exposure Margin on:',c('HED','Cmax','AUC'))
+               shiny::selectInput('SMbasis','Base Exposure Margin on:',c('HED','Cmax','AUC'))
              )
       ),
-      column(4,
-             uiOutput('displayStudies')
+      shiny::column(4,
+             shiny::uiOutput('displayStudies')
       ),
       
-      column(4, 
-             uiOutput('displayFindings'))
+      shiny::column(4, 
+             shiny::iOutput('displayFindings'))
     ),
-    conditionalPanel(
+    shiny::conditionalPanel(
       condition='input.selectData!="blankData.rds" && input.clinDosing != null && input.clinDosing != ""',
-      tabsetPanel(
-        tabPanel('Figure',
+      shiny::tabsetPanel(
+        shiny::tabPanel('Figure',
                  
-                 fluidRow(
+                 shiny::fluidRow(
                    
-                   column(2,
-                          actionButton('refreshPlot','Refresh Plot')),
-                  column(2, 
-                         selectInput("NOAEL_choices", "Filter NOAEL:",
+                   shiny::column(2,
+                          shiny::actionButton('refreshPlot','Refresh Plot')),
+                  shiny::column(2, 
+                         shiny::selectInput("NOAEL_choices", "Filter NOAEL:",
 						  choices = c("ALL", "Less than or equal to NOAEL", "Greater than NOAEL"),
                              selected = "ALL")),
-                  column(2, 
-                         radioButtons("dose_sm", "Display Dose/Exposure Margin/Notes:",
+                  shiny::column(2, 
+                         shiny::radioButtons("dose_sm", "Display Dose/Exposure Margin/Notes:",
 						 choices = list(
 						"Show Dose Only"=1,
 						 "Show Dose with Exposure Margin"= 2,
 						 "Show Notes" =3))),
-                 column(3, 
-                        sliderInput("plotheight", "Adjust Plot Height:",
+                 shiny::column(3, 
+                        shiny::sliderInput("plotheight", "Adjust Plot Height:",
 						 min = 1, max = 15, value = 6)),
-				column(2,
-				sliderInput("text_width", "Adjust Text", 
+				shiny::column(2,
+				shiny::sliderInput("text_width", "Adjust Text", 
 				min = 10, max = 80, value = 60 ))),
-                 br(),
+                 htmltools::br(),
                  #withSpinner(girafeOutput('figure')),
-				 uiOutput('renderFigure'),
-                 br(),
-                 hr(style = "border-top: 1px dashed black"),
-                 fluidRow(
-                   column(9,
+				 shiny::uiOutput('renderFigure'),
+                 htmltools::br(),
+                 htmltools::hr(style = "border-top: 1px dashed black"),
+                 shiny::fluidRow(
+                   shiny::column(9,
                           
-                          tableOutput("table_note"),
-                          h4("Click on button below to export the table in a docx file"),
+                          shiny::tableOutput("table_note"),
+                          htmltools::h4("Click on button below to export the table in a docx file"),
                           
-                          downloadButton("down_notes", "Docx file download")
+                          shiny::downloadButton("down_notes", "Docx file download")
                           ))),
         
-      tabPanel("Clinical Relevance Table",
+      shiny::tabPanel("Clinical Relevance Table",
                DT::dataTableOutput('table_01'),
-               br(),
-               hr(style = "border-top: 1px dashed black"),
-               h4("Click on button below to export the table in a docx file"),
-               downloadButton("down_01_doc", "Docx file download"),
-               br()
+               htmltools::br(),
+               htmltools::hr(style = "border-top: 1px dashed black"),
+               htmltools::h4("Click on button below to export the table in a docx file"),
+               shiny::downloadButton("down_01_doc", "Docx file download"),
+               htmltools::br()
       ),
-      tabPanel("Key Findings Table",
+      shiny::tabPanel("Key Findings Table",
                DT::dataTableOutput('table_02'),
-               br(),
-               hr(style = "border-top: 1px dashed black"),
-               h4("Click on button below to export the table in a docx file"),
-               downloadButton("down_02_doc", "Docx file download"),
-               br()
+               htmltools::br(),
+               htmltools::hr(style = "border-top: 1px dashed black"),
+               htmltools::h4("Click on button below to export the table in a docx file"),
+               shiny::downloadButton("down_02_doc", "Docx file download"),
+               htmltools::br()
       ),
-      tabPanel("Safety Margin Table",
+      shiny::tabPanel("Safety Margin Table",
                DT::dataTableOutput('table_03'),
-               br(),
-               hr(style = "border-top: 1px dashed black"),
-               h4("Click on button below to export the table in a docx file"),
-               downloadButton("down_03_doc", "Docx file download"),
-               br()
+               htmltools::br(),
+               htmltools::hr(style = "border-top: 1px dashed black"),
+               htmltools::h4("Click on button below to export the table in a docx file"),
+               shiny::downloadButton("down_03_doc", "Docx file download"),
+               htmltools::br()
       ),
-      tabPanel("All Table", 
-               br(),
-               p("All three table can be downloaded in single docx file. Click button below to download."),
-               downloadButton("down_all", "Docx file download")),
+      shiny::tabPanel("All Table", 
+               htmltools::br(),
+               htmltools::p("All three table can be downloaded in single docx file. Click button below to download."),
+               shiny::downloadButton("down_all", "Docx file download")),
       
-      tabPanel("Download Application",
-               br(),
-               h4("Download Application in RDS format:"),
-               br(),
-               p("Application can be downloaded in RDS format to share with others"),
+      shiny::tabPanel("Download Application",
+               htmltools::br(),
+               htmltools::h4("Download Application in RDS format:"),
+               htmltools::br(),
+               htmltools::p("Application can be downloaded in RDS format to share with others"),
                
-               uiOutput("download_rds"),
-               downloadButton("down_btn", "Download Application"),
-               br(),
-               hr(style = "border-top: 1px dashed black"),
+               shiny::uiOutput("download_rds"),
+               shiny::downloadButton("down_btn", "Download Application"),
+               htmltools::br(),
+               htmltools::hr(style = "border-top: 1px dashed black"),
                
-               h4("Upload Application in RDS format:"),
-               fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
-      tabPanel(uiOutput("Admin_toggle"),
-               br(),
-               passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
-               uiOutput("download_tar_file"),
-               br(),
-               hr(),
-               br(),
-               uiOutput("show_file_table"))))))
+               htmltools::h4("Upload Application in RDS format:"),
+               shiny::fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
+      shiny::tabPanel(uiOutput("Admin_toggle"),
+               htmltools::br(),
+               shiny::passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
+               shiny::uiOutput("download_tar_file"),
+               htmltools::br(),
+               htmltools::hr(),
+               htmltools::br(),
+               shiny::uiOutput("show_file_table"))))))
 
 
 
 # app running function ----
 
-shinyApp(ui = ui, server = server)
+shiny::shinyApp(ui = ui, server = server)
 
 }

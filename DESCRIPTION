@@ -13,5 +13,6 @@ RoxygenNote: 7.2.1
 Imports: 
     data.table,
     ggplot2,
+    htmltools,
     shiny,
     shinydashboard
