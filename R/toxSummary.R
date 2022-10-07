@@ -9,35 +9,51 @@
 # )
 
 
-library("shiny")
-library("ggplot2")
-library("stringr")
-library("dplyr")
-library("htmltools")
-library("shinydashboard")
-library("shinycssloaders")
-library("RColorBrewer")
-library("DT")
-library("plotly")
-library("officer")
-library("flextable")
-library("ggiraph")
-library("patchwork")
-library("shinyjs")
-library("data.table")
-library("RSQLite")
-library("ini")
+# library("shiny")
+# library("ggplot2")
+# library("stringr")
+# library("dplyr")
+# library("htmltools")
+# library("shinydashboard")
+# library("shinycssloaders")
+# library("RColorBrewer")
+# library("DT")
+# library("plotly")
+# library("officer")
+# library("flextable")
+# library("ggiraph")
+# library("patchwork")
+# library("shinyjs")
+# library("data.table")
+# library("RSQLite")
+# library("ini")
 
-source("utils.R")
-# source("connect_fda_database.R")
-source("connect_database.R")
-source("create_blank_data.R")
-source("get_dose_pp.R")
-
-######
+# source("utils.R")
+# source("connect_database.R")
+# source("create_blank_data.R")
+# source("get_dose_pp.R")
 
 
-# Species Conversion ----
+# Server function started here (selectData) ----
+
+toxsummary_app <- function(database_path, save_file_path = NULL, where_to_run= "local") {
+
+ if (is.null(save_file_path)) {
+     save_file_path <- getwd()
+ } else {
+     save_file_path <- save_file_path
+ }
+ paths <- get_paths(
+     database_path = database_path,
+     save_file_path = save_file_path, where_to_run = where_to_run
+ )
+
+ conn <- DBI::dbConnect(drv = RSQLite::SQLite(), paths$database_path)
+
+
+server <- function(input, output, session) {
+
+	# Species Conversion ----
 
 speciesConversion <- c(6.2,1.8,3.1,3.1
                        ,12.3,1.1,4.6,7.4)
@@ -51,14 +67,6 @@ choices_sex <- c("M", "F")
 names(choices_sex) <- choices_sex
 choices_sex <- sort(choices_sex)
 ########
-
-
-
-
-
-# Server function started here (selectData) ----
-
-server <- function(input, output, session) {
 
 values <- reactiveValues()
 values$Application <- NULL
@@ -2402,3 +2410,5 @@ ui <- dashboardPage( skin = "blue",
 # app running function ----
 
 shinyApp(ui = ui, server = server)
+
+}
