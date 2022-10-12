@@ -114,12 +114,12 @@ clin_data <- function(Data_rds) {
 
 ####
 addUIDep <- function(x) {
-    jqueryUIDep <- htmlDependency("jqueryui", "1.10.4",
+    jqueryUIDep <- htmltools::htmlDependency("jqueryui", "1.10.4",
         c(href = "shared/jqueryui/1.10.4"),
         script = "jquery-ui.min.js",
         stylesheet = "jquery-ui.min.css"
     )
-    attachDependencies(x, c(htmlDependencies(x), list(jqueryUIDep)))
+    htmltools::attachDependencies(x, c(htmltools::htmlDependencies(x), list(jqueryUIDep)))
 }
 
 ## significant figure

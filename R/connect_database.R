@@ -20,4 +20,4 @@ ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
 
 ### extract studyid from database ----
 
-conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
+

@@ -22,11 +22,11 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   visit_day <- as.integer(visit_day)
   }
   print(studyid)
-  studyid_list_all <- RSQLite::dbGetQuery(conn = conn,
+  studyid_list_all <- DBI::dbGetQuery(conn = conn,
   'SELECT DISTINCT STUDYID FROM TX')
-  studyid_list_pp <- RSQLite::dbGetQuery(conn = conn,
+  studyid_list_pp <- DBI::dbGetQuery(conn = conn,
   'SELECT DISTINCT STUDYID FROM PP')
-  testcode_list_pp <- RSQLite::dbGetQuery(conn = conn,
+  testcode_list_pp <- DBI::dbGetQuery(conn = conn,
   'SELECT DISTINCT PPTESTCD FROM PP WHERE STUDYID==:x',
   params = list(x = studyid))
 
@@ -48,12 +48,12 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   }
 
 
-  pp_domain <- RSQLite::dbGetQuery(conn = conn,
+  pp_domain <- DBI::dbGetQuery(conn = conn,
   'SELECT * FROM PP WHERE STUDYID==:x AND PPTESTCD IN ($CMAX, $AUC)',
   params = list(x = studyid, CMAX = "CMAX", AUC = pk_param))
 
   # get the dose information
-  dose <- RSQLite::dbGetQuery(conn=conn,
+  dose <- DBI::dbGetQuery(conn=conn,
   'SELECT TX.STUDYID, TX.TXPARMCD, TX.TXVAL, TX.SETCD,
   DM.USUBJID, DM.SEX FROM TX INNER JOIN DM 
   ON (TX.STUDYID=DM.STUDYID AND TX.SETCD=DM.SETCD)
@@ -110,13 +110,13 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
 
   } else if (nrow(pp_domain) == sum(pp_domain$USUBJID == "")) {
 	  print("second condition- line 94")
-    pooldef_list <- RSQLite::dbGetQuery(conn = conn,
+    pooldef_list <- DBI::dbGetQuery(conn = conn,
 	 'SELECT DISTINCT STUDYID FROM POOLDEF')
 
     if (studyid %ni% pooldef_list$STUDYID) {
       stop("USUBJID in PP domain empty and this study does not have POOLDEF domain to merge with PP domain")
     }
-    pooldef <- RSQLite::dbGetQuery(conn = conn,
+    pooldef <- DBI::dbGetQuery(conn = conn,
 	 'SELECT * FROM POOLDEF WHERE STUDYID==:x',
 	  params = list(x=studyid))
     pooldef <- data.table::as.data.table(pooldef)
