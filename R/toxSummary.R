@@ -1,38 +1,17 @@
 
-# libraries
-# if (!require("pacman")) install.packages("pacman")
-# pacman::p_load(
-#     shiny, ggplot2, stringr, htmltools,
-#     shinydashboard, shinycssloaders,
-#     RColorBrewer, DT, plotly, officer, flextable,
-#     ggiraph, patchwork, shinyjs, data.table, RSQLite,ini
-# )
 
 
-# library("shiny")
-# library("ggplot2")
-# library("stringr")
-# library("dplyr")
-# library("htmltools")
-# library("shinydashboard")
-# library("shinycssloaders")
-# library("RColorBrewer")
-# library("DT")
-# library("plotly")
-# library("officer")
-# library("flextable")
-# library("ggiraph")
-# library("patchwork")
-# library("shinyjs")
-# library("data.table")
-# library("RSQLite")
-# library("ini")
 
-# source("utils.R")
-# source("connect_database.R")
-# source("create_blank_data.R")
-# source("get_dose_pp.R")
 
+
+
+#' @importFrom data.table .N
+#' @importFrom data.table .
+#' @importFrom data.table .SD
+#' @importFrom data.table %like%
+#' @importFrom data.table :=
+#' @importFrom stats na.omit
+#' @importFrom magrittr %>%
 
 
 
