@@ -36,7 +36,8 @@
 
 
 
-toxsummary_app <- function(database_path, save_file_path = NULL, where_to_run= "local") {
+toxsummary_app <- function(database_path, studyid_file,
+ save_file_path = NULL, where_to_run= "local") {
 
  if (is.null(save_file_path)) {
      save_file_path <- getwd()
@@ -49,6 +50,24 @@ toxsummary_app <- function(database_path, save_file_path = NULL, where_to_run= "
  )
 
  conn <- DBI::dbConnect(drv = RSQLite::SQLite(), paths$database_path)
+
+
+## study id file
+# study id file should a csv with IND number and studyid
+ col_name <- c(
+    "application_type",
+    "IND_num",
+    "studyID")
+
+
+  ind_table <- data.table::fread(studyid_file,
+    col.names = col_name)
+
+    # ind_table <- ind_table[application_type == "IND", c("IND_num", "studyID")]
+# ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
+ind_number_list <- ind_table$IND_num
+# ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
+
 
 # Server function started here (selectData) ----
 server <- function(input, output, session) {
@@ -2293,7 +2312,7 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
   shinydashboard::dashboardHeader(title="Nonclinical Summary Tool",titleWidth = 250),
   shinydashboard::dashboardSidebar(width = 350,
                    shinydashboard::sidebarMenuOutput('menu'),
-                   htmltools::ags$head(
+                   htmltools::tags$head(
                      htmltools::tags$style(
                        htmltools::HTML(".sidebar {height: 94vh; overflow-y: auto;}")
                      )
@@ -2324,7 +2343,7 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
       ),
       
       shiny::column(4, 
-             shiny::iOutput('displayFindings'))
+             shiny::uiOutput('displayFindings'))
     ),
     shiny::conditionalPanel(
       condition='input.selectData!="blankData.rds" && input.clinDosing != null && input.clinDosing != ""',

@@ -3,8 +3,8 @@ Title: Visualize and Summarize Nonclinical Study Results
 Version: 0.0.0.9000
 Authors@R:
  c(
-    person("Yousuf", "Ali", , "md.ali@fda.hhs.gov", role = c("aut", "cre"))
-    person("Kevin", "Snyder", , "kevin.snyder@fda.hhs.gov", role = c("aut")))
+    person("Yousuf", "Ali", email=  "md.ali@fda.hhs.gov", role = c("cre", "aut")),
+    person("Kevin", "Snyder", email= "kevin.snyder@fda.hhs.gov", role ="aut"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8

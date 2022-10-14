@@ -18,3 +18,4 @@
 ^studyid_species_sex_metadata\.R$
 ^others$
 ^my_data_fda$
+^connect_database\.R$
