@@ -19,3 +19,5 @@
 ^others$
 ^my_data_fda$
 ^connect_database\.R$
+^check\.log$
+^test_data$

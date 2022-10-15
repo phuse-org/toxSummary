@@ -12,7 +12,18 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     data.table,
+    DBI,
+    dplyr,
+    DT,
+    flextable,
+    ggiraph,
     ggplot2,
     htmltools,
+    magrittr,
+    officer,
+    patchwork,
+    RSQLite,
     shiny,
-    shinydashboard
+    shinycssloaders,
+    shinydashboard,
+    stringr
