@@ -1,18 +1,7 @@
 
 # function to get dose and Pharmacokinetics parameter for a specific study
-# library(DBI)
-# library(data.table)
 
-#' Title
-#'
-#' @param db 
-#' @param studyid 
-#' @param pk_param 
-#'
-#' @return
-#' @export
-#'
-#' @examples
+
 get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, visit_day=NULL){
   '%ni%' <- Negate('%in%')
   studyid <- as.character(studyid)
