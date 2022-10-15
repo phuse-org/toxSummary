@@ -21,3 +21,5 @@
 ^connect_database\.R$
 ^check\.log$
 ^test_data$
+^app\.R$
+^data-raw$
