@@ -6,12 +6,12 @@
 
 
 #' @importFrom data.table .N
-#' @importFrom data.table .
 #' @importFrom data.table .SD
 #' @importFrom data.table %like%
 #' @importFrom data.table :=
 #' @importFrom stats na.omit
 #' @importFrom magrittr %>%
+#' @importFrom utils tar
 
 
 
@@ -46,6 +46,11 @@ toxsummary_app <- function(database_path, studyid_file,
 # ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
 ind_number_list <- ind_table$IND_num
 # ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
+
+
+#########
+www_path <- system.file("", package = "toxSummary")
+dt_extension <- paste0(www_path, "/www/DT_extension" )
 
 
 # Server function started here (selectData) ----
@@ -88,7 +93,7 @@ values$Findings <- ''
   })
 
   # create folder and copy Aplication_Demo.rds file that folder
-  observeEvent(user(), {
+  shiny::observeEvent(user(), {
       dir_list <- list.dirs("Applications", full.names = F, recursive = F)
       if (!basename(user()) %in% dir_list) {
           dir.create(user())
@@ -546,7 +551,7 @@ values$Findings <- ''
      shiny::updateActionButton(
          session = session,
          "get_from_db", "Clicked: Data updated  from database",
-         icon = icon("mouse-pointer")
+         icon = shiny::icon("mouse-pointer")
      )
  })
 
@@ -639,7 +644,7 @@ values$Findings <- ''
   #  Findings -----
   
   output$Findings <- shiny::renderUI({
-    req(input$selectStudy)
+    shiny::req(input$selectStudy)
       studyData <- values$tmpData
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
@@ -955,7 +960,7 @@ values$Findings <- ''
                                 rowsGroup = list(0,1,2))) %>%
       DT::formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
-    path <- "DT_extension" # folder containing dataTables.rowsGroup.js
+    path <- dt_extension # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
       "RowsGroup", "2.0.0",
       path, script = "dataTables.rowsGroup.js")
@@ -1055,7 +1060,7 @@ values$Findings <- ''
                                 rowsGroup = list(0,1,2,3,4,5))) %>%
       DT::formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
     
-    path <- "DT_extension" # folder containing dataTables.rowsGroup.js
+    path <- dt_extension # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
       "RowsGroup", "2.0.0", 
       path, script = "dataTables.rowsGroup.js")
@@ -1206,7 +1211,7 @@ values$Findings <- ''
   
   ## download all table
    download_all <- shiny::reactive({
-     doc <- read_docx()
+     doc <- officer::read_docx()
      doc_02 <-  flextable::body_add_flextable(doc, dt_to_flex_01()) %>%
        officer::body_add_par("   ") %>%
        officer::body_add_par("   ") %>%
@@ -1449,7 +1454,7 @@ values$Findings <- ''
       
 # findings plot ----
       
-      q <- ggplot(plotData)+
+      q <- ggplot2::ggplot(plotData)+
         ggiraph::geom_col_interactive(ggplot2::aes(x= Findings, y = Value, fill = Severity, group = Dose,  tooltip = Findings),
                  position = ggplot2::position_stack(reverse = TRUE),
                  color = 'transparent',
@@ -1458,13 +1463,13 @@ values$Findings <- ''
                   size = q_text_size,
                   color = 'white',
                   fontface = 'bold',
-                  position = position_stack(vjust = 0.5, reverse = TRUE))+
+                  position = ggplot2::position_stack(vjust = 0.5, reverse = TRUE))+
         #scale_y_discrete(position = 'right')+
         ggplot2::ylim(0, q_y_max)+
         ggplot2::scale_fill_manual(values = color_manual)+
         ggplot2::facet_grid(Study ~ ., scales = 'free')+
         ggplot2::theme_bw(base_size=12)+
-        ggplot2::theme(axis.title.y = element_blank(),
+        ggplot2::theme(axis.title.y = ggplot2::element_blank(),
               strip.text.y = ggplot2::element_blank(),
               axis.ticks.y = ggplot2::element_blank(),
               axis.text.y  = ggplot2::element_blank(),
@@ -1528,7 +1533,7 @@ values$Findings <- ''
       "all_file.tar"
     },
     content = function(file) {
-      all_file <- tar("all_file.tar", files = "Applications")
+      all_file <- utils::tar("all_file.tar", files = "Applications")
       file.copy("all_file.tar", file)
     }
   )
@@ -1599,7 +1604,7 @@ values$Findings <- ''
                                 rowsGroup = list(0))) %>%
       DT::formatStyle(columns = colnames(dir_tab), `font-size` = "18px")
     
-    path <- "DT_extension" # folder containing dataTables.rowsGroup.js
+    path <- dt_extension # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
       "RowsGroup", "2.0.0", 
       path, script = "dataTables.rowsGroup.js")
@@ -2266,7 +2271,7 @@ help_menu_item <- function() {
                            shiny::conditionalPanel('input.selectData=="blankData.rds"',
                                             shiny::textInput('newApplication','Enter New Application Number:')
                            ),
-                           actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
+                           shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
                            htmltools::br()
                   ),
                   htmltools::hr(),
@@ -2298,8 +2303,8 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
                    )
   ),
   shinydashboard::dashboardBody(
-	  htmltools::includeCSS("www/modal_dialog.css"),
-	  htmltools::includeScript("www/button.js"),
+	  htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
+	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
 	#   tags$head(tags$script(src = "button.js")),
     # useShinyjs(),
     # shinyjs::runcodeUI(),
@@ -2405,7 +2410,7 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
                
                htmltools::h4("Upload Application in RDS format:"),
                shiny::fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
-      shiny::tabPanel(uiOutput("Admin_toggle"),
+      shiny::tabPanel(shiny::uiOutput("Admin_toggle"),
                htmltools::br(),
                shiny::passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
                shiny::uiOutput("download_tar_file"),
