@@ -1,5 +1,21 @@
 
-
+#' @title run toxSummary app
+#' @param database_path Mandatory/cr
+#'    file path for database
+#' @param studyid_file Mandatory/cr
+#' 		file path for studyid
+#' 
+#' @param save_file_path optional
+#' 		path where created application file will be saved.
+#' 		If NULL, file will be saved in  working directory
+#' 
+#' @param where_to_run Mandatory/cr
+#' 		where run will be running. Default is local
+#' 
+#' @return function run the app.
+#' 
+#' @export 
+#' 
 
 
 
