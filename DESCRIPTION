@@ -23,6 +23,7 @@ Imports:
     magrittr,
     officer,
     patchwork,
+    pkgload,
     RSQLite,
     shiny,
     shinycssloaders,
