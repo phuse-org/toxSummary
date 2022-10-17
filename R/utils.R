@@ -94,6 +94,34 @@
 
 "%ni%" <- Negate("%in%")
 
+
+
+### function for getting paths
+
+get_paths <- function(database_path, save_file_path, where_to_run) {
+    database_path <- as.character(database_path)
+    save_file_path <- as.character(save_file_path)
+    where_to_run <- as.character(where_to_run)
+    if (file.exists(database_path)) {
+        database_path <- database_path
+    } else {
+        stop(paste0(database_path, " file does not exist"))
+    }
+
+    if (dir.exists(save_file_path)) {
+        save_file_path <- fs::path(save_file_path)
+    } else {
+        stop(paste0(save_file_path, " directory does not exist"))
+    }
+
+    list(
+        database_path = database_path,
+        save_file_path = save_file_path,
+        where_to_run = where_to_run
+    )
+}
+
+
 # function for using whether there are any value that is not NULL
 # fundctin will return sum of all clinical doses
 
