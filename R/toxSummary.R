@@ -28,6 +28,7 @@
 #' @importFrom stats na.omit
 #' @importFrom magrittr %>%
 #' @importFrom utils tar
+#' @importFrom patchwork plot_layout
 
 
 
