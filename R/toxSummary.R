@@ -1513,9 +1513,9 @@ values$Findings <- ''
         ggplot2::theme(axis.title.y = ggplot2::element_blank(),
               strip.text.y = ggplot2::element_blank(),
               axis.ticks.y = ggplot2::element_blank(),
-              axis.text.y  = ggplot2::element_blank(),
+              axis.text.y = ggplot2::element_blank(),
               axis.title.x = ggplot2::element_blank(),
-              axis.text.x  = ggplot2::element_text(size= 16, angle = 90), #need to work
+              axis.text.x = ggplot2::element_text(size= 16, angle = 90), #need to work
               #plot.title = element_text(size=20,hjust = 0.5),
               panel.grid.major.y = ggplot2::element_blank(),
               panel.grid.minor.y = ggplot2::element_blank(),
@@ -1524,8 +1524,8 @@ values$Findings <- ''
               legend.text  = ggplot2::element_text(size = 14),
               legend.title = ggplot2::element_text(size = 16),
               legend.justification = "top")+
-        #labs(title = '' )+
         ggplot2::guides(fill = ggplot2::guide_legend(override.aes = ggplot2::aes(label = "")))
+
       ggiraph::girafe(code = print(p+q+ patchwork::plot_layout(ncol = 2, widths = c(3,1))),
              options = list(ggiraph::opts_tooltip(css = tooltip_css)),
              fonts = list(sans= "Roboto"),
