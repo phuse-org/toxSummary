@@ -14,7 +14,7 @@
 #' 
 #' @return function run the app.
 #' 
-#' @export 
+#' @export
 #' 
 
 
@@ -31,7 +31,7 @@
 
 
 
-toxsummary_app <- function(database_path, studyid_file,
+toxSummary_app <- function(database_path, studyid_file,
  save_file_path = NULL, where_to_run= "local") {
 
  if (is.null(save_file_path)) {
@@ -43,6 +43,16 @@ toxsummary_app <- function(database_path, studyid_file,
      database_path = database_path,
      save_file_path = save_file_path, where_to_run = where_to_run
  )
+
+
+if (paths$save_file_path == getwd()) {
+    if (!dir.exists("Applications")) {
+        dir.create("Applications")
+    }
+
+    paths$save_file_path <- fs::path(getwd(), "Applications")
+	# message("file will be saved in ", paths$save_file_path)
+}
 
  conn <- DBI::dbConnect(drv = RSQLite::SQLite(), paths$database_path)
 
@@ -67,6 +77,16 @@ ind_number_list <- ind_table$IND_num
 #########
 www_path <- system.file("", package = "toxSummary")
 dt_extension <- paste0(www_path, "/www/DT_extension" )
+
+### create blankData.rds and Applications_Demo.rds files
+
+if(!file.exists("blankData.rds")) {
+	saveRDS(blank_data, "blankData.rds")
+}
+if(!file.exists("Applications_Demo.rds")){
+	saveRDS(applications_demo, "Applications_Demo.rds")
+}
+
 
 
 # Server function started here (selectData) ----
@@ -101,19 +121,24 @@ values$Findings <- ''
 
 # user folder  ----
   user <- shiny::reactive({
-      url_search <- session$clientData$url_search
-      username <- unlist(strsplit(url_search, "user="))[2]
-      username <- tolower(username)
-      username <- paste0("Applications/", username)
-      return(username)
+      if (paths$where_to_run == "local") {
+          username <- fs::path(paths$save_file_path, basename(fs::path_home()))
+      } else if (paths$where_to_run == "rsconnect") {
+          username <- session$user
+
+          username <- tolower(username)
+          username <- fs::path(paths$save_file_path, username)
+          
+      }
+      username
   })
 
   # create folder and copy Aplication_Demo.rds file that folder
   shiny::observeEvent(user(), {
-      dir_list <- list.dirs("Applications", full.names = F, recursive = F)
+      dir_list <- list.dirs(paths$save_file_path, full.names = F, recursive = F)
       if (!basename(user()) %in% dir_list) {
           dir.create(user())
-          file.copy("Application_Demo.rds", user())
+          file.copy("Applications_Demo.rds", user())
       }
   })
 
@@ -1549,7 +1574,7 @@ values$Findings <- ''
       "all_file.tar"
     },
     content = function(file) {
-      all_file <- utils::tar("all_file.tar", files = "Applications")
+      all_file <- utils::tar("all_file.tar", files = paths$save_file_path)
       file.copy("all_file.tar", file)
     }
   )
@@ -1578,12 +1603,12 @@ values$Findings <- ''
     
     df_files <- data.frame(matrix(ncol = 2))
     colnames(df_files) <- c("user", "files")
-    folder_list <- basename(list.dirs("Applications/"))
+    folder_list <- basename(list.dirs(paths$save_file_path))
     folder_list <- utils::tail(folder_list, -1)
     count <- 1
     for (folder in folder_list) {
       
-        file_list <- grep(".rds", list.files(paste0("Applications/", folder)), value = T)
+        file_list <- grep(".rds", list.files(fs::path(paths$save_file_path, folder)), value = T)
         for (file in file_list) {
           df_files[count, "user"] <- folder
           file <- unlist(strsplit(file, ".rds"))
