@@ -593,7 +593,7 @@ values$Findings <- ''
      shiny::updateActionButton(
          session = session,
          "get_from_db", "Clicked: Data updated  from database",
-         icon = shiny::icon("arrow-pointer")
+         icon = shiny::icon("mouse-pointer")
      )
  })
 
@@ -612,7 +612,7 @@ values$Findings <- ''
          session = session,
          "get_from_db",
          "Click me to populate dose and pk from  database",
-         icon = shiny::icon("arrow-pointer")
+         icon = shiny::icon("mouse-pointer")
      )
  })
 
@@ -1786,7 +1786,7 @@ values$Findings <- ''
              shiny::numericInput("CustomDoseAUC", NULL, value = NULL, min = 0)
          ),
          shiny::actionButton("saveClinicalInfo", "Save Clinical Information",
-             icon = shiny::icon("circle-plus"),
+             icon = shiny::icon("plus-circle"),
 			 style = "background-color: white;
             border: 2px solid #4CAF50;"
 
@@ -2025,12 +2025,12 @@ data_modal <- function() {
         shiny::uiOutput("selectStudy"),
         htmltools::br(),
         shiny::actionButton("saveStudy", "Save Study",
-            icon = shiny::icon("circle-plus"),
+            icon = shiny::icon("plus-circle"),
             style = "background-color: white;
             border: 2px solid #4CAF50;"
         ),
         shiny::actionButton("deleteStudy", "Delete Study",
-            icon = shiny::icon("circle-minus"),
+            icon = shiny::icon("minus-circle"),
             style = "background-color: white;
                     border: 2px solid #FF0000;"
         ),
@@ -2080,7 +2080,7 @@ data_modal <- function() {
 		shiny::uiOutput("Choose_visit_day"),
 		shiny::actionButton("get_from_db", 
 		 "Click me to populate dose and pk from  database", 
-		icon  = shiny::icon("arrow-pointer"),
+		icon  = shiny::icon("mouse-pointer"),
 		 style = "background-color:skyblue"),
 		 htmltools::br(),
 		 htmltools::br(),
@@ -2113,7 +2113,7 @@ data_modal <- function() {
         shiny::checkboxInput("notes", "Notes for Study?", value = FALSE),
         shiny::uiOutput("study_note"),
         shiny::actionButton("saveStudy_02", "Save Study",
-            icon = shiny::icon("circle-plus"),
+            icon = shiny::icon("plus-circle"),
             style = "
                    background-color: white;
                    border: 2px solid #4CAF50;"
@@ -2235,7 +2235,7 @@ help_menu_item <- function() {
         "Questions/Feedback",
         shinydashboard::menuSubItem(
             text = "Email for help",
-            icon = shiny::icon("square-envelope"),
+            icon = shiny::icon("envelope-square"),
             href = "mailto:kevin.snyder@fda.hhs.gov"
         )
     )
@@ -2253,12 +2253,12 @@ help_menu_item <- function() {
                              shiny::conditionalPanel('input.selectData=="blankData.rds"',
                                               shiny::textInput('newApplication','Enter New Application Number:')
                              ),
-                             shiny::actionButton('saveData','Submit',icon=shiny::icon('circle-plus')),
+                             shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
                              htmltools::br()
                     ),
                     # hr(),
 					help_menu_item()
-                    # menuItem('Questions/Feedback',icon=icon('square-envelope'),
+                    # menuItem('Questions/Feedback',icon=icon('envelope-square'),
                     #          href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       } else {
@@ -2268,7 +2268,7 @@ help_menu_item <- function() {
                              shiny::conditionalPanel('input.selectData=="blankData.rds"',
                                               shiny::textInput('newApplication','Enter New Application Number:')
                              ),
-                             shiny::actionButton('deleteData','Delete',icon=shiny::icon('circle-minus')),
+                             shiny::actionButton('deleteData','Delete',icon=shiny::icon('minus-circle')),
                              htmltools::br()
                     ),
                     # hr(),
@@ -2295,15 +2295,15 @@ help_menu_item <- function() {
 
                     htmltools::br(),
 
-					 shinydashboard::menuItem("Units for Cmax/AUC", icon = shiny::icon("scale-balanced"),
+					 shinydashboard::menuItem("Units for Cmax/AUC", icon = shiny::icon("balance-scale"),
                              shiny::textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
                              shiny::textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
-                             shiny::actionButton('save_units','Save Units',icon= shiny::icon('circle-plus')),
+                             shiny::actionButton('save_units','Save Units',icon= shiny::icon('plus-circle')),
                              htmltools::br()),
                     
               htmltools::br(),
 			  help_menu_item()
-            #   menuItem('Questions/Feedback',icon=icon('square-envelope'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+            #   menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
         )
       }
     } else {
@@ -2313,12 +2313,12 @@ help_menu_item <- function() {
                            shiny::conditionalPanel('input.selectData=="blankData.rds"',
                                             shiny::textInput('newApplication','Enter New Application Number:')
                            ),
-                           shiny::actionButton('saveData','Submit',icon=shiny::icon('circle-plus')),
+                           shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
                            htmltools::br()
                   ),
                   htmltools::hr(),
 				  help_menu_item()
-                #   menuItem('Questions/Feedback',icon=icon('square-envelope'),href = 'mailto:kevin.snyder@fda.hhs.gov')
+                #   menuItem('Questions/Feedback',icon=icon('envelope-square'),href = 'mailto:kevin.snyder@fda.hhs.gov')
                   # tags$a(href='mailto:kevin.snyder@fda.hhs.gov?','Questions/Feedback')
       )
     }
