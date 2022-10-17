@@ -16,6 +16,7 @@ Imports:
     dplyr,
     DT,
     flextable,
+    fs,
     ggiraph,
     ggplot2,
     htmltools,

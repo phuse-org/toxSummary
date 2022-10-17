@@ -21,7 +21,7 @@ get_paths <- function(database_path, save_file_path, where_to_run) {
     }
 
     if (dir.exists(save_file_path)) {
-        save_file_path <- save_file_path
+        save_file_path <- fs::path(save_file_path)
     } else {
         stop(paste0(save_file_path, " directory does not exist"))
     }
