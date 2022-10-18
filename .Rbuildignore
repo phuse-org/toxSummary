@@ -24,3 +24,4 @@
 ^app\.R$
 ^data-raw$
 ^Applications_Demo\.rds$
+^manifest\.json$
