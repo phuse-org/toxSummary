@@ -17,3 +17,4 @@ Change the directory in __paths.ini__ file.
 ## Demo App
 A demo app can be found here
 [Demo Shiny App](https://phuse-org.shinyapps.io/toxSummary/)
+[Demo Shiny App_updated](https://yousuf28.shinyapps.io/toxsummary)
