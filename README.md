@@ -55,8 +55,8 @@ toxSummary::toxSummary_app(
 
 
 
-```database_path = "path/of/your/database.db"```
-```studyid_file = "path/for/IND_studyid_mapping.csv"``` 
+```database_path = "path/of/your/database.db"```  
+```studyid_file = "path/for/IND_studyid_mapping.csv"```   
 Both argument are mandatory when  running the function from package.  
 Package does not contain database. Database is too big for a package.
 
@@ -64,19 +64,19 @@ Package does not contain database. Database is too big for a package.
 
 ### from cloned repo:
 Deploying Shiny app as package is little different. 
-There is not publish button when you open app.R file in RStudio.
+There is not publish button when you open app.R file in RStudio.  
 __crate manifest.json file__
-- shinyappsio 
+- shinyappsio   
   ``` rsconnect::deployApp()``` 
-- rsconnect
+- rsconnect  
   ```rsconnect::deployApp()``` 
 
 ### From the installed package
 app.R file not included in the package.
-first create app.R file in the working directory. Then copy the code from here and change the database and file paths.
+first create app.R file in the working directory.  
+Then copy the code from here and change the database and file paths.
 
 ```
-
  toxSummary::toxSummary_app(
     database_path = "path/of/your/database.db"
     studyid_file = "path/for/IND_studyid_mapping.csv"
