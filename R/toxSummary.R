@@ -1591,7 +1591,7 @@ values$Findings <- ''
   )
 ####
   output$Admin_toggle <- shiny::renderUI({
-    if (basename(user()) == "md.ali@fda.hhs.gov") {
+    if (basename(user()) == "md_ali") {
 "Admin"
     }
   })
