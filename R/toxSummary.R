@@ -32,7 +32,7 @@
 
 
 
-toxSummary_app <- function(database_path, studyid_file,
+toxSummary_app_old <- function(database_path, studyid_file,
  save_file_path = NULL, where_to_run= "local") {
 
  if (is.null(save_file_path)) {
