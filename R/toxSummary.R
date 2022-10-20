@@ -69,7 +69,7 @@ if (paths$save_file_path == getwd()) {
   ind_table <- data.table::fread(studyid_file,
     col.names = col_name)
 
-    # ind_table <- ind_table[application_type == "IND", c("IND_num", "studyID")]
+ind_table <- ind_table[application_type == "IND",]
 # ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
 ind_number_list <- ind_table$IND_num
 # ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
