@@ -4,6 +4,7 @@
     utils::globalVariables(".")
 	utils::globalVariables(".SD")
     utils::globalVariables("STUDYID")
+    utils::globalVariables("application_type")
     utils::globalVariables("DOMAIN")
     utils::globalVariables("USUBJID")
     utils::globalVariables("POOLID")
