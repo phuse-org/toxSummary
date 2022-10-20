@@ -518,7 +518,7 @@ values$Findings <- ''
   # display Studies ----
   
   output$displayStudies <- shiny::renderUI({
-    shiny::req(input$clinDosing)
+    # shiny::req(input$clinDosing)
     input$selectData
     input$selectStudy
     shiny::isolate(Data <- getData())
@@ -536,7 +536,7 @@ values$Findings <- ''
   ## display findings ----
   
   output$displayFindings <- shiny::renderUI({
-      shiny::req(input$clinDosing)
+    #   shiny::req(input$clinDosing)
       input$selectData
       input$selectStudy
       data <- getPlotData()
@@ -809,12 +809,21 @@ values$Findings <- ''
 ## human dose ----
   
   output$humanDosing <- shiny::renderUI({
-    shiny::req(input$clinDosing)
+    # shiny::req(input$clinDosing)
     Data <- getData()
-    clinDosingNames <- input$clinDosing
+	  clinData <- Data[['Clinical Information']]
+    clinDosing <- NULL
+    for (dose in clinDosingOptions) {
+      clin_dose <- clinData[[dose]][[gsub(' ','',dose)]]
+      clin_dose_mgkg <- clinData[[dose]][[paste0(gsub(' ','',dose), 'MgKg')]]
+      if ((!is.null(clin_dose)) | (!is.null(clin_dose_mgkg))) {
+        clinDosing <- c(clinDosing,dose)
+      }
+    }
+    clinDosingNames <- clinDosing
     names(clinDosingNames) <- clinDosingNames
     if (length(clinDosingNames)>0) {
-      for (clinDose in input$clinDosing) {
+      for (clinDose in clinDosing) {
         if (Data[['Clinical Information']][['MgKg']]==F) {
           names(clinDosingNames)[which(clinDosingNames==clinDose)] <- paste0(clinDose,
                                                                              ': (', Data[['Clinical Information']][[clinDose]][[paste0(unlist(strsplit(clinDose,' ')),
@@ -880,8 +889,8 @@ values$Findings <- ''
         if (input$SMbasis=='HED') {
           
           HED <- Dose/speciesConversion[[Species]]
-          
-          if (input$MgKg==F) {
+
+          if (Data[["Clinical Information"]][["MgKg"]]=="FALSE") {
             humanDose <- Data[['Clinical Information']][[input$humanDosing]][[humanDoseName]]
             HED <- HED*Data[['Clinical Information']][['HumanWeight']]
                      
@@ -906,7 +915,7 @@ values$Findings <- ''
                SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDMgKg"]])
              } else {SM_MRHD <- NA}
           }
-          
+
         } else if (input$SMbasis=='Cmax') {
           
           if (!is.null(Data[['Clinical Information']][[input$humanDosing]][[paste0(humanDoseName,input$SMbasis)]])) {
@@ -1359,7 +1368,7 @@ values$Findings <- ''
 ## figure -----
   
   output$figure <- ggiraph::renderGirafe({
-    shiny::req(input$clinDosing)
+    # shiny::req(input$clinDosing)
     input$selectData
     data <- getData()
     clin_dose <- clin_data(data)
@@ -1531,7 +1540,8 @@ values$Findings <- ''
              options = list(ggiraph::opts_tooltip(css = tooltip_css)),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
-    }}
+    }
+	}
   })
 
   shiny::observe({
@@ -2329,7 +2339,7 @@ help_menu_item <- function() {
 		ggiraph::girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
   })
     
-    # runcodeServer()
+    # shinyjs::runcodeServer()
 }
 
 
@@ -2348,7 +2358,7 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
 	  htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
 	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
 	#   tags$head(tags$script(src = "button.js")),
-    # useShinyjs(),
+    # shinyjs::useShinyjs(),
     # shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
@@ -2359,10 +2369,10 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
              shiny::uiOutput('humanDosing')
       ),
       shiny::column(2,
-             shiny::conditionalPanel(
-               'input.clinDosing != null && input.clinDosing != ""',
+            #  shiny::conditionalPanel(
+            #    'input.clinDosing != null && input.clinDosing != ""',
                shiny::selectInput('SMbasis','Base Exposure Margin on:',c('HED','Cmax','AUC'))
-             )
+            #  )
       ),
       shiny::column(4,
              shiny::uiOutput('displayStudies')
@@ -2371,8 +2381,8 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
       shiny::column(4, 
              shiny::uiOutput('displayFindings'))
     ),
-    shiny::conditionalPanel(
-      condition='input.selectData!="blankData.rds" && input.clinDosing != null && input.clinDosing != ""',
+    # shiny::conditionalPanel(
+    #   condition='input.selectData!="blankData.rds" && input.clinDosing != null && input.clinDosing != ""',
       shiny::tabsetPanel(
         shiny::tabPanel('Figure',
                  
@@ -2459,7 +2469,11 @@ ui <- shinydashboard::dashboardPage( skin = "blue",
                htmltools::br(),
                htmltools::hr(),
                htmltools::br(),
-               shiny::uiOutput("show_file_table"))))))
+               shiny::uiOutput("show_file_table"))
+			   )
+			#    )
+			   )
+			   )
 
 
 
