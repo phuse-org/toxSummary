@@ -1921,7 +1921,7 @@ output$studyid_ui  <- shiny::renderUI({
       st_id_option <- st_id_option$st_title
       names(st_id_option) <- paste0("\U25FC ", st_id_option)
 	   if (input$selectStudy=='New Study') {
-      shiny::updateSelectizeInput(
+      shiny::updateSelectizeInput(session = session,
           inputId = "study_id",
           selected = NULL,
           choices = c(Choose = "", st_id_option)
@@ -1935,7 +1935,7 @@ output$studyid_ui  <- shiny::renderUI({
 			   select_study <- NULL 
 
 		   }
-		    shiny::updateSelectizeInput(
+		    shiny::updateSelectizeInput(session = session,
           inputId = "study_id",
           selected = select_study,
           choices = c(Choose = "", st_id_option)
