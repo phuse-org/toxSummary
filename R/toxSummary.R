@@ -1185,8 +1185,8 @@ values$Findings <- ''
   
     names(plotData_03)[names(plotData_03)=="Cmax"] <- cmax_unit
     names(plotData_03)[names(plotData_03)=="AUC"] <- auc_unit
-    
-    if (input$MgKg==F) {
+    Data <- getData()
+    if (Data[["Clinical Information"]][["MgKg"]]=="FALSE") {
       plotData_03 <- plotData_03 %>% 
         dplyr::rename("HED (mg/day)" = HED_value)
     } else {plotData_03 <- plotData_03 %>% 
