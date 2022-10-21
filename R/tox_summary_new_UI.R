@@ -2239,12 +2239,12 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
     }
   })
   
- shiny::observeEvent(input$saveData,ignoreInit = TRUE, {
-	session$reload()
-	shiny::updateCheckboxGroupInput(session,'clinDosing',selected=NULL)
+#  shiny::observeEvent(input$saveData,ignoreInit = TRUE, {
+# 	session$reload()
+# 	shiny::updateCheckboxGroupInput(session,'clinDosing',selected=NULL)
 
 
-  })
+#   })
 
 
 
