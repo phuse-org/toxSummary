@@ -146,24 +146,7 @@ values$Findings <- ''
   })
 
   ###
-  output$select_Data <- shiny::renderUI({
-      datasets <- c("blankData.rds", grep(".rds", list.files(user(),
-          full.names = T
-      ), value = T))
-      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
-      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
-      if (is.null(values$selectData)) {
-          shiny::selectInput("selectData", "Select Application:",
-              datasets,
-              selected = "blankData.rds"
-          )
-      } else {
-          shiny::selectInput("selectData", "Select Application:",
-              datasets,
-              selected = values$selectData
-          )
-      }
-  })
+ 
   
   ### Study Name ----
   output$studyName <- shiny::renderUI({
@@ -207,12 +190,12 @@ values$Findings <- ''
       )
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
       names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
-      shiny::selectInput("selectData", "Select Application:", datasets)
+    #   shiny::selectInput("selectData", "Select Application:", datasets)
       shiny::updateSelectInput(session, "selectData",
           choices = datasets, selected = values$Application
       )
   })
-  
+
   
 # delete application ----
 
@@ -236,7 +219,7 @@ values$Findings <- ''
       )
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
       names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
-      shiny::selectInput("selectData", "Select Application:", datasets)
+    #   shiny::selectInput("selectData", "Select Application:", datasets)
       shiny::updateSelectInput(session, "selectData",
           choices = datasets, selected = "blankData.rds"
       )
@@ -1817,43 +1800,7 @@ values$Findings <- ''
 #      )
 #  }
   
- #  call clinical data Modal function ---- 
  
-  
-   shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = TRUE, {
-    
-	 Data <- getData()
-
-    # update clinical information
-    clinData <- Data[['Clinical Information']]
-    if (clinData$MgKg==F) {
-      shiny::updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
-    } else { shiny::updateCheckboxInput(session, "MgKg", value = T)}
-    
-    clinDosing <- NULL
-    for (dose in clinDosingOptions) {
-      clin_dose <- clinData[[dose]][[gsub(' ','',dose)]]
-      clin_dose_mgkg <- clinData[[dose]][[paste0(gsub(' ','',dose), 'MgKg')]]
-      if ((!is.null(clin_dose)) | (!is.null(clin_dose_mgkg))) {
-        clinDosing <- c(clinDosing,dose)
-      }
-    }
-    shiny::updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
-    
-    for (dose in clinDosing) {
-      doseName <- gsub(' ','',dose)
-      if (clinData$MgKg==F) {
-        shiny::updateNumericInput(session,doseName,value = clinData[[dose]][[doseName]])
-      } else {
-        shiny::updateNumericInput(session,paste0(doseName,'MgKg'),value = clinData[[dose]][[paste0(doseName,'MgKg')]])
-      }
-      shiny::updateNumericInput(session,paste0(doseName,'Cmax'),value = clinData[[dose]][[paste0(doseName,'Cmax')]])
-      shiny::updateNumericInput(session,paste0(doseName,'AUC'),value = clinData[[dose]][[paste0(doseName,'AUC')]])
-    }
-  })
-  
-
-  
    #### get studyID from IND selection
   
 
@@ -2257,6 +2204,68 @@ output$Choose_visit_day <- shiny::renderUI({
 #         )
 #     )
 # }
+
+
+shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit = TRUE, {
+
+    
+	 Data <- getData()
+
+    # update clinical information
+    clinData <- Data[['Clinical Information']]
+    if (clinData$MgKg==F) {
+      shiny::updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
+    } else { shiny::updateCheckboxInput(session, "MgKg", value = T)}
+    
+    clinDosing <- NULL
+    for (dose in clinDosingOptions) {
+      clin_dose <- clinData[[dose]][[gsub(' ','',dose)]]
+      clin_dose_mgkg <- clinData[[dose]][[paste0(gsub(' ','',dose), 'MgKg')]]
+      if ((!is.null(clin_dose)) | (!is.null(clin_dose_mgkg))) {
+        clinDosing <- c(clinDosing,dose)
+      }
+    }
+    shiny::updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
+    
+    for (dose in clinDosing) {
+      doseName <- gsub(' ','',dose)
+      if (clinData$MgKg==F) {
+        shiny::updateNumericInput(session,doseName,value = clinData[[dose]][[doseName]])
+      } else {
+        shiny::updateNumericInput(session,paste0(doseName,'MgKg'),value = clinData[[dose]][[paste0(doseName,'MgKg')]])
+      }
+      shiny::updateNumericInput(session,paste0(doseName,'Cmax'),value = clinData[[dose]][[paste0(doseName,'Cmax')]])
+      shiny::updateNumericInput(session,paste0(doseName,'AUC'),value = clinData[[dose]][[paste0(doseName,'AUC')]])
+    }
+  })
+  
+ shiny::observeEvent(input$saveData,ignoreInit = TRUE, {
+	session$reload()
+	shiny::updateCheckboxGroupInput(session,'clinDosing',selected=NULL)
+
+
+  })
+
+
+
+ output$select_Data <- shiny::renderUI({
+      datasets <- c("blankData.rds", grep(".rds", list.files(user(),
+          full.names = T
+      ), value = T))
+      names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      if (is.null(values$selectData)) {
+          shiny::selectInput("selectData", "Select Application:",
+              datasets,
+              selected = "blankData.rds"
+          )
+      } else {
+          shiny::selectInput("selectData", "Select Application:",
+              datasets,
+              selected = values$selectData
+          )
+      }
+  })
   
   # output$menu function -----
   
