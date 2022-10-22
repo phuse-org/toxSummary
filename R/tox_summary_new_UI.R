@@ -2225,8 +2225,11 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
         clinDosing <- c(clinDosing,dose)
       }
     }
-    shiny::updateCheckboxGroupInput(session,'clinDosing',selected=clinDosing)
-    
+	
+    shiny::updateCheckboxGroupInput(session, inputId = 'clinDosing',
+	choices = clinDosingOptions,
+	 selected=clinDosing)
+
     for (dose in clinDosing) {
       doseName <- gsub(' ','',dose)
       if (clinData$MgKg==F) {
@@ -2239,13 +2242,6 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
     }
   })
   
-#  shiny::observeEvent(input$saveData,ignoreInit = TRUE, {
-# 	session$reload()
-# 	shiny::updateCheckboxGroupInput(session,'clinDosing',selected=NULL)
-
-
-#   })
-
 
 
  output$select_Data <- shiny::renderUI({
@@ -2455,9 +2451,10 @@ htmltools::h4("Edit Clinical Data"),
 		 htmltools::br(),
         
          shiny::checkboxGroupInput(
-             "clinDosing", "Clinical Dosing:",
-             clinDosingOptions
+            inputId = "clinDosing", label = "Clinical Dosing:",
+             choices = clinDosingOptions
          ),
+
          shiny::conditionalPanel(
              "condition=input.MgKg==false",
              shiny::numericInput("HumanWeight", "*Human Weight (kg):",
