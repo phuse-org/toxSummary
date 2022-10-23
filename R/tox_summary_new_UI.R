@@ -2558,7 +2558,7 @@ shiny::fluidPage(
 htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
 		htmltools::br(),
-        shiny::fluidRow(
+        shiny::fluidRow( style= "margin-right:50px;",
 			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
         shiny::uiOutput("selectStudy"),
         htmltools::br(),
@@ -2574,7 +2574,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         ),
         htmltools::br(),
         htmltools::br(),
-        htmltools::tags$hr(style = "border-top: 3px solid#1e9acd;"),
+        htmltools::tags$hr(style = "border-top: 2px solid#1e9acd;"),
 		
         shiny::selectizeInput(
             inputId = "ind_id",
@@ -2593,6 +2593,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         htmltools::br(),
 		shiny::uiOutput("studyid_ui"),
         htmltools::br(),
+		htmltools::tags$hr(style = "border-top: 2px solid#1e9acd;"),
         htmltools::br(),
         shiny::selectInput("Species",
             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-dog"
@@ -2609,22 +2610,24 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 			inline  = TRUE
             # choices = c("ALL", "M", "F")
         ),
+		htmltools::br(),
         shiny::textAreaInput("Duration", "*Study Duration/Description:",
          height = "100px"),
         htmltools::h4("Study Name:"),
         shiny::verbatimTextOutput("studyTitle"),
-
-        # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
-		),
-		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
-        shiny::uiOutput("choose_auc"),
+		shiny::uiOutput("choose_auc"),
 		shiny::uiOutput("Choose_visit_day"),
 		shiny::actionButton("get_from_db", 
 		 "Click me to populate dose and pk from  database", 
 		icon  = shiny::icon("mouse-pointer"),
 		 style = "background-color:skyblue"),
-		 htmltools::br(),
-		 htmltools::br(),
+		htmltools::tags$div(style= " padding-bottom: 40px")
+
+        # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
+		),
+		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
+		#  htmltools::br(),
+		#  htmltools::br(),
         # checkboxInput(
         #     inputId = "get_from_database",
         #     label = "Populate from Database", value = FALSE
@@ -2643,6 +2646,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         ),
         # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
         shiny::uiOutput("Doses"),
+		htmltools::tags$div(style= " padding-bottom: 40px")
         # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
 		),
 		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
@@ -2660,10 +2664,14 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
             style = "
                    background-color: white;
                    border: 2px solid #4CAF50;"
-        ))
+        ),
+		htmltools::tags$div(style= " padding-bottom: 40px")
+		)
 
 
-))
+),
+htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;")
+)
 ),
 
 shiny::tabPanel("Help")
