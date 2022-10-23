@@ -2547,11 +2547,11 @@ shiny::fluidPage(
 		
 	
 
-htmltools::h4("Edit Nonclinical Data"),
+htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
 		htmltools::br(),
         shiny::fluidRow(
-			shiny::column(width = 3, offset = 1,
+			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
         shiny::uiOutput("selectStudy"),
         htmltools::br(),
         shiny::actionButton("saveStudy", "Save Study",
@@ -2606,8 +2606,9 @@ htmltools::h4("Edit Nonclinical Data"),
         htmltools::h4("Study Name:"),
         shiny::verbatimTextOutput("studyTitle"),
 
-        htmltools::hr(style = "border-top: 3px solid#1e9acd;")),
-		shiny::column(width = 3, offset = 1,
+        # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
+		),
+		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
         shiny::uiOutput("choose_auc"),
 		shiny::uiOutput("Choose_visit_day"),
 		shiny::actionButton("get_from_db", 
@@ -2634,8 +2635,9 @@ htmltools::h4("Edit Nonclinical Data"),
         ),
         # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
         shiny::uiOutput("Doses"),
-        htmltools::hr(style = "border-top: 3px solid#1e9acd;")),
-		shiny::column(width = 3, offset = 1,
+        # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
+		),
+		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
         shiny::numericInput("nFindings",
             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-microscope"
 			style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
