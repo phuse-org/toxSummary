@@ -161,7 +161,7 @@ values$Findings <- ''
           ))
       }
   })
-  
+
 # getData ------
 
   getData <- shiny::reactive({
@@ -2445,7 +2445,7 @@ shiny::sidebarLayout(
 shiny::tabPanel("Edit Clinical",
 shiny::fluidPage(
 shiny::fluidRow(
-	shiny::column(width = 4,offset = 3,
+	shiny::column(width = 4,offset = 1,
 htmltools::h4("Edit Clinical Data"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
 		 htmltools::br(),
@@ -2530,7 +2530,14 @@ htmltools::h4("Edit Clinical Data"),
 
          )
 
-)))),
+), 
+shiny::column(offset = 1, width=3,
+htmltools::tags$div(style= " padding-bottom: 40px"),
+shiny::textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
+shiny::textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
+shiny::actionButton('save_units','Save Units',icon= shiny::icon('plus-circle'))
+)
+))),
 
 
 
@@ -2649,11 +2656,6 @@ htmltools::h4("Edit Nonclinical Data"),
 ))
 ),
 
-shiny::tabPanel("Edit Units",
-shiny::textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
-shiny::textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
-shiny::actionButton('save_units','Save Units',icon= shiny::icon('plus-circle'))
-),
 shiny::tabPanel("Help")
 
 
