@@ -1290,16 +1290,37 @@ values$Findings <- ''
    
  
 # output table for notes  ----
+
+  output$table_note <- DT::renderDT({
+    data <- getData()
+    clin_dose <- clin_data(data)
+    if (clin_dose>0) {
+    note_table <- all_study_notes()
+    note_table <- DT::datatable(note_table,rownames = FALSE, 
+                             extensions = list("Buttons" = NULL,
+                                               "ColReorder" = NULL),
+                             class = "cell-border stripe",
+                             filter = list(position = 'top'),
+                             caption = htmltools::tags$caption(
+                               style = "caption-side: top; text-align: center; font-size: 20px; color: black",
+                               "Table :", htmltools::strong("Notes for study")
+                             ),
+                             options = list(
+                               dom = "lfrtipB",
+                               buttons = c("csv", "excel", "copy", "print"),
+                               colReorder = TRUE,
+                               pageLength = 10,
+                               columnDefs = list(list(className = "dt-center", targets = "_all")),
+                               scrollY = TRUE,
+                               initComplete = DT::JS(
+                                 "function(settings, json) {",
+                                 "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+                                 "}"))) %>% 
+      DT::formatStyle(columns = colnames(note_table), `font-size` = "18px")
+
+    note_table
+  }})
    
-   output$table_note <- shiny::renderTable({
-     data <- getData()
-     clin_dose <- clin_data(data)
-     if (clin_dose>0) {
-       all_study_notes()}},
-                             bordered = TRUE,
-                             striped = TRUE,
-                             spacing = 'xs',
-                             width = '100%', align = 'lr')
  
 ## download notes table
    table_note_to_flex <- shiny::reactive({
@@ -2492,8 +2513,13 @@ shiny::sidebarLayout(
       ),
       shiny::tabPanel("All Table", 
                htmltools::br(),
-               htmltools::p("All three table can be downloaded in single docx file. Click button below to download."),
+               htmltools::p("All three table (Clinical Relevance Table, Key Findings Table, Safety Margin Table) can be downloaded in single docx file. Click button below to download."),
                shiny::downloadButton("down_all", "Docx file download")),
+	shiny::tabPanel("Notes Table",
+				htmltools::br(),
+	   			DT::DTOutput("table_note"),
+				htmltools::h4("Click on button below to export the table in a docx file"),
+				shiny::downloadButton("down_notes", "Docx file download")),
       
       shiny::tabPanel("Download Application",
                htmltools::br(),
