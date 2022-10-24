@@ -497,7 +497,9 @@ values$Findings <- ''
   
 # title 
   output$studyTitle <- shiny::renderText({
-    paste(input$Species,input$Duration,sep=': ')
+    text  <- paste(input$Species,input$Duration,sep=': ')
+	text <- strwrap(text, 30)
+	text
   })
   
   # display Studies ----
@@ -2615,7 +2617,9 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::textAreaInput("Duration", "*Study Duration/Description:",
          height = "100px"),
         htmltools::h4("Study Name:"),
-        shiny::verbatimTextOutput("studyTitle"),
+        shiny::textOutput("studyTitle"),
+		htmltools::br(),
+		htmltools::br(),
 		shiny::uiOutput("choose_auc"),
 		shiny::uiOutput("Choose_visit_day"),
 		shiny::actionButton("get_from_db", 
