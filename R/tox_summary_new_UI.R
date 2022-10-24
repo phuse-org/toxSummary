@@ -1591,7 +1591,7 @@ values$Findings <- ''
   ####
   output$show_file_table <- shinydashboard::renderMenu({
     if (input$pass_admin == "HeLLo_aDMiN_PT") {
-      DT::dataTableOutput("dir_list")
+      DT::DTOutput("dir_list")
     }
   })
   
@@ -2463,18 +2463,11 @@ shiny::sidebarLayout(
                  #withSpinner(girafeOutput('figure')),
 				 shiny::uiOutput('renderFigure'),
                  htmltools::br(),
-                 htmltools::hr(style = "border-top: 1px dashed black"),
-                 shiny::fluidRow(
-                   shiny::column(9,
-                          
-                          shiny::tableOutput("table_note"),
-                          htmltools::h4("Click on button below to export the table in a docx file"),
-                          
-                          shiny::downloadButton("down_notes", "Docx file download")
-                          ))),
+                 htmltools::hr(style = "border-top: 1px dashed black")
+						  ),
         
       shiny::tabPanel("Clinical Relevance Table",
-               DT::dataTableOutput('table_01'),
+               DT::DTOutput('table_01'),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
@@ -2482,7 +2475,7 @@ shiny::sidebarLayout(
                htmltools::br()
       ),
       shiny::tabPanel("Key Findings Table",
-               DT::dataTableOutput('table_02'),
+               DT::DTOutput('table_02'),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
@@ -2490,7 +2483,7 @@ shiny::sidebarLayout(
                htmltools::br()
       ),
       shiny::tabPanel("Safety Margin Table",
-               DT::dataTableOutput('table_03'),
+               DT::DTOutput('table_03'),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
