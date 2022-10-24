@@ -2514,13 +2514,12 @@ shiny::sidebarLayout(
 shiny::tabPanel("Edit Clinical",
 shiny::fluidPage(
 shiny::fluidRow(
-		shiny::textOutput("clin_page_application"),
-	htmltools::br(),
 	shiny::column(width = 4,offset = 1, style = "background-color:#ffffff",
 htmltools::h4("Edit Clinical Data", style= "text-align:center"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-		 htmltools::br(),
-        
+		shiny::textOutput("clin_page_application"),
+	htmltools::br(),
+	htmltools::br(),
          shiny::checkboxGroupInput(
             inputId = "clinDosing", label = "Clinical Dosing:",
              choices = clinDosingOptions
