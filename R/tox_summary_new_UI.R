@@ -2207,6 +2207,9 @@ output$Choose_visit_day <- shiny::renderUI({
 #     )
 # }
 
+shiny::observeEvent(eventExpr = input$reload_app, {
+	session$reload()
+})
 
 shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit = TRUE, {
 
@@ -2273,6 +2276,14 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
       if (input$selectData=='blankData.rds') {
 
 htmltools::tagList(
+	shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right'),
+			style = "background-color: white;
+            border: 2px solid #bcbf0a;"
+			),
+			htmltools::br(),
+			htmltools::tags$hr(style = "border-top: 1px solid#337ab7;"),
+			htmltools::br(),
+
 		shiny::uiOutput("select_Data"),
 		shiny::conditionalPanel('input.selectData=="blankData.rds"',
 							shiny::textInput('newApplication','Enter New Application Number:')
@@ -2281,10 +2292,20 @@ htmltools::tagList(
 			style = "background-color: white;
             border: 2px solid #4CAF50;"
 			),
+			htmltools::br(),
 			htmltools::br()
+			
+
 			)
       } else {
 		htmltools::tagList(
+			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right'),
+			style = "background-color: white;
+            border: 2px solid #bcbf0a;"
+			),
+			htmltools::br(),
+			htmltools::tags$hr(style = "border-top: 1px solid#337ab7;"),
+			htmltools::br(),
         
 			shiny::uiOutput('select_Data'),
 			shiny::conditionalPanel('input.selectData=="blankData.rds"',
@@ -2301,6 +2322,14 @@ htmltools::tagList(
       }
     } else {
 		htmltools::tagList(
+			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right'),
+			style = "background-color: white;
+            border: 2px solid #bcbf0a;"
+			),
+			
+		htmltools::br(),
+			htmltools::tags$hr(style = "border-top: 1px solid#337ab7;"),
+			htmltools::br(),
    
 		shiny::uiOutput('select_Data'),
 		shiny::conditionalPanel('input.selectData=="blankData.rds"',
