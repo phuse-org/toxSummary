@@ -2643,7 +2643,7 @@ htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
 htmltools::br(),
 # htmltools::tags$div(style= " padding-bottom: 40px"),
 shiny::textInput("cmax_unit", "*Insert Unit for Cmax:", value = "ng/mL"),
-shiny::textInput("auc_unit", "*Insert Unit for AUC:", value = "ng*h/mL"),
+shiny::textInput("auc_unit", "*Insert Unit for AUC:", value = "h*ng/mL"),
 shiny::actionButton('save_units','Save Units',icon= shiny::icon('plus-circle'),
 style = "background-color: white;
             border: 2px solid #4CAF50;"
