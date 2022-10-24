@@ -2211,6 +2211,22 @@ shiny::observeEvent(eventExpr = input$reload_app, {
 	session$reload()
 })
 
+output$show_unit_in_nonclinical  <- shiny::renderUI({
+	shiny::req(input$selectData)
+	if(input$MgKg == FALSE) {
+		dose_unit <- "mg or (mg/day)"
+	} else{
+		dose_unit <- "mg/kg/day or mg/kg"
+	}
+	cmax_unit <- input$cmax_unit
+	auc_unit <- input$auc_unit
+	htmltools::HTML(paste0(
+		"<h5>", "Dose Unit: ",dose_unit, "<br>",
+		"Cmax Unit: ",cmax_unit, "<br>","AUC Unit: ",  auc_unit, "</h5>"
+	))
+
+})
+
 output$clin_page_application  <- shiny::renderText({
 	shiny::req(input$selectData)
 	if(input$selectData != "blankdData.rds") {
@@ -2719,7 +2735,10 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         ),
         # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
         shiny::uiOutput("Doses"),
-		htmltools::tags$div(style= " padding-bottom: 40px")
+		htmltools::tags$div(style= " padding-bottom: 40px"),
+		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
+		htmltools::tags$h4("Units used in Clinical:"),
+		shiny::uiOutput("show_unit_in_nonclinical")
         # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
 		),
 		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
