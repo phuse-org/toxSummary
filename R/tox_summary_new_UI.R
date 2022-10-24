@@ -2560,6 +2560,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 		htmltools::br(),
         shiny::fluidRow( style= "margin-right:50px;",
 			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
+			htmltools::tags$div(style= " padding-bottom: 10px"),
         shiny::uiOutput("selectStudy"),
         htmltools::br(),
         shiny::actionButton("saveStudy", "Save Study",
@@ -2626,6 +2627,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
 		),
 		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
+		htmltools::tags$div(style= " padding-bottom: 10px"),
 		#  htmltools::br(),
 		#  htmltools::br(),
         # checkboxInput(
@@ -2650,6 +2652,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
 		),
 		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
+		htmltools::tags$div(style= " padding-bottom: 10px"),
         shiny::numericInput("nFindings",
             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-microscope"
 			style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
