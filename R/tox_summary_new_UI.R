@@ -155,7 +155,7 @@ values$Findings <- ''
           htmltools::HTML(paste(
               htmltools::p(htmltools::HTML(paste0(
                   '<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
-                      <h4 style= "color:skyblue"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                      <h4 style= "color:#337ab7"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                   (basename(unlist(strsplit(input$selectData, ".rds")))), "</h4>"
               )))
           ))
@@ -2277,8 +2277,12 @@ htmltools::tagList(
 		shiny::conditionalPanel('input.selectData=="blankData.rds"',
 							shiny::textInput('newApplication','Enter New Application Number:')
 							),
-			shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle')
-			))
+			shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle'),
+			style = "background-color: white;
+            border: 2px solid #4CAF50;"
+			),
+			htmltools::br()
+			)
       } else {
 		htmltools::tagList(
         
@@ -2286,8 +2290,11 @@ htmltools::tagList(
 			shiny::conditionalPanel('input.selectData=="blankData.rds"',
 							shiny::textInput('newApplication','Enter New Application Number:')
 			),
-			shiny::actionButton('deleteData','Delete',icon=shiny::icon('minus-circle')),
+			shiny::actionButton('deleteData','Delete',icon=shiny::icon('minus-circle'),
+			style = "background-color: white;
+                    border: 2px solid #FF0000;"),
 			htmltools::br(),
+			htmltools::tags$hr(style = "border-top: 1px solid#337ab7;"),
 			shiny::uiOutput('studyName')
 		)
                   
@@ -2299,8 +2306,9 @@ htmltools::tagList(
 		shiny::conditionalPanel('input.selectData=="blankData.rds"',
 						shiny::textInput('newApplication','Enter New Application Number:')
 		),
-		shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle')),
-		htmltools::br()
+		shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle'),
+		style = "background-color: white;
+            border: 2px solid #4CAF50;")
 		)
                   
        
