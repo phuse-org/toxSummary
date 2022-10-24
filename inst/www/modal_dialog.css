@@ -40,3 +40,8 @@ body{
     color: #f8f5f5;
 } */
 
+#clin_page_application, #non_clin_page_application {
+	padding-left: 50px;
+	font-size: medium;
+	font-weight: bold;
+}

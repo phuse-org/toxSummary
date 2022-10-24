@@ -2211,6 +2211,36 @@ shiny::observeEvent(eventExpr = input$reload_app, {
 	session$reload()
 })
 
+output$clin_page_application  <- shiny::renderText({
+	shiny::req(input$selectData)
+	if(input$selectData != "blankdData.rds") {
+	text <- basename(unlist(strsplit(input$selectData, ".rds")))
+	if(text =="blankData") {
+		text <- paste0("Selected Application: ", "New Application")
+	} else {
+	text <- paste0("Selected Application: ", text)}
+	} else { text <- paste0("Selected Application: ", "New Application")
+	}
+	text
+
+})
+
+
+output$non_clin_page_application  <- shiny::renderText({
+	shiny::req(input$selectData)
+	if(input$selectData != "blankdData.rds") {
+	text <- basename(unlist(strsplit(input$selectData, ".rds")))
+	if(text =="blankData") {
+		text <- paste0("Selected Application: ", "New Application")
+	} else {
+	text <- paste0("Selected Application: ", text)}
+	} else { text <- paste0("Selected Application: ", "New Application")
+	}
+	text
+
+})
+
+
 shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit = TRUE, {
 
     
@@ -2484,6 +2514,8 @@ shiny::sidebarLayout(
 shiny::tabPanel("Edit Clinical",
 shiny::fluidPage(
 shiny::fluidRow(
+		shiny::textOutput("clin_page_application"),
+	htmltools::br(),
 	shiny::column(width = 4,offset = 1, style = "background-color:#ffffff",
 htmltools::h4("Edit Clinical Data", style= "text-align:center"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
@@ -2590,9 +2622,6 @@ htmltools::tags$div(style= " padding-bottom: 20px")
 
 shiny::tabPanel("Edit Nonclinical",
 shiny::fluidPage(
-	
-		
-	
 
 htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
@@ -2600,6 +2629,8 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::fluidRow( style= "margin-right:50px;",
 			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
 			htmltools::tags$div(style= " padding-bottom: 10px"),
+			shiny::textOutput("non_clin_page_application"),
+			htmltools::br(),
         shiny::uiOutput("selectStudy"),
         htmltools::br(),
         shiny::actionButton("saveStudy", "Save Study",
