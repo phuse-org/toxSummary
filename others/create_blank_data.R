@@ -2,7 +2,7 @@
 
 Data <- list(
     CmaxUnit = "ng/mL",
-    AUCUnit = "ng*h/mL",
+    AUCUnit = "h*ng/mL",
     "Clinical Information" = list(
         HumanWeight = 60,
         MgKg = F,
