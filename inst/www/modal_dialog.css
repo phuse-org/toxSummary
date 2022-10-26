@@ -44,4 +44,7 @@ body{
 	/* font-size: medium; */
 	font-weight: bold;
 }
+#renderFigure {
+	padding-right: 50px;
+}
 

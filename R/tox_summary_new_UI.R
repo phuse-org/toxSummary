@@ -2428,7 +2428,7 @@ shiny::sidebarLayout(
 	shiny::sidebarPanel(width = 2,
 		shiny::uiOutput("menu")
 	),
-	shiny::mainPanel(
+	shiny::mainPanel(width = 10,
 	htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
 	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
 	#   tags$head(tags$script(src = "button.js")),
