@@ -504,7 +504,7 @@ values$Findings <- ''
   
   # display Studies ----
   
-  output$displayStudies <- shiny::renderUI({
+  output$display_Studies <- shiny::renderUI({
     # shiny::req(input$clinDosing)
     input$selectData
     input$selectStudy
@@ -522,7 +522,7 @@ values$Findings <- ''
   
   ## display findings ----
   
-  output$displayFindings <- shiny::renderUI({
+  output$display_Findings <- shiny::renderUI({
     #   shiny::req(input$clinDosing)
       input$selectData
       input$selectStudy
@@ -795,7 +795,7 @@ values$Findings <- ''
  
 ## human dose ----
   
-  output$humanDosing <- shiny::renderUI({
+  output$human_Dosing <- shiny::renderUI({
     # shiny::req(input$clinDosing)
     Data <- getData()
 	  clinData <- Data[['Clinical Information']]
@@ -2440,7 +2440,7 @@ shiny::sidebarLayout(
 
     shiny::fluidRow(
       shiny::column(2,
-             shiny::uiOutput('humanDosing')
+             shiny::uiOutput('human_Dosing')
       ),
       shiny::column(2,
             #  shiny::conditionalPanel(
@@ -2449,11 +2449,11 @@ shiny::sidebarLayout(
             #  )
       ),
       shiny::column(4,
-             shiny::uiOutput('displayStudies')
+             shiny::uiOutput('display_Studies')
       ),
       
       shiny::column(4, 
-             shiny::uiOutput('displayFindings'))
+             shiny::uiOutput('display_Findings'))
     ),
     # shiny::conditionalPanel(
     #   condition='input.selectData!="blankData.rds" && input.clinDosing != null && input.clinDosing != ""',
