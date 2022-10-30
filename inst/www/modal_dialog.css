@@ -48,3 +48,7 @@ body{
 	padding-right: 50px;
 }
 
+.shiny-output-error-study_no_ts {
+	color: red;
+}
+

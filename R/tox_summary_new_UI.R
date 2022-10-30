@@ -1861,7 +1861,12 @@ TSPARMCD IN ("SDESIGN",
   
   studyid_option <- shiny::reactive({
 	  df <- studyid_info()
-
+	  shiny::validate(
+		shiny::need(expr = nrow(df) > 0,
+		 message = " TS and PP domain NOT available for the study related to IND selected"
+		),
+		errorClass = "study_no_ts"
+	  )
 	  df <- df[TSPARMCD ==  "STITLE", .(STUDYID,TSPARMCD,TSVAL)][!duplicated(STUDYID)]
 	  df <- df[, st_title := paste0(STUDYID, ": ", TSVAL)]
 	  df
