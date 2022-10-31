@@ -130,3 +130,55 @@ pp <- RSQLite::dbGetQuery(
 tictoc::toc()
 
 pp <- data.table::as.data.table(pp)
+
+##########
+
+pp <- RSQLite::dbGetQuery(
+    conn = conn,
+    "SELECT *  FROM PP "
+)
+pp <- data.table::as.data.table(pp)
+
+tx <- RSQLite::dbGetQuery(
+    conn = conn,
+    "SELECT *  FROM TX "
+)
+tx <- data.table::as.data.table(tx)
+
+# ex <- RSQLite::dbGetQuery(
+#     conn = conn,
+#     "SELECT *  FROM EX "
+# )
+# ex <- data.table::as.data.table(ex)
+nrow(pp)
+nrow(tx)
+head(pp)
+View(pp[, .(n_row = nrow(.SD)), by = STUDYID])
+
+pp_num_row <- NA
+for (i in 1:nrow(ind_table)) {
+    studyid <- ind_table[["STUDYID"]][i]
+    df <- pp[STUDYID == studyid]
+    pp_num_row[i] <- nrow(df)
+}
+
+
+tx_num_row <- NA
+for (i in 1:nrow(ind_table)) {
+    studyid <- ind_table[["STUDYID"]][i]
+    df <- tx[STUDYID == studyid]
+    tx_num_row[i] <- nrow(df)
+}
+
+length(pp_num_row)
+length(tx_num_row)
+df <- data.table(pp_num_row = pp_num_row, tx_num_row = tx_num_row)
+head(df)
+View(df)
+nrow(ind_table)
+head(ind_table)
+new_ind_table <- copy(ind_table)
+new_ind_table <- cbind(new_ind_table, pp_num_row = pp_num_row, tx_num_row = tx_num_row)
+View(new_ind_table)
+
+new_ind_table[pp_num_row==0 & tx_num_row!=0,][!duplicated(STUDYID)]
