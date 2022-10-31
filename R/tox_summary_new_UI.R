@@ -1924,6 +1924,17 @@ output$studyid_ui  <- shiny::renderUI({
 	   }
   })
   
+
+  shiny::observeEvent(input$ind_id, {
+	shiny::req(input$ind_id)
+      if (input$selectStudy == "New Study") {
+          shiny::updateSelectInput(session = session, inputId = "Species",choices = names(speciesConversion))
+		  shiny::updateCheckboxGroupInput(session= session, inputId = "which_sex",
+		  choices = choices_sex, selected = NULL, inline = TRUE)
+          shiny::updateTextInput(session = session, inputId = "Duration", value = "")
+      }
+  })
+  
   studyid_selected <- shiny::eventReactive(input$study_id, {
 	   if(!is.null(input$study_id) & (input$study_id != "")) {
 	  df <- studyid_option()
