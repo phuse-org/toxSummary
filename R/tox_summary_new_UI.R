@@ -2154,84 +2154,165 @@ output$studyid_ui  <- shiny::renderUI({
   
   
   #### choose AUC from database
-  output$choose_auc <- shiny::renderUI({
+  output$from_database <- shiny::renderUI({
+	shiny::req(input$ind_id)
+	shiny::req(input$study_id)
+	# if error in studyid, error will also shown here
+	check <- studyid_option()
+
+
 	  study <- studyid_selected()
     
     auc_list <- DBI::dbGetQuery(conn=conn,
 	 'SELECT DISTINCT PPTESTCD,PPTEST FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
 	 params=list(x=study))
+
+	  pp_df <- DBI::dbGetQuery(
+        conn = conn,
+        "SELECT * FROM PP WHERE STUDYID=:x",
+        params = list(x = study)
+    )
   
+    shiny::validate(
+		shiny::need(expr = nrow(pp_df) > 0,
+		 message = "PP domain empty for this study"
+		),
+
+		shiny::need(expr = nrow(auc_list) > 0,
+		 message = "PP domain empty or AUC not available for this study"
+		),
+		errorClass = "study_empty_pp"
+	  )
+
     auc_list <- data.table::as.data.table(auc_list)
 	auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
+
+
+	if(!all(is.na(pp_df[["PPNOMDY"]]))) {
+		ppnomdy_options <- unique(pp_df[["PPNOMDY"]])
+
+	} else {
+		ppnomdy_options <- unique(pp_df[["VISITDY"]])
+
+	}
+	 names(ppnomdy_options) <- as.character(ppnomdy_options)
+
+
 	
 	if ("AUCLST" %in% auc_list$PPTESTCD) {
+		htmltools::tagList(
 		shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
                           selected= "AUCLST",
-                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option))
+                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option)),
+		shiny::selectizeInput(
+        inputId = "pp_visitday",
+        label = "Select PPNOMDY/VISITDY Day",
+        choices = c(ppnomdy_options),
+        selected = ppnomdy_options,
+        multiple = TRUE,
+        options = list(plugins = list("remove_button"))
+    ),
+
+		shiny::actionButton("get_from_db", 
+		 "Click me to populate dose and pk from  database", 
+		icon  = shiny::icon("mouse-pointer"),
+		 style = "background-color:skyblue")
+  )
+
 
 	} else {
+		htmltools::tagList(
     
     shiny::selectizeInput(inputId = "auc_db", 
                           label="Select AUC parameter",
-                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option))
+                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option)),
+		
+	shiny::selectizeInput(
+        inputId = "pp_visitday",
+        label = "Select PPNOMDY/VISITDY Day",
+        choices = c(ppnomdy_options),
+        selected = ppnomdy_options,
+        multiple = TRUE,
+        options = list(plugins = list("remove_button"))
+	),
+
+		shiny::actionButton("get_from_db", 
+		 "Click me to populate dose and pk from  database", 
+		icon  = shiny::icon("mouse-pointer"),
+		 style = "background-color:skyblue")
+  )
 	}
 
-	# if(length(auc_list$PPTESTCD) < 1) {
-	# 	  shiny::selectizeInput(inputId = "auc_db", 
-    #                       label="NO AUC parameter available",
-    #                       choices= c(choose = ""))
 
-	# } else if ("AUCLST" %in% auc_list$PPTESTCD) {
-	# 	shiny::selectizeInput(inputId = "auc_db", 
-    #                       label="Select AUC parameter",
-    #                       selected= "AUCLST",
-    #                       choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
-
-	# } else {
-    
-    # shiny::selectizeInput(inputId = "auc_db", 
-    #                       label="Select AUC parameter",
-    #                       choices= setNames(auc_list$PPTESTCD, auc_list$choice_option))
-	# }
   }) 
   
   # 
 
   #### group by visit day ----
-output$Choose_visit_day <- shiny::renderUI({
-    study <- studyid_selected()
-    pp_df <- DBI::dbGetQuery(
-        conn = conn,
-        "SELECT * FROM PP WHERE STUDYID=:x",
-        params = list(x = study)
-    )
+# output$Choose_visit_day <- shiny::renderUI({
+# 	shiny::req(input$study_id)
+#     study <- studyid_selected()
+#     pp_df <- DBI::dbGetQuery(
+#         conn = conn,
+#         "SELECT * FROM PP WHERE STUDYID=:x",
+#         params = list(x = study)
+#     )
 
-	if(!all(is.na(pp_df[["PPNOMDY"]]))) {
-		auc_list <- unique(pp_df[["PPNOMDY"]])
+	#   shiny::validate(
+	# 	shiny::need(expr = nrow(pp_df) > 0,
+	# 	 message = "PP domain empty for this study"
+	# 	),
+	# 	errorClass = "study_no_empty_pp"
+	#   )
 
-	} else {
-		auc_list <- unique(pp_df[["VISITDY"]])
+# 	if(!all(is.na(pp_df[["PPNOMDY"]]))) {
+# 		ppnomdy_options <- unique(pp_df[["PPNOMDY"]])
 
-	}
-    # auc_list <- RSQLite::dbGetQuery(
-    #     conn = conn,
-    #     "SELECT DISTINCT VISITDY FROM PP WHERE STUDYID=:x",
-    #     params = list(x = study)
-    # )
-    # auc_list <- auc_list[["VISITDY"]]
-    names(auc_list) <- as.character(auc_list)
+# 	} else {
+# 		ppnomdy_options <- unique(pp_df[["VISITDY"]])
 
-    shiny::selectizeInput(
-        inputId = "pp_visitday",
-        label = "Select PPNOMDY/VISITDY Day",
-        choices = c(auc_list),
-        selected = auc_list,
-        multiple = TRUE,
-        options = list(plugins = list("remove_button"))
-    )
-})
+# 	}
+   
+#     names(ppnomdy_options) <- as.character(ppnomdy_options)
+# htmltools::tagList(
+# 	shiny::selectizeInput(
+#         inputId = "pp_visitday",
+#         label = "Select PPNOMDY/VISITDY Day",
+#         choices = c(ppnomdy_options),
+#         selected = ppnomdy_options,
+#         multiple = TRUE,
+#         options = list(plugins = list("remove_button"))
+#     ),
 
+# 		shiny::actionButton("get_from_db", 
+# 		 "Click me to populate dose and pk from  database", 
+# 		icon  = shiny::icon("mouse-pointer"),
+# 		 style = "background-color:skyblue")
+# )
+    
+
+
+# })
+
+
+# shiny::observeEvent(input$study_id,{
+# 	shiny::req(input$ind_id)
+   
+#    msg <- input$study_id
+#    print(msg)
+
+
+
+# 	session$sendCustomMessage("change_auc", msg)
+# })
+
+# shiny::observe({
+# 	shiny::req(input$ind_id)
+# 	input$study_id
+# 	session$sendCustomMessage("change_auc", "choose_auc")
+
+# })
 
 # help_menu_item <- function() {
 #     shinydashboard::menuItem(
@@ -2738,12 +2819,18 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::textOutput("studyTitle"),
 		htmltools::br(),
 		htmltools::br(),
-		shiny::uiOutput("choose_auc"),
-		shiny::uiOutput("Choose_visit_day"),
-		shiny::actionButton("get_from_db", 
-		 "Click me to populate dose and pk from  database", 
-		icon  = shiny::icon("mouse-pointer"),
-		 style = "background-color:skyblue"),
+		shiny::uiOutput("from_database"),
+		# shiny::uiOutput("Choose_visit_day"),
+		# shiny::conditionalPanel(
+		# 	condition = "input.auc_db != null",
+
+
+		# 	shiny::actionButton("get_from_db", 
+		#  "Click me to populate dose and pk from  database", 
+		# icon  = shiny::icon("mouse-pointer"),
+		#  style = "background-color:skyblue"),
+
+		# ),
 		htmltools::tags$div(style= " padding-bottom: 40px")
 
         # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
