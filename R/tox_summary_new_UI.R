@@ -615,7 +615,7 @@ values$Findings <- ''
       df <- get_dose_pk_for_study()
       n_dose <-   length(unique(df[,TRTDOS]))
       
-      
+      df$mean <- round(df$mean, digits = 2)
       cmax <- df[PPTESTCD=="CMAX"]
       auc <- df[PPTESTCD!="CMAX"]
 
