@@ -2440,7 +2440,7 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
       if (input$selectData=='blankData.rds') {
 
 htmltools::tagList(
-	shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right'),
+	shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right', verify_fa = FALSE),
 			style = "background-color: white;
             border: 2px solid #bcbf0a;"
 			),
@@ -2463,7 +2463,7 @@ htmltools::tagList(
 			)
       } else {
 		htmltools::tagList(
-			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right'),
+			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right',verify_fa = FALSE),
 			style = "background-color: white;
             border: 2px solid #bcbf0a;"
 			),
@@ -2486,7 +2486,7 @@ htmltools::tagList(
       }
     } else {
 		htmltools::tagList(
-			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right'),
+			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right',verify_fa = FALSE),
 			style = "background-color: white;
             border: 2px solid #bcbf0a;"
 			),
