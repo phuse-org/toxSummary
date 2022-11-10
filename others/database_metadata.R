@@ -6,15 +6,16 @@
 
 library(RSQLite)
 library(data.table)
-
+library(tictoc)
 #  connect database
+tic("start")
 db_path <- "C:/Users/Md.Ali/OneDrive - FDA/yousuf/10_DATA/SEND_unclean.db"
 conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
 ind_table <- data.table::as.data.table(RSQLite::dbGetQuery(
     conn = conn, "SELECT *  FROM ID"
 ))
 ind_table <- ind_table[APPID %like% "IND", ]
-ind_table <- ind_table[1:1000]
+# ind_table <- ind_table[1:1000]
 # get_pp <- function(conn, studyid) {
 
 #  df <- RSQLite::dbGetQuery(conn = conn,
@@ -74,8 +75,8 @@ final_df[, `:=`(
 	ppnomdy_populated = PPNOMDY_populated,
 	unq_testcd = PPTESTCD
 )]
-
-#data.table::fwrite(final_df, "data/pp_metadata.csv")
+toc()
+#saveRDS(final_df, "C:/Users/Md.Ali/OneDrive - FDA/yousuf/00_github_projects/toxSummary/my_data_fda/pp_metadata_final.rds")
 # end
 
 
@@ -182,3 +183,27 @@ new_ind_table <- cbind(new_ind_table, pp_num_row = pp_num_row, tx_num_row = tx_n
 View(new_ind_table)
 
 new_ind_table[pp_num_row==0 & tx_num_row!=0,][!duplicated(STUDYID)]
+
+# whether cmax and auc common in pp domain
+library(data.table)
+pp_meta_org <- readRDS("my_data_fda/pp_metadata_final.rds")
+str(pp_meta_org)
+dim(pp_meta_org)
+pp_meta <- pp_meta[num_row != 0L]
+dim(pp_meta)
+testcd <- pp_meta$unq_testcd
+testcd[1:5]
+index <- seq(length(testcd))
+#find where cmax not available
+cmax <- grep("CMAX", testcd, ignore.case = TRUE)
+`%not_in%`  <- Negate("%in%")
+no_cmax <- which(index %not_in% cmax == TRUE)
+no_cmax_list <- testcd[no_cmax]
+pp_meta[unq_testcd %in% no_cmax_list, ]
+
+# find where auc not available
+auc <- grep("AUC", testcd, ignore.case = TRUE)
+
+no_auc <- which(index %not_in% auc == TRUE)
+no_auc_list <- testcd[no_auc]
+pp_meta[unq_testcd %in% no_auc_list, ]
