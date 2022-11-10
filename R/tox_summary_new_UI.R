@@ -665,7 +665,8 @@ values$Findings <- ''
 			 min=0, value=studyData$Doses[[doseName]][['AUC']]))
         
       } else {
-        htmltools::div(shiny::checkboxInput(paste0('NOAEL',I),'NOAEL?',value=studyData$Doses[[doseName]][['NOAEL']]))
+        htmltools::div(shiny::checkboxInput(paste0('NOAEL',I),'NOAEL?',
+		value=studyData$Doses[[doseName]][['NOAEL']]))
       }
     })}
   })
@@ -1022,7 +1023,8 @@ values$Findings <- ''
       flextable::flextable() %>%
       flextable::merge_v(j = ~ Findings + Reversibility + Study) %>%
       flextable::autofit() %>%
-      flextable::add_header_row(values = c("Nonclinical Findings of Potential Clinical Relevance"), colwidths = c(5)) %>%
+      flextable::add_header_row(values = c("Nonclinical Findings of Potential Clinical Relevance"),
+	   colwidths = c(5)) %>%
       flextable::theme_box()
     plotData_tab
   })
@@ -1034,7 +1036,8 @@ values$Findings <- ''
       paste0("clinical_relevance", ".docx")
     },
     content = function(file) {
-      flextable::save_as_docx(dt_to_flex_01(), path = paste0(user(), "/clinical_relevance.docx"))
+      flextable::save_as_docx(dt_to_flex_01(),
+	   path = paste0(user(), "/clinical_relevance.docx"))
       file.copy(paste0(user(),"/clinical_relevance.docx"), file)
     }
   )
@@ -1723,106 +1726,7 @@ values$Findings <- ''
     htmltools::HTML(paste0(five_space, htmltools::strong(auc)))
   })
   
-# clinical data modal function ----
-#   clinical_data_modal <- function() {
-#      shiny::modalDialog(
 
-# 		 size = "l",
-
-# 		 htmltools::h4("Edit Clinical Data"),
-# 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-# 		 htmltools::br(),
-        
-#          shiny::checkboxGroupInput(
-#              "clinDosing", "Clinical Dosing:",
-#              clinDosingOptions
-#          ),
-#          shiny::conditionalPanel(
-#              "condition=input.MgKg==false",
-#              shiny::numericInput("HumanWeight", "*Human Weight (kg):",
-#                  value = 60, min = 0
-#              )
-#          ),
-#          shiny::checkboxInput("MgKg", "Dosing in mg/kg?", value = F),
-#          shiny::conditionalPanel(
-#              condition = 'input.clinDosing.includes("Start Dose")',
-#              htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-#              htmltools::h4("Start Dose Information:"),
-#              shiny::conditionalPanel(
-#                  condition = "input.MgKg==true",
-#                  shiny::numericInput("StartDoseMgKg", "*Start Dose (mg/kg/day):",
-#                      value = NULL, min = 0
-#                  )
-#              ),
-#              shiny::conditionalPanel(
-#                  condition = "input.MgKg==false",
-#                  shiny::numericInput("StartDose", "*Start Dose (mg/day):",
-#                      value = NULL, min = 0
-#                  )
-#              ),
-#              shiny::uiOutput("start_cmax"),
-#              shiny::numericInput("StartDoseCmax", NULL, value = NULL, min = 0),
-#              shiny::uiOutput("start_auc"),
-#              shiny::numericInput("StartDoseAUC", NULL, value = NULL, min = 0)
-#          ),
-#          shiny::conditionalPanel(
-#              condition = 'input.clinDosing.includes("MRHD")',
-#             htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-#              htmltools::h4("MRHD Information:"),
-#              shiny::conditionalPanel(
-#                  condition = "input.MgKg==true",
-#                  shiny::numericInput("MRHDMgKg", "*MRHD (mg/kg):",
-#                      value = NULL, min = 0
-#                  )
-#              ),
-#              shiny::conditionalPanel(
-#                  condition = "input.MgKg==false",
-#                  shiny::numericInput("MRHD", "*MRHD (mg):", value = NULL, min = 0)
-#              ),
-#              shiny::uiOutput("MRHD_cmax"),
-#              shiny::numericInput("MRHDCmax", NULL, value = NULL, min = 0),
-#              shiny::uiOutput("MRHD_auc"),
-#              shiny::numericInput("MRHDAUC", NULL, value = NULL, min = 0)
-#          ),
-#          shiny::conditionalPanel(
-#              condition = 'input.clinDosing.includes("Custom Dose")',
-#              htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-#              htmltools::h4("Custom Dose Information:"),
-#              shiny::conditionalPanel(
-#                  condition = "input.MgKg==true",
-#                  shiny::numericInput("CustomDoseMgKg", "*Custom Dose (mg/kg):",
-#                      value = NULL, min = 0
-#                  )
-#              ),
-#              shiny::conditionalPanel(
-#                  condition = "input.MgKg==false",
-#                  shiny::numericInput("CustomDose", "*Custom Dose (mg):",
-#                      value = NULL, min = 0
-#                  )
-#              ),
-#              shiny::uiOutput("custom_cmax"),
-#              shiny::numericInput("CustomDoseCmax", NULL, value = NULL, min = 0),
-#              shiny::uiOutput("custom_auc"),
-#              shiny::numericInput("CustomDoseAUC", NULL, value = NULL, min = 0)
-#          ),
-#          shiny::actionButton("saveClinicalInfo", "Save Clinical Information",
-#              icon = shiny::icon("plus-circle"),
-# 			 style = "background-color: white;
-#             border: 2px solid #4CAF50;"
-
-#          ),
-#          htmltools::br(),
-# 		 htmltools::br(),
-#          footer = htmltools::tagList(
-# 			htmltools::tags$h4("* Indicates Required Fields ", align = "left"),
-#              htmltools::tags$h4("Please save the clinical data before hit the close button",
-#                  style = "color:#E31616;"
-#              ),
-#              shiny::modalButton("Close")
-#          )
-#      )
-#  }
-  
  
    #### get studyID from IND selection
   
@@ -1873,7 +1777,7 @@ TSPARMCD IN ("SDESIGN",
 	  
   })
 
-  # 
+  # study input after ind selection
 output$studyid_ui  <- shiny::renderUI({
      shiny::req(input$ind_id)
 	#  if (!is.null(input$ind_id)) {
@@ -1924,17 +1828,43 @@ output$studyid_ui  <- shiny::renderUI({
 	   }
   })
   
+  # update downstream input when input$ind_id (IND number) changes
 
   shiny::observeEvent(input$ind_id, {
-	shiny::req(input$ind_id)
+      shiny::req(input$ind_id)
       if (input$selectStudy == "New Study") {
-          shiny::updateSelectInput(session = session, inputId = "Species",choices = names(speciesConversion))
-		  shiny::updateCheckboxGroupInput(session= session, inputId = "which_sex",
-		  choices = choices_sex, selected = NULL, inline = TRUE)
-          shiny::updateTextInput(session = session, inputId = "Duration", value = "")
+          shiny::updateSelectInput(
+              session = session, inputId = "Species",
+              choices = names(speciesConversion)
+          )
+          shiny::updateCheckboxGroupInput(
+              session = session, inputId = "which_sex",
+              choices = choices_sex,
+              selected = NULL,
+              inline = TRUE
+          )
+          shiny::updateTextInput(
+              session = session,
+              inputId = "Duration",
+              value = ""
+          )
+          shiny::updateSelectizeInput(
+              session = session,
+              inputId = "auc_db",
+              choices = character(0),
+              selected = character(0)
+          )
+          shiny::updateSelectizeInput(
+              session = session,
+              inputId = "pp_visitday",
+              choices = character(0),
+              selected = character(0),
+              options = list(plugins = list("remove_button"))
+          )
       }
   })
   
+  #  get which study selected from list (study number)
   studyid_selected <- shiny::eventReactive(input$study_id, {
 	   if(!is.null(input$study_id) & (input$study_id != "")) {
 	  df <- studyid_option()
@@ -1969,7 +1899,7 @@ output$studyid_ui  <- shiny::renderUI({
 	  )
 	  }
   })
-  # get species information
+  # get species information and update
   
   shiny::observeEvent(input$study_id, {
 	   if(!is.null(input$study_id) & (input$study_id != "")) {
@@ -2005,138 +1935,7 @@ output$studyid_ui  <- shiny::renderUI({
 
 
 
-  # observeEvent(input$get_from_database, {
-  #   updateNumericInput(session = session, inputId = 'nDoses')
-  # })
-
-# nonclinical modal dialog ----
-
-# data_modal <- function() {
-
-# 	htmltools::tags$div(id = "nonclinicalModal",
-#     shiny::modalDialog(
-		
-		
-# 		size = "l",
-# 		htmltools::h4("Edit Nonclinical Data"),
-# 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
-# 		htmltools::br(),
-        
-#         shiny::uiOutput("selectStudy"),
-#         htmltools::br(),
-#         shiny::actionButton("saveStudy", "Save Study",
-#             icon = shiny::icon("plus-circle"),
-#             style = "background-color: white;
-#             border: 2px solid #4CAF50;"
-#         ),
-#         shiny::actionButton("deleteStudy", "Delete Study",
-#             icon = shiny::icon("minus-circle"),
-#             style = "background-color: white;
-#                     border: 2px solid #FF0000;"
-#         ),
-#         htmltools::br(),
-#         htmltools::br(),
-#         htmltools::tags$hr(style = "border-top: 3px solid#1e9acd;"),
-		
-#         shiny::selectizeInput(
-#             inputId = "ind_id",
-#             label = htmltools::tags$div(
-#                 htmltools::HTML('<i class="fa fa-folder-open"
-#              style = "color:#000000;font-size:18px;"></i> Select IND')
-#             ),
-#             selected = NULL,
-#             choices = NULL
-#                         # ind_number_list
-                        
-#             # options = list(maxOptions = 2500)
-#         ),
-		
-#         htmltools::br(),
-#         htmltools::br(),
-# 		shiny::uiOutput("studyid_ui"),
-#         htmltools::br(),
-#         htmltools::br(),
-#         shiny::selectInput("Species",
-#             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-dog"
-#             style = "color:#724028d9;font-size:18px;"></i> *Select Species:')),
-#             choices = names(speciesConversion)
-#         ),
-#         htmltools::br(),
-#         htmltools::br(),
-# 		shiny::checkboxGroupInput("which_sex",
-#             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-venus"
-#             style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
-#             choices = choices_sex,
-# 			selected = choices_sex,
-# 			inline  = TRUE
-#             # choices = c("ALL", "M", "F")
-#         ),
-#         shiny::textAreaInput("Duration", "*Study Duration/Description:",
-#          height = "100px"),
-#         htmltools::h4("Study Name:"),
-#         shiny::verbatimTextOutput("studyTitle"),
-#         htmltools::hr(style = "border-top: 3px solid#1e9acd;"),
-#         shiny::uiOutput("choose_auc"),
-# 		shiny::uiOutput("Choose_visit_day"),
-# 		shiny::actionButton("get_from_db", 
-# 		 "Click me to populate dose and pk from  database", 
-# 		icon  = shiny::icon("mouse-pointer"),
-# 		 style = "background-color:skyblue"),
-# 		 htmltools::br(),
-# 		 htmltools::br(),
-#         # checkboxInput(
-#         #     inputId = "get_from_database",
-#         #     label = "Populate from Database", value = FALSE
-#         # ),
-
-#         #   shiny::actionButton(inputId = "get_from_database",
-#         #   label = "Populate From Database",
-#         #   style = "background-color: white;
-#         #   border: 2px solid #4CAF50;"),
-
-
-#         shiny::numericInput("nDoses",
-#             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-syringe"
-# 			style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
-#             value = 1, step = 1, min = 1
-#         ),
-#         # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
-#         shiny::uiOutput("Doses"),
-#         htmltools::hr(style = "border-top: 3px solid#1e9acd;"),
-#         shiny::numericInput("nFindings",
-#             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-microscope"
-# 			style = "color:#940aebd9;font-size:18px;"></i> *Number of Findings:')),
-#             value = 1, step = 1, min = 1
-#         ),
-#         shiny::uiOutput("Findings"),
-#         htmltools::tags$hr(style = "border-top: 2px solid#1e9acd;"),
-#         shiny::checkboxInput("notes", "Notes for Study?", value = FALSE),
-#         shiny::uiOutput("study_note"),
-#         shiny::actionButton("saveStudy_02", "Save Study",
-#             icon = shiny::icon("plus-circle"),
-#             style = "
-#                    background-color: white;
-#                    border: 2px solid #4CAF50;"
-#         )
-# 		,
-		
-#         footer = htmltools::tagList(
-#             htmltools::tags$h4("Please save the study before close",
-#                 style = "color:#E31616;"
-#             ),
-#             shiny::modalButton("Close")
-#         )
-
-#     )
-# 	)
-# }
-  
-#   shiny::observeEvent(eventExpr = input$edit_nonclinical, {
-#       shiny::showModal(
-#           data_modal()
-#       )
-#   })
-
+# update study from saved data 
   shiny::observeEvent(input$selectData, ignoreNULL = TRUE, {
 	#   shiny::req(input$selectData)
     #   input$selectData
@@ -2149,186 +1948,100 @@ output$studyid_ui  <- shiny::renderUI({
   })
   
 
+# AUC update
 
-
-  
-  
-  #### choose AUC from database
-  output$from_database <- shiny::renderUI({
+ get_auc_list <- shiny::reactive({
 	shiny::req(input$ind_id)
 	shiny::req(input$study_id)
-	# if error in studyid, error will also shown here
-	check <- studyid_option()
-
-
-	  study <- studyid_selected()
-    
-    auc_list <- DBI::dbGetQuery(conn=conn,
+	study <- studyid_selected()	
+	   auc_list <- DBI::dbGetQuery(conn=conn,
 	 'SELECT DISTINCT PPTESTCD,PPTEST FROM PP WHERE STUDYID=:x AND PPTESTCD LIKE "%auc%"',
 	 params=list(x=study))
+	 
+  })
 
-	  pp_df <- DBI::dbGetQuery(
-        conn = conn,
-        "SELECT * FROM PP WHERE STUDYID=:x",
-        params = list(x = study)
-    )
+  shiny::observeEvent(input$study_id, {
+      if (!is.null(input$study_id) & (input$study_id != "")) {
+          auc_list <- get_auc_list()
+          if (nrow(auc_list) > 0) {
+              auc_list <- data.table::as.data.table(auc_list)
+              auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
+
+              if ("AUCLST" %in% auc_list$PPTESTCD) {
+                  shiny::updateSelectizeInput(
+                      inputId = "auc_db",
+                      selected = "AUCLST",
+                      choices = stats::setNames(
+                          auc_list$PPTESTCD,
+                          auc_list$choice_option
+                      )
+                  )
+              } else {
+                  shiny::updateSelectizeInput(
+                      inputId = "auc_db",
+                      choices = stats::setNames(
+                          auc_list$PPTESTCD,
+                          auc_list$choice_option
+                      )
+                  )
+              }
+          }
+      }
+  })
+
+
+  ## ppnomdy/vistday update
+
+  get_visitday <- shiny::reactive({
+      shiny::req(input$ind_id)
+      shiny::req(input$study_id)
+      study <- studyid_selected()
+      pp_df <- DBI::dbGetQuery(
+          conn = conn,
+          "SELECT * FROM PP WHERE STUDYID=:x",
+          params = list(x = study)
+      )
+  })
+
+  shiny::observeEvent(input$study_id, {
+      if (!is.null(input$study_id) & (input$study_id != "")) {
+          pp_df <- get_visitday()
+
+		  if(nrow(pp_df) > 0) {
+			 if (!all(is.na(pp_df[["PPNOMDY"]]))) {
+              ppnomdy_options <- unique(pp_df[["PPNOMDY"]])
+          } else {
+              ppnomdy_options <- unique(pp_df[["VISITDY"]])
+          }
+          names(ppnomdy_options) <- as.character(ppnomdy_options)
+
+          shiny::updateSelectizeInput(
+              inputId = "pp_visitday",
+              choices = c(ppnomdy_options),
+              selected = ppnomdy_options,
+            #   multiple = TRUE,
+              options = list(plugins = list("remove_button"))
+          )
+
+		  } else {
+			shiny::showNotification(paste0("PP domain empty for study: ", study),
+			type = "warning")
+		  }
+
+
+         
+      }
+  })
   
-    shiny::validate(
-		shiny::need(expr = nrow(pp_df) > 0,
-		 message = "PP domain empty for this study"
-		),
-
-		shiny::need(expr = nrow(auc_list) > 0,
-		 message = "PP domain empty or AUC not available for this study"
-		),
-		errorClass = "study_empty_pp"
-	  )
-
-    auc_list <- data.table::as.data.table(auc_list)
-	auc_list[, choice_option := paste0(PPTESTCD, " (", PPTEST, ")")]
-
-
-	if(!all(is.na(pp_df[["PPNOMDY"]]))) {
-		ppnomdy_options <- unique(pp_df[["PPNOMDY"]])
-
-	} else {
-		ppnomdy_options <- unique(pp_df[["VISITDY"]])
-
-	}
-	 names(ppnomdy_options) <- as.character(ppnomdy_options)
-
-
-	
-	if ("AUCLST" %in% auc_list$PPTESTCD) {
-		htmltools::tagList(
-		shiny::selectizeInput(inputId = "auc_db", 
-                          label="Select AUC parameter",
-                          selected= "AUCLST",
-                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option)),
-		shiny::selectizeInput(
-        inputId = "pp_visitday",
-        label = "Select PPNOMDY/VISITDY Day",
-        choices = c(ppnomdy_options),
-        selected = ppnomdy_options,
-        multiple = TRUE,
-        options = list(plugins = list("remove_button"))
-    ),
-
-		shiny::actionButton("get_from_db", 
-		 "Click me to populate dose and pk from  database", 
-		icon  = shiny::icon("mouse-pointer"),
-		 style = "background-color:skyblue")
-  )
-
-
-	} else {
-		htmltools::tagList(
-    
-    shiny::selectizeInput(inputId = "auc_db", 
-                          label="Select AUC parameter",
-                          choices= stats::setNames(auc_list$PPTESTCD, auc_list$choice_option)),
-		
-	shiny::selectizeInput(
-        inputId = "pp_visitday",
-        label = "Select PPNOMDY/VISITDY Day",
-        choices = c(ppnomdy_options),
-        selected = ppnomdy_options,
-        multiple = TRUE,
-        options = list(plugins = list("remove_button"))
-	),
-
-		shiny::actionButton("get_from_db", 
-		 "Click me to populate dose and pk from  database", 
-		icon  = shiny::icon("mouse-pointer"),
-		 style = "background-color:skyblue")
-  )
-	}
-
-
-  }) 
+ 
   
-  # 
-
-  #### group by visit day ----
-# output$Choose_visit_day <- shiny::renderUI({
-# 	shiny::req(input$study_id)
-#     study <- studyid_selected()
-#     pp_df <- DBI::dbGetQuery(
-#         conn = conn,
-#         "SELECT * FROM PP WHERE STUDYID=:x",
-#         params = list(x = study)
-#     )
-
-	#   shiny::validate(
-	# 	shiny::need(expr = nrow(pp_df) > 0,
-	# 	 message = "PP domain empty for this study"
-	# 	),
-	# 	errorClass = "study_no_empty_pp"
-	#   )
-
-# 	if(!all(is.na(pp_df[["PPNOMDY"]]))) {
-# 		ppnomdy_options <- unique(pp_df[["PPNOMDY"]])
-
-# 	} else {
-# 		ppnomdy_options <- unique(pp_df[["VISITDY"]])
-
-# 	}
-   
-#     names(ppnomdy_options) <- as.character(ppnomdy_options)
-# htmltools::tagList(
-# 	shiny::selectizeInput(
-#         inputId = "pp_visitday",
-#         label = "Select PPNOMDY/VISITDY Day",
-#         choices = c(ppnomdy_options),
-#         selected = ppnomdy_options,
-#         multiple = TRUE,
-#         options = list(plugins = list("remove_button"))
-#     ),
-
-# 		shiny::actionButton("get_from_db", 
-# 		 "Click me to populate dose and pk from  database", 
-# 		icon  = shiny::icon("mouse-pointer"),
-# 		 style = "background-color:skyblue")
-# )
-    
-
-
-# })
-
-
-# shiny::observeEvent(input$study_id,{
-# 	shiny::req(input$ind_id)
-   
-#    msg <- input$study_id
-#    print(msg)
-
-
-
-# 	session$sendCustomMessage("change_auc", msg)
-# })
-
-# shiny::observe({
-# 	shiny::req(input$ind_id)
-# 	input$study_id
-# 	session$sendCustomMessage("change_auc", "choose_auc")
-
-# })
-
-# help_menu_item <- function() {
-#     shinydashboard::menuItem(
-#         "Questions/Feedback",
-#         shinydashboard::menuSubItem(
-#             text = "Email for help",
-#             icon = shiny::icon("envelope-square"),
-#             href = "mailto:kevin.snyder@fda.hhs.gov"
-#         )
-#     )
-# }
+## reload page 
 
 shiny::observeEvent(eventExpr = input$reload_app, {
 	session$reload()
 })
 
+## show clinical unit in nonclinical section
 output$show_unit_in_nonclinical  <- shiny::renderUI({
 	shiny::req(input$selectData)
 	if(input$MgKg == FALSE) {
@@ -2345,6 +2058,7 @@ output$show_unit_in_nonclinical  <- shiny::renderUI({
 
 })
 
+# show which application selected in clinical page
 output$clin_page_application  <- shiny::renderText({
 	shiny::req(input$selectData)
 	if(input$selectData != "blankdData.rds") {
@@ -2359,7 +2073,7 @@ output$clin_page_application  <- shiny::renderText({
 
 })
 
-
+# show which application selected in nonclinical page
 output$non_clin_page_application  <- shiny::renderText({
 	shiny::req(input$selectData)
 	if(input$selectData != "blankdData.rds") {
@@ -2374,13 +2088,10 @@ output$non_clin_page_application  <- shiny::renderText({
 
 })
 
-
+  # update clinical information  from application selected
 shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit = TRUE, {
 
-    
 	 Data <- getData()
-
-    # update clinical information
     clinData <- Data[['Clinical Information']]
     if (clinData$MgKg==F) {
       shiny::updateNumericInput(session,'HumanWeight',value = clinData$HumanWeight)
@@ -2411,7 +2122,7 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
     }
   })
   
-
+##  update application UI
 
  output$select_Data <- shiny::renderUI({
       datasets <- c("blankData.rds", grep(".rds", list.files(user(),
@@ -2432,7 +2143,7 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
       }
   })
   
-  # output$menu function -----
+  # output Menu UI function -----
   
   output$menu <- shiny::renderUI({
 
@@ -2463,7 +2174,8 @@ htmltools::tagList(
 			)
       } else {
 		htmltools::tagList(
-			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right',verify_fa = FALSE),
+			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right',
+			verify_fa = FALSE),
 			style = "background-color: white;
             border: 2px solid #bcbf0a;"
 			),
@@ -2486,7 +2198,8 @@ htmltools::tagList(
       }
     } else {
 		htmltools::tagList(
-			shiny::actionButton('reload_app','Reload App',icon=shiny::icon('rotate-right',verify_fa = FALSE),
+			shiny::actionButton('reload_app','Reload App',
+			icon=shiny::icon('rotate-right',verify_fa = FALSE),
 			style = "background-color: white;
             border: 2px solid #bcbf0a;"
 			),
@@ -2509,15 +2222,20 @@ htmltools::tagList(
   })
   
 
-
+## render Figure (plot)
     output$renderFigure <- shiny::renderUI({
-    shinycssloaders::withSpinner(
-		ggiraph::girafeOutput('figure',width='100%',height=paste0(100*plotHeight(),'px')))
-  })
+        shinycssloaders::withSpinner(
+            ggiraph::girafeOutput("figure",
+                width = "100%",
+                height = paste0(100 * plotHeight(), "px")
+            )
+        )
+    })
     
     # shinyjs::runcodeServer()
 }
 
+###############################    UI   ################################ ----
 
 ui <- shiny::navbarPage("Nonclinical Summary",
 shiny::tabPanel("Application",
@@ -2529,8 +2247,8 @@ shiny::sidebarLayout(
 	htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
 	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
 	#   tags$head(tags$script(src = "button.js")),
-    # shinyjs::useShinyjs(),
-    # shinyjs::runcodeUI(),
+    shinyjs::useShinyjs(),
+    shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
@@ -2643,6 +2361,8 @@ shiny::sidebarLayout(
 
 	)
 )),
+
+##################################### clinical ###########################
 shiny::tabPanel("Edit Clinical",
 shiny::fluidPage(
 shiny::fluidRow(
@@ -2750,7 +2470,7 @@ htmltools::tags$div(style= " padding-bottom: 20px")
 ))),
 
 
-
+##################### nonclinical #################################################
 shiny::tabPanel("Edit Nonclinical",
 shiny::fluidPage(
 
@@ -2808,7 +2528,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-venus"
             style = "color:#943488d9;font-size:18px;"></i> *Select Sex:')),
             choices = choices_sex,
-			selected = choices_sex,
+			selected = NULL,
 			inline  = TRUE
             # choices = c("ALL", "M", "F")
         ),
@@ -2819,43 +2539,37 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::textOutput("studyTitle"),
 		htmltools::br(),
 		htmltools::br(),
-		shiny::uiOutput("from_database"),
-		# shiny::uiOutput("Choose_visit_day"),
-		# shiny::conditionalPanel(
-		# 	condition = "input.auc_db != null",
-
-
-		# 	shiny::actionButton("get_from_db", 
-		#  "Click me to populate dose and pk from  database", 
-		# icon  = shiny::icon("mouse-pointer"),
-		#  style = "background-color:skyblue"),
-
-		# ),
+		shiny::selectizeInput(inputId = "auc_db", 
+                          label = "Select AUC parameter:",
+                          choices = NULL,
+						  selected = NULL),
+		htmltools::br(),
+		shiny::selectizeInput(
+        inputId = "pp_visitday",
+        label = "Select PPNOMDY/VISITDY Day:",
+        choices = NULL,
+        selected = NULL,
+        multiple = TRUE,
+        options = list(plugins = list("remove_button"))
+    ),
+		shiny::actionButton("get_from_db", 
+		"Click me to populate dose and pk from  database", 
+		icon  = shiny::icon("mouse-pointer"),
+		style = "background-color:skyblue"),
 		htmltools::tags$div(style= " padding-bottom: 40px")
 
         # htmltools::hr(style = "border-top: 3px solid#1e9acd;")
 		),
 		shiny::column(width = 3, offset = 1,style = "background-color:#ffffff",
 		htmltools::tags$div(style= " padding-bottom: 10px"),
-		#  htmltools::br(),
-		#  htmltools::br(),
-        # checkboxInput(
-        #     inputId = "get_from_database",
-        #     label = "Populate from Database", value = FALSE
-        # ),
-
-        #   shiny::actionButton(inputId = "get_from_database",
-        #   label = "Populate From Database",
-        #   style = "background-color: white;
-        #   border: 2px solid #4CAF50;"),
-
+	
 
         shiny::numericInput("nDoses",
             label = htmltools::tags$div(htmltools::HTML('<i class="fa fa-syringe"
 			style = "color:#169abbd9;font-size:18px;"></i> *Number of Dose Levels:')),
             value = 1, step = 1, min = 1
         ),
-        # numericInput('nDoses','*Number of Dose Levels:',value=1,step=1,min=1),
+        ############### doses ###############
         shiny::uiOutput("Doses"),
 		htmltools::tags$div(style= " padding-bottom: 40px"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
