@@ -2024,7 +2024,7 @@ output$studyid_ui  <- shiny::renderUI({
           )
 
 		  } else {
-			shiny::showNotification(paste0("PP domain empty for study: ", study),
+			shiny::showNotification(paste0("PP domain empty for the study"),
 			type = "warning")
 		  }
 
