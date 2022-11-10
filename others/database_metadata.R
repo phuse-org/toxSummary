@@ -121,16 +121,18 @@ dt[, .(n = .N), by = STUDYID][n>1,][order(-n)][1:30, ]
 
 dt[STUDYID=="2769-005"]
 dt[STUDYID=="2.917E+11"]
+#################################################################################################
+
+# find empty pp, tx, domain list
+
+db_path <- "C:/Users/Md.Ali/OneDrive - FDA/yousuf/10_DATA/SEND_unclean.db"
+conn <- RSQLite::dbConnect(drv = SQLite(), db_path)
+ind_table <- data.table::as.data.table(RSQLite::dbGetQuery(
+    conn = conn, "SELECT *  FROM ID"
+))
+ind_table <- ind_table[APPID %like% "IND", ]
 
 
-tictoc::tic()
-pp <- RSQLite::dbGetQuery(
-    conn = conn,
-    "SELECT *  FROM PP "
-)
-tictoc::toc()
-
-pp <- data.table::as.data.table(pp)
 
 ##########
 
@@ -146,22 +148,24 @@ tx <- RSQLite::dbGetQuery(
 )
 tx <- data.table::as.data.table(tx)
 
+ts <- RSQLite::dbGetQuery(
+    conn = conn,
+    "SELECT *  FROM TX "
+)
+ts <- data.table::as.data.table(ts)
+
 # ex <- RSQLite::dbGetQuery(
 #     conn = conn,
 #     "SELECT *  FROM EX "
 # )
 # ex <- data.table::as.data.table(ex)
-nrow(pp)
-nrow(tx)
-head(pp)
-View(pp[, .(n_row = nrow(.SD)), by = STUDYID])
-
+study <- ind_table$STUDYID
+tic()
 pp_num_row <- NA
-for (i in 1:nrow(ind_table)) {
-    studyid <- ind_table[["STUDYID"]][i]
-    df <- pp[STUDYID == studyid]
-    pp_num_row[i] <- nrow(df)
+for (i in 1:length(study)) {
+    pp_num_row[i] <- nrow(pp[STUDYID == study[i]])
 }
+toc()
 
 
 tx_num_row <- NA
@@ -171,18 +175,38 @@ for (i in 1:nrow(ind_table)) {
     tx_num_row[i] <- nrow(df)
 }
 
-length(pp_num_row)
-length(tx_num_row)
-df <- data.table(pp_num_row = pp_num_row, tx_num_row = tx_num_row)
-head(df)
-View(df)
-nrow(ind_table)
-head(ind_table)
-new_ind_table <- copy(ind_table)
-new_ind_table <- cbind(new_ind_table, pp_num_row = pp_num_row, tx_num_row = tx_num_row)
-View(new_ind_table)
+tic()
+ts_num_row <- NA
+for (i in 1:length(study)) {
+    ts_num_row[i] <- nrow(ts[STUDYID == study[i]])
+}
+toc()
 
-new_ind_table[pp_num_row==0 & tx_num_row!=0,][!duplicated(STUDYID)]
+new_ind_table <- data.table(pp = pp_num_row, ts = ts_num_row, tx = ts_num_row)
+head(new_ind_table)
+nrow(new_ind_table)
+
+new_ind_table$dm <- dm_num_row
+
+saveRDS(new_ind_table, "C:/Users/Md.Ali/OneDrive - FDA/yousuf/00_github_projects/toxSummary/my_data_fda/pp_ts_tx_nrow_all.rds")
+
+new_ind_table[pp == 0 & ts == 0]
+#1197
+new_ind_table[pp == 0 & ts != 0]
+new_ind_table[dm ==0 & pp != 0 ]
+
+#############################################
+dm <- RSQLite::dbGetQuery(
+    conn = conn,
+    "SELECT *  FROM DM "
+)
+dm <- data.table::as.data.table(dm)
+tic()
+dm_num_row <- NA
+for (i in 1:length(study)) {
+    dm_num_row[i] <- nrow(dm[STUDYID == study[i]])
+}
+toc()
 
 # whether cmax and auc common in pp domain
 library(data.table)
