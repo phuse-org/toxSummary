@@ -258,7 +258,22 @@ values$Findings <- ''
       values$changeStudyFlag <- T
     }
   })
-  
+
+  #### print when focus and blur
+#   shiny::observe({
+# 	if(!is.null(input$dose1)) {
+# 		rnd <- rnorm(1)
+# 		session$sendCustomMessage("dose_value", "dose1")
+# 	}
+#   })
+
+#   shiny::observeEvent(input$save_now,{
+	
+# 	print(input$save_now)
+#   })
+
+
+
   # Flip changeStudyFlag after study has loaded and update tmpData to match UI
   shiny::observe({
     shiny::req(input$nDoses)
@@ -286,6 +301,7 @@ values$Findings <- ''
       }
     }
   })
+
   
   
  # Add findings to the list
@@ -646,7 +662,7 @@ values$Findings <- ''
     
     cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")")
     auc_unit <- paste0(" AUC (", input$auc_unit, ")")
-    studyData <- values$tmpData
+    studyData <- shiny::isolate(values$tmpData)
     lapply(1:(4*input$nDoses), function(i) {
       I <- ceiling(i/4)
       doseName <- names(studyData$Doses)[I]
@@ -675,7 +691,7 @@ values$Findings <- ''
   
   output$Findings <- shiny::renderUI({
     shiny::req(input$selectStudy)
-      studyData <- values$tmpData
+      studyData <- shiny::isolate(values$tmpData)
       if (input$nFindings>0) {
         numerator <- 2 + input$nDoses
         lapply(1:(numerator*input$nFindings), function(i) {
@@ -705,6 +721,7 @@ values$Findings <- ''
           }
         })
       }
+	
   })
 
 
