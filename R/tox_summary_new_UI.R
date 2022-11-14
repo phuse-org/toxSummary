@@ -558,9 +558,12 @@ values$Findings <- ''
     get_dose_pk_for_study <- shiny::reactive({
       if (!is.null(input$study_id)) {
           if (!is.null(input$auc_db) & (input$auc_db != "")) {
+			auc <- shiny::isolate(input$auc_db)
+			sex <- shiny::isolate(input$which_sex)
+			visitday <- shiny::isolate(input$pp_visitday)
               df <- get_pk_param(
-                  conn = conn, studyid_selected(), pk_param = input$auc_db,
-                  sex_include = input$which_sex, visit_day = input$pp_visitday
+                  conn = conn, studyid_selected(), pk_param = auc,
+                  sex_include = sex, visit_day = visitday
               )
               df
           } else { 
@@ -610,11 +613,14 @@ values$Findings <- ''
 # update toggle to "no run" when ind, studyid changes 
 
  shiny::observe({
-     input$ind_id
-     input$study_id
-     input$selectStudy
      shiny::req(input$ind_id)
      shiny::req(input$study_id)
+	input$ind_id
+     input$study_id
+     input$selectStudy
+	 input$which_sex
+	 input$auc_db
+	 input$pp_visitday
 
      toggle$db <- "no run"
 
