@@ -648,16 +648,16 @@ values$Findings <- ''
         #doseName <- names(studyData$Doses)[I]
         if (i %% 4 == 1) {
           htmltools::div(htmltools::hr(style = "border-top: 1px dashed skyblue"),
-              shiny::numericInput(paste0('dose',I),paste0('*Dose ',I,  " ",cmax[I, .(TRTDOSU)], ":"),
+              shiny::numericInput(paste0("dose",I),paste0("*Dose ",I,  " ", "(",cmax[I, .(TRTDOSU)], ")", ":"),
 			   min=0, value = cmax[I, .(TRTDOS)]))
         } else if (i %% 4 == 2) {
           htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
-              shiny::numericInput(paste0('Cmax',I),paste0('Cmax ',I, " ", cmax[I, .(PPSTRESU)], ":"),
+              shiny::numericInput(paste0('Cmax',I),paste0("Dose ", I,' Cmax', " ", "(", cmax[I, .(PPSTRESU)], ")", ":"),
 			   min=0, value=cmax[I, .(mean)]))
         }
         else if (i %% 4 == 3) {
           htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
-              shiny::numericInput(paste0("AUC",I),paste0(input$auc_db, " ",I, " ",auc[I, PPSTRESU], ":"),
+              shiny::numericInput(paste0("AUC",I),paste0("Dose ", I, " ", which_auc, " ", "(", auc[I, PPSTRESU], ")", ":"),
 			   min=0, value=auc[I, .(mean)]))
           
         }
@@ -668,8 +668,8 @@ values$Findings <- ''
       
     } else {
     
-    cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")")
-    auc_unit <- paste0(" AUC (", input$auc_unit, ")")
+    cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")", ":")
+    auc_unit <- paste0(" AUC (", input$auc_unit, ")", ":")
     studyData <- shiny::isolate(values$tmpData)
     lapply(1:(4*input$nDoses), function(i) {
       I <- ceiling(i/4)

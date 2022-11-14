@@ -190,6 +190,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
   }
   df <- df[order(PPTESTCD,TRTDOS),]
+  print(df)
   df <- na.omit(df)
   print(df)
 
@@ -221,6 +222,9 @@ get_only_dose <- function(conn, studyid) {
  df2$PPSTRESU <- "ng/mL"
 df_ls <- list(df1,df2)
 final_df <- data.table::rbindlist(df_ls)
+final_df <- final_df[TRTDOS != 0]
+final_df <- na.omit(final_df, cols = c("TRTDOS"))
+ final_df <- final_df[order(PPTESTCD,TRTDOS),]
 final_df
 }
 
