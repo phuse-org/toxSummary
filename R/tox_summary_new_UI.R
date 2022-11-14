@@ -726,8 +726,18 @@ values$Findings <- ''
           } else {
             lapply(1:input$nDoses, function(j) {
               if ((i %% numerator == 2+j)|((i %% numerator == 0)&(j==input$nDoses))) {
+				if(toggle$db == "run") {
+					shiny::req(input$study_id)
+					df <- get_dose_pk_for_study()
+					dose_unit <- unique(df$TRTDOSU)
+
+					lab <- paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]], " ",dose_unit, ")")
+				} else {
+					lab  <- paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)')
+
+				}
                 shiny::selectInput(inputId = paste0('Severity',I,'_',j),
-                            label = paste0('Select Severity at Dose ',j,' (',input[[paste0('dose',j)]],' mg/kg/day)'),
+                            label = lab,
                             choices = c('Absent','Present','Minimal','Mild','Moderate','Marked','Severe'),
                             selected=studyData$Findings[[paste0('Finding',I)]]$Severity[[paste0('Dose',j)]])
               }
