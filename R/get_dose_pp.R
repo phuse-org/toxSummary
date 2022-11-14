@@ -196,7 +196,33 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   return(df)
 }
 
+get_only_dose <- function(conn, studyid) {
+	studyid <- as.character(studyid)
 
+	dose <- DBI::dbGetQuery(conn=conn,
+  'SELECT TX.STUDYID, TX.TXPARMCD, TX.TXVAL, TX.SETCD,
+  DM.USUBJID, DM.SEX FROM TX INNER JOIN DM 
+  ON (TX.STUDYID=DM.STUDYID AND TX.SETCD=DM.SETCD)
+  WHERE TX.STUDYID==:x AND (TX.TXPARMCD="TRTDOS" OR TX.TXPARMCD="TRTDOSU")',
+  params = list(x = studyid))
+  
+  dose <- data.table::as.data.table(dose)
+  dose_wide <- data.table::dcast.data.table(dose, ... ~ TXPARMCD,
+                                            value.var = "TXVAL")
+  dose_wide$TRTDOS <- clean_txval_dose(dose = dose_wide$TRTDOS)
+  df <- dose_wide[!duplicated(TRTDOS), .(TRTDOS, TRTDOSU)]
+ df1 <- df
+ df2 <- df
+ df1$PPTESTCD <- "AUCLST"
+ df1$mean <- NA
+ df1$PPSTRESU <- "h*ng/mL"
+ df2$PPTESTCD <- "CMAX"
+ df2$mean <- NA
+ df2$PPSTRESU <- "ng/mL"
+df_ls <- list(df1,df2)
+final_df <- data.table::rbindlist(df_ls)
+final_df
+}
 
 
 clean_txval_dose <- function(dose) {

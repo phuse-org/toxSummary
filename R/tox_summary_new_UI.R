@@ -555,15 +555,22 @@ values$Findings <- ''
   })
   
   ## get dose and pk values
-  get_dose_pk_for_study <- shiny::reactive({
-      if (!is.null(input$study_id) & !is.null(input$auc_db)) {
-          df <- get_pk_param(
-              conn = conn, studyid_selected(), pk_param = input$auc_db,
-              sex_include = input$which_sex, visit_day = input$pp_visitday
-          )
-          df
+    get_dose_pk_for_study <- shiny::reactive({
+      if (!is.null(input$study_id)) {
+          if (!is.null(input$auc_db) & (input$auc_db != "")) {
+              df <- get_pk_param(
+                  conn = conn, studyid_selected(), pk_param = input$auc_db,
+                  sex_include = input$which_sex, visit_day = input$pp_visitday
+              )
+              df
+          } else { 
+			df <- get_only_dose(conn = conn, studyid = studyid_selected())
+			df
+
+		  }
       }
   })
+
   
  
 #   shiny::observe({
@@ -634,6 +641,7 @@ values$Findings <- ''
       df$mean <- round(df$mean, digits = 2)
       cmax <- df[PPTESTCD=="CMAX"]
       auc <- df[PPTESTCD!="CMAX"]
+	  which_auc <- unique(auc$PPTESTCD)
 
       lapply(1:(4*input$nDoses), function(i) {
         I <- ceiling(i/4)
