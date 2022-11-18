@@ -214,7 +214,7 @@ get_only_dose <- function(conn, studyid) {
   df <- dose_wide[!duplicated(TRTDOS), .(TRTDOS, TRTDOSU)]
  df1 <- df
  df2 <- df
- df1$PPTESTCD <- "AUCLST"
+ df1$PPTESTCD <- "AUC"
  df1$mean <- NA
  df1$PPSTRESU <- "h*ng/mL"
  df2$PPTESTCD <- "CMAX"

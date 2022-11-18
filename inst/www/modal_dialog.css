@@ -52,3 +52,28 @@ body{
 	color: red;
 }
 
+/* bottom left */
+
+  /* #shiny-notification-panel {
+	top: unset;
+	bottom: 0t;
+	left: 0;
+	right: unset;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	max-width: 450px;
+  } */
+
+  /* bottom right  */
+
+  /* #shiny-notification-panel {
+	top: unset;
+	bottom: 0t;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	max-width: 450px;
+  } */

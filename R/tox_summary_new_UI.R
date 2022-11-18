@@ -558,9 +558,12 @@ values$Findings <- ''
     get_dose_pk_for_study <- shiny::reactive({
       if (!is.null(input$study_id)) {
           if (!is.null(input$auc_db) & (input$auc_db != "")) {
-			auc <- shiny::isolate(input$auc_db)
-			sex <- shiny::isolate(input$which_sex)
-			visitday <- shiny::isolate(input$pp_visitday)
+			auc <- input$auc_db
+			sex <- input$which_sex
+			visitday <- input$pp_visitday
+			# auc <- shiny::isolate(input$auc_db)
+			# sex <- shiny::isolate(input$which_sex)
+			# visitday <- shiny::isolate(input$pp_visitday)
               df <- get_pk_param(
                   conn = conn, studyid_selected(), pk_param = auc,
                   sex_include = sex, visit_day = visitday
@@ -2026,7 +2029,22 @@ output$studyid_ui  <- shiny::renderUI({
                       )
                   )
               }
-          }
+          } else {
+			    shiny::updateSelectizeInput(
+              session = session,
+              inputId = "auc_db",
+              choices = character(0),
+              selected = character(0)
+          )
+          shiny::updateSelectizeInput(
+              session = session,
+              inputId = "pp_visitday",
+              choices = character(0),
+              selected = character(0),
+              options = list(plugins = list("remove_button"))
+          )
+
+		  }
       }
   })
 
@@ -2288,8 +2306,8 @@ shiny::sidebarLayout(
 	htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
 	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
 	#   tags$head(tags$script(src = "button.js")),
-    shinyjs::useShinyjs(),
-    shinyjs::runcodeUI(),
+    # shinyjs::useShinyjs(),
+    # shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
