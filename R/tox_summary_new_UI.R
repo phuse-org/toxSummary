@@ -557,7 +557,7 @@ values$Findings <- ''
   ## get dose and pk values
     get_dose_pk_for_study <- shiny::reactive({
       if (!is.null(input$study_id)) {
-          if (!is.null(input$auc_db) & (input$auc_db != "")) {
+          if (!is.null(input$auc_db) & (input$auc_db != "") & (!is.null(input$pp_visitday))) {
 			auc <- input$auc_db
 			sex <- input$which_sex
 			visitday <- input$pp_visitday
