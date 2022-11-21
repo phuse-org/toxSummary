@@ -608,10 +608,12 @@ values$Findings <- ''
      toggle$db <- "run"
      shiny::updateActionButton(
          session = session,
-         "get_from_db", "Clicked: Data updated  from database",
+         "get_from_db", 
+		 label = "Updated",
          icon = shiny::icon("mouse-pointer")
      )
  })
+
 
 # update toggle to "no run" when ind, studyid changes 
 
@@ -630,7 +632,7 @@ values$Findings <- ''
      shiny::updateActionButton(
          session = session,
          "get_from_db",
-         "Click me to populate dose and pk from  database",
+         "Click to Update",
          icon = shiny::icon("mouse-pointer")
      )
  })
@@ -2723,7 +2725,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         options = list(plugins = list("remove_button"))
     ),
 		shiny::actionButton("get_from_db", 
-		"Click me to populate dose and pk from  database", 
+		label = "Click to Update", 
 		icon  = shiny::icon("mouse-pointer"),
 		style = "background-color:skyblue"),
 		htmltools::tags$div(style= " padding-bottom: 40px")
