@@ -249,7 +249,7 @@ values$Findings <- ''
       #values$tmpData <- Data[['Nonclinical Information']][['New Study']]
     }
   })
-  
+
   # Flip changeStudyFlag after "New Study" has loaded
   shiny::observe({
     if (is.null(input$dose1)) {
@@ -703,6 +703,82 @@ values$Findings <- ''
       }
     })}
   })
+
+# update number of doses
+# shiny::observe({
+#      shiny::req(input$ind_id)
+#      shiny::req(input$study_id)
+# 	input$ind_id
+#      input$study_id
+#     #  input$selectStudy
+# 	 input$which_sex
+# 	 input$auc_db
+# 	 input$pp_visitday
+	 
+# 	 if(input$selectStudy == "New Study") {
+
+
+#   shiny::updateNumericInput(session, "nDoses", value = 1)
+
+# 	 }
+#  })
+
+ ############ update doses
+#  shiny::observe({
+#      shiny::req(input$ind_id)
+#      shiny::req(input$study_id)
+# 	input$ind_id
+#      input$study_id
+#     #  input$selectStudy
+# 	 input$which_sex
+# 	 input$auc_db
+# 	 input$pp_visitday
+	 
+# 	 if(input$selectStudy == "New Study") {
+
+# 		 if (toggle$db == "no run") {
+
+ 
+   
+#     #   blankData <- readRDS('blankData.rds')
+#     #   studyData <- blankData[['Nonclinical Information']][["New Study"]]
+# 	studyData <- shiny::isolate(values$tmpData)
+
+# 	  cmax_unit <- paste0(" Cmax (", input$cmax_unit, ")", ":")
+#      auc_unit <- paste0(" AUC (", input$auc_unit, ")", ":")
+#       lapply(1:(4*input$nDoses), function(i) {
+#       I <- ceiling(i/4)
+#       doseName <- names(studyData$Doses)[I]
+#       if (i %% 4 == 1) {
+#         htmltools::div(htmltools::hr(style = "border-top: 1px dashed skyblue"),
+#             shiny::updateNumericInput(session, paste0('dose',I),paste0('*Dose ',I,' (mg/kg/day):'),
+# 			 min=0, value = ""
+# 			 )
+# 			 )
+#       } else if (i %% 4 == 2) {
+#         htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
+#             shiny::updateNumericInput(session, paste0('Cmax',I),paste0('Dose ',I, cmax_unit), 
+# 			min=0, value=""
+# 			))
+#       }
+#       else if (i %% 4 == 3) {
+#         htmltools::div(style="display: inline-block;vertical-align:top; width: 115px;",
+#             shiny::updateNumericInput(session, paste0('AUC',I),paste0('Dose ',I, auc_unit),
+# 			 min=0, value=studyData$Doses[[doseName]][['AUC']]))
+        
+#       } else {
+#         htmltools::div(shiny::updateCheckboxInput(session, paste0('NOAEL',I),'NOAEL?',
+# 		value=studyData$Doses[[doseName]][['NOAEL']]))
+#       }
+#     })
+
+# 		 }
+# 	 }
+
+   
+#  })
+
+
   
   #  Findings -----
   
@@ -1876,6 +1952,41 @@ output$studyid_ui  <- shiny::renderUI({
 
   shiny::observeEvent(input$ind_id, {
       shiny::req(input$ind_id)
+      if (input$selectStudy == "New Study") {
+          shiny::updateSelectInput(
+              session = session, inputId = "Species",
+              choices = names(speciesConversion)
+          )
+          shiny::updateCheckboxGroupInput(
+              session = session, inputId = "which_sex",
+              choices = choices_sex,
+              selected = NULL,
+              inline = TRUE
+          )
+          shiny::updateTextInput(
+              session = session,
+              inputId = "Duration",
+              value = ""
+          )
+          shiny::updateSelectizeInput(
+              session = session,
+              inputId = "auc_db",
+              choices = character(0),
+              selected = character(0)
+          )
+          shiny::updateSelectizeInput(
+              session = session,
+              inputId = "pp_visitday",
+              choices = character(0),
+              selected = character(0),
+              options = list(plugins = list("remove_button"))
+          )
+      }
+  })
+
+# update when new study selected
+    shiny::observeEvent(input$selectStudy, {
+    #   shiny::req(input$ind_id)
       if (input$selectStudy == "New Study") {
           shiny::updateSelectInput(
               session = session, inputId = "Species",
