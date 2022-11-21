@@ -56,6 +56,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
  
   # select only required columns
   pp_domain <- data.table::as.data.table(pp_domain)
+  pp_domain$PPSTRESN <- as.numeric(pp_domain$PPSTRESN)
   if ("PPNOMDY" %in% names(pp_domain)) {
     pp_domain <-  pp_domain[, .(STUDYID, DOMAIN, USUBJID,
                                 POOLID, PPTESTCD,  PPTEST,
@@ -190,7 +191,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
   }
   df <- df[order(PPTESTCD,TRTDOS),]
-  print(df)
+#   print(df)
   df <- na.omit(df)
   print(df)
 
