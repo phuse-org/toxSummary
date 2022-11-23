@@ -32,6 +32,8 @@ blank_data <- list(
             Species = NULL,
             Sex_include = NULL,
             Duration = "",
+            auc_param = "",
+            visitday = "",
             Notes = NULL,
             check_note = F,
             nDoses = 1,
