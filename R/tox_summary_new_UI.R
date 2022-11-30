@@ -807,7 +807,7 @@ values$Findings <- ''
               htmltools::hr(style = "border-top: 1px dashed skyblue"),
               shiny::selectizeInput(paste0('Finding',I),paste0('*Finding ',I,':'), choices= findings,
                              selected = studyData$Findings[[paste0('Finding',I)]]$Finding,
-                             options = list(create = TRUE)))
+                             options = list(create = TRUE, placeholder = "Click Add or  hit ENTER after typing")))
           } else if (i %% numerator == 2) {
             shiny::radioButtons(paste0('Reversibility',I),'Reversibility:',
                          choiceNames=c('Reversible [Rev]','Not Reversible [NR]',
@@ -1912,6 +1912,7 @@ TSPARMCD IN ("SDESIGN",
   # study input after ind selection
 output$studyid_ui  <- shiny::renderUI({
      shiny::req(input$ind_id)
+      if(!(rlang::is_empty(input$ind_id))) {
 	#  if (!is.null(input$ind_id)) {
 	  st_id_option <- studyid_option()
 	  st_id_option <- st_id_option$st_title
@@ -1927,6 +1928,7 @@ output$studyid_ui  <- shiny::renderUI({
             choices =  c(Choose = "", st_id_option)
         )
 	#  }
+    }
 })
   
   # update studyID list
@@ -2135,14 +2137,16 @@ output$studyid_ui  <- shiny::renderUI({
 
 # update study from saved data 
   shiny::observeEvent(input$selectData, ignoreNULL = TRUE, {
-	#   shiny::req(input$selectData)
-    #   input$selectData
       Data <- getData()
       studyList <- names(Data[["Nonclinical Information"]])
-	shiny::updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList )
-	shiny::updateSelectizeInput(session, inputId =  "ind_id",
-	                     choices = c(Choose = "", ind_number_list), server = TRUE)
-
+      shiny::updateSelectInput(session, "selectStudy", "Select Study:", choices = studyList)
+      shiny::updateSelectizeInput(session,
+          inputId = "ind_id",
+          selected = character(0),
+          choices = ind_number_list,
+          options = list(placeholder = "Choose"),
+          server = TRUE
+      )
   })
   
 
@@ -2471,7 +2475,7 @@ htmltools::tagList(
         )
     })
     
-    # shinyjs::runcodeServer()
+    shinyjs::runcodeServer()
 }
 
 ###############################    UI   ################################ ----
@@ -2712,6 +2716,8 @@ htmltools::tags$div(style= " padding-bottom: 20px")
 ##################### nonclinical #################################################
 shiny::tabPanel("Edit Nonclinical",
 shiny::fluidPage(
+    shinyjs::useShinyjs(),
+    shinyjs::runcodeUI(),
 
 htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
@@ -2744,7 +2750,9 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
              style = "color:#000000;font-size:18px;"></i> Select IND')
             ),
             selected = NULL,
-            choices = NULL
+            choices = NULL,
+            options= list(placeholder = "Choose")
+            # options(placeholder= "Choose")
                         # ind_number_list
                         
             # options = list(maxOptions = 2500)
