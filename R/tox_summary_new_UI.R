@@ -612,6 +612,9 @@ values$Findings <- ''
     toggle <- shiny::reactiveValues(db = "no run")
 
  shiny::observeEvent(input$get_from_db, {
+      shiny::req(input$selectStudy)
+	  shiny::req(input$ind_id)
+	  shiny::req(input$study_id)
      toggle$db <- "run"
      shiny::updateActionButton(
          session = session,
