@@ -2475,7 +2475,7 @@ htmltools::tagList(
         )
     })
     
-    shinyjs::runcodeServer()
+    # shinyjs::runcodeServer()
 }
 
 ###############################    UI   ################################ ----
@@ -2716,8 +2716,8 @@ htmltools::tags$div(style= " padding-bottom: 20px")
 ##################### nonclinical #################################################
 shiny::tabPanel("Edit Nonclinical",
 shiny::fluidPage(
-    shinyjs::useShinyjs(),
-    shinyjs::runcodeUI(),
+    # shinyjs::useShinyjs(),
+    # shinyjs::runcodeUI(),
 
 htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
 		htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
