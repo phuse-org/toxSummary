@@ -123,8 +123,12 @@ server <- function(input, output, session) {
 
 	  })
       shiny::observeEvent(input$help_clinical, {
-    # print(input$help_application)
 		  guide_02$init()$start()
+
+	  })
+
+            shiny::observeEvent(input$help_nonclinical, {
+		  guide_03$init()$start()
 
 	  })
 
@@ -2638,6 +2642,7 @@ htmltools::h4("Edit Clinical Data", style= "text-align:center"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
           shiny::actionButton("help_clinical", 
           label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
+          htmltools::br(),
 		shiny::textOutput("clin_page_application"),
 	htmltools::br(),
 	htmltools::br(),
@@ -2751,6 +2756,9 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::fluidRow( style= "margin-right:50px;",
 			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
 			htmltools::tags$div(style= " padding-bottom: 10px"),
+            shiny::actionButton("help_nonclinical", 
+          label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
+          htmltools::br(),
 			shiny::textOutput("non_clin_page_application"),
 			htmltools::br(),
         shiny::uiOutput("selectStudy"),
