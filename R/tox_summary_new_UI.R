@@ -107,48 +107,6 @@ names(choices_sex) <- choices_sex
 choices_sex <- sort(choices_sex)
 
 
-guide_01 <- cicerone::Cicerone$new()$step(
-    el = "help_application",
-    title = "Read Carefully",
-    description = "Follow the step to create New Application, Now Hit Next"
-)$step(
-    el = "selectData-label",
-    title = "Step: 01",
-    description = "To create a new application, make sure 'New Application' selected here",
-    position = "top"
-)$step(
-    el = "newApplication-label",
-    title = "Step: 2",
-    description = "Type an application number in the text box",
-    position = "top"
-)$step(
-    el = "saveData",
-    title = "Step: 3",
-    description = "Hit the submit button to create the application",
-    position = "bottom"
-)$step(
-    ".nav",
-    title = "Step: 4",
-    description = "Click Edit Clinical Tab \U1F446 and go to edit clinical page. You will enter clinical info there",
-    is_id = FALSE
-)$step(
-    el = "reload_app",
-    title = "Some tips",
-    description = paste0(
-        "General workflow of the app: 01. You create an application in this page. ",
-        "02. Enter  clinical information in Edit clinical page (don't forget to hit save button). ",
-        "03. Enter Nonclinical information in Nonclinical Page (don't forget to hit save button). "  ,
-        "about Relaod Button: ",
-        "There are situations when you might need to hit reload button. ",
-        "If you decide to reload the app, make sure you saved you data \U1F64F.",
-        " All unsaved data will be lost \U1F61F. You have to enter again. ",
-        "App might get disconnected after some idle time. ",
-        "You will need to hit reload button to restart the app. ",
-        "If reload does not work, restart your browser. ",
-        "Google Chrome is the preferred browser. "
-        
-    )
-)
 
 # Server function started here (selectData) ----
 server <- function(input, output, session) {
@@ -162,6 +120,11 @@ server <- function(input, output, session) {
  shiny::observeEvent(input$help_application, {
     print(input$help_application)
 		  guide_01$init()$start()
+
+	  })
+      shiny::observeEvent(input$help_clinical, {
+    # print(input$help_application)
+		  guide_02$init()$start()
 
 	  })
 
@@ -2464,7 +2427,7 @@ htmltools::tagList(
 			),
 			htmltools::br(),
 			htmltools::br(),
-            shiny::actionButton("help_application", label = "\U1F604 Need Help?"),
+            shiny::actionButton("help_application", label = "Need Help? \U1F604", icon = shiny::icon("mouse-pointer")),
             htmltools::br()
 			
 
@@ -2515,7 +2478,7 @@ htmltools::tagList(
             border: 2px solid #4CAF50;"),
             htmltools::br(),
 			htmltools::br(),
-             shiny::actionButton("help_application", label = "\U1F604 Need Help?"),
+             shiny::actionButton("help_application", label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
             htmltools::br()
 		)
                   
@@ -2673,6 +2636,8 @@ shiny::fluidRow(
 	shiny::column(width = 4,offset = 1, style = "background-color:#ffffff",
 htmltools::h4("Edit Clinical Data", style= "text-align:center"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
+          shiny::actionButton("help_clinical", 
+          label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
 		shiny::textOutput("clin_page_application"),
 	htmltools::br(),
 	htmltools::br(),
