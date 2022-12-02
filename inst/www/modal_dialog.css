@@ -52,6 +52,10 @@ body{
 	color: red;
 }
 
+#help_nonclinical {
+    display: none;
+}
+
 /* bottom left */
 
   /* #shiny-notification-panel {

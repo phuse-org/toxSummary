@@ -132,6 +132,29 @@ server <- function(input, output, session) {
 
 	  })
 
+      shiny::observeEvent(input$show_help, {
+        if(input$show_help) {
+            shiny::updateCheckboxInput(session, "show_help", label="Hide Help Button")
+
+        } else{
+            shiny::updateCheckboxInput(session, "show_help", label="Show Help Button")
+        }
+
+        
+          
+      })
+      shiny::observeEvent(input$show_help, {
+         session$sendCustomMessage(type = "toggle_help", input$show_help)
+
+          
+      })
+
+      shiny::observeEvent(input$show_help_ac, {
+        session$sendCustomMessage(type = "toggle_show_hide", input$show_help_ac)
+          
+      })
+
+     
 values <- shiny::reactiveValues()
 values$Application <- NULL
 values$SM <- NULL
@@ -2756,6 +2779,10 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::fluidRow( style= "margin-right:50px;",
 			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
 			htmltools::tags$div(style= " padding-bottom: 10px"),
+            htmltools::br(),
+            shiny::checkboxInput("show_help", label = "Show Help Button"),
+            shiny::actionButton("show_help_ac", label = "show/hide Help Button"),
+           
             shiny::actionButton("help_nonclinical", 
           label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
           htmltools::br(),

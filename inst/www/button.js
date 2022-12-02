@@ -12,6 +12,23 @@ Shiny.addCustomMessageHandler("confirm_study_remove", function(message) {
 	document.getElementById(message).click()
 })
 
+Shiny.addCustomMessageHandler("toggle_help", function(data){
+// let data = data;
+if(data) {
+    $("#help_nonclinical").show()
+} else{
+    $("#help_nonclinical").hide()
+
+}
+}
+)
+Shiny.addCustomMessageHandler("toggle_show_hide", function(data){
+    
+        $("#help_nonclinical").toggle();
+}
+)
+
+
 // Shiny.addCustomMessageHandler("dose_value", function(message) {
 // 	let el_dose = document.getElementById(message);
 // 	console.log(message)
