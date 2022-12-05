@@ -28,20 +28,70 @@ guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "reload_app",
     title = "Some tips",
     description = paste0(
-        "General workflow of the app: 01. You create an application in this page. ",
-        "02. Enter  clinical information in Edit clinical page (don't forget to hit save button). ",
-        "03. Enter Nonclinical information in Nonclinical Page (don't forget to hit save button). "  ,
+        "General workflow of the app: <br> 01. You create an application in this page. <br>",
+        "02. Enter  clinical information in Edit clinical page (don't forget to hit save button). <br> ",
+        "03. Enter Nonclinical information in Nonclinical Page (don't forget to hit save button). <br>"  ,
         "about Relaod Button: ",
         "There are situations when you might need to hit reload button. ",
         "If you decide to reload the app, make sure you saved you data \U1F64F.",
         " All unsaved data will be lost \U1F61F. You have to enter again. ",
         "App might get disconnected after some idle time. ",
         "You will need to hit reload button to restart the app. ",
-        "If reload does not work, restart your browser. ",
-        "Google Chrome is the preferred browser. "
+        "If reload does not work, restart your browser. <br>",
+        "Google Chrome is the preferred browser for the app. "
         
     )
+)$step(
+    el = "refreshPlot",
+    title = "Plot Options",
+    description = paste("Let's assume you already created an application and added a study. That will create plot on this page.",
+    "Next few options will help you to customize the plot."),
+    position = "right"
+)$step(
+    el = "humanDosing-label",
+    title = "Plot Options",
+    description = paste("You can change Clinical Dosing options here."),
+    position = "left"
+)$step(
+    el = "SMbasis-label",
+    title = "SM Basis",
+    description = paste("You can change how exposure margin will be calculated."),
+    position = "left"
+)$step(
+    el = "displayStudies-label",
+    title = "Display Studies",
+    description = paste("you can select or remove study from the plot here.  ", 
+    "You can also drag and rearrange the order of the study in the plot."),
+    position = "left"
+)$step(
+    el = "displayFindings-label",
+    title = "Display Findings",
+    description = paste("you can select or remove findings from the plot here.", 
+    "You can also drag and rearrange the order of the findings in the plot."),
+    position = "left"
+)$step(
+    el = "NOAEL_choices-label",
+    title = "NOAEL Choices",
+    description = paste("You can filter NOAEL dose or greater than NOAEL dose from the plot here. "),
+    position = "left"
+)$step(
+    el= "dose_sm-label",
+    title = "Dose SM",
+    description = paste("You can change the option here to see dose with exposure margin", 
+     "or notes on the plot."),
+    position = "left"
+)$step(
+    el = "plotheight-label",
+    title = "Plot Height",
+    description = paste("You can change the plot height here. "),
+    position = "left"
+)$step(
+    el = "text_width-label",
+    title = "Text Width",
+    description = paste("You can change the text width here. sometimes text is too long to fit in the right side of the plot."),
+    position = "left"
 )
+
 
 guide_02 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "clin_page_application",
@@ -419,3 +469,49 @@ guide_04 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     position = "right"
 
 )
+
+
+# guide_05 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
+#     el = "humanDosing-label",
+#     title = "Human Dosing",
+#     description = paste("You can change Clinical Dosing options here. <br> "),
+#     position = "left"
+# )$step(
+#     el = "SMbasis-label",
+#     title = "SM Basis",
+#     description = paste("You can change SM Basis options here. <br> "),
+#     position = "left"
+# )$step(
+#     el = "displayStudies-label",
+#     title = "Display Studies",
+#     description = paste("you can select or remove strudy from the plot here.  ", 
+#     "You can also drag and rearrange the order of the study in the plot."),
+#     position = "left"
+# )$step(
+#     el = "displayFindings-label",
+#     title = "Display Findings",
+#     description = paste("you can select or remove findings from the plot here.", 
+#     "You can also drag and rearrange the order of the findings in the plot."),
+#     position = "left"
+# )$step(
+#     el = "NOAEL_choices-label",
+#     title = "NOAEL Choices",
+#     description = paste("You can filter NOAEL dose or greater than NOAEL dose from the plot here. "),
+#     position = "left"
+# )$step(
+#     el= "dose_sm-label",
+#     title = "Dose SM",
+#     description = paste("You can change the option here to see dose with exposure margin", 
+#      "or notes on the plot."),
+#     position = "left"
+# )$step(
+#     el = "plotheight-label",
+#     title = "Plot Height",
+#     description = paste("You can change the plot height here. "),
+#     position = "left"
+# )$step(
+#     el = "text_width-label",
+#     title = "Text Width",
+#     description = paste("You can change the text width here. sometimes text is too long to fit in the right side of the plot."),
+#     position = "left"
+# )
