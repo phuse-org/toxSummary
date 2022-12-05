@@ -52,9 +52,13 @@ body{
 	color: red;
 }
 
-#help_nonclinical {
+#help_nonclinical, #help_nonclinical_02 {
     display: none;
 }
+#help_button_space{
+    padding-bottom: 1px;
+}
+
 
 /* bottom left */
 

@@ -13,20 +13,23 @@ Shiny.addCustomMessageHandler("confirm_study_remove", function(message) {
 })
 
 Shiny.addCustomMessageHandler("toggle_help", function(data){
-// let data = data;
-if(data) {
-    $("#help_nonclinical").show()
-} else{
-    $("#help_nonclinical").hide()
 
+if(data) {
+    $("#help_nonclinical").css("display","block")
+    $("#help_nonclinical_02").css("display","block")
+    $("#help_button_space").css("padding-bottom", "15px")
+} else{
+    $("#help_nonclinical").css("display","none")
+    $("#help_nonclinical_02").css("display","none")
+    $("#help_button_space").css("padding-bottom", "1px")
 }
 }
 )
-Shiny.addCustomMessageHandler("toggle_show_hide", function(data){
+// Shiny.addCustomMessageHandler("toggle_show_hide", function(data){
     
-        $("#help_nonclinical").toggle();
-}
-)
+//         $("#help_nonclinical_02").style("display: block")
+// }
+// )
 
 
 // Shiny.addCustomMessageHandler("dose_value", function(message) {

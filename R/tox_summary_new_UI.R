@@ -118,7 +118,7 @@ server <- function(input, output, session) {
 
 
  shiny::observeEvent(input$help_application, {
-    print(input$help_application)
+    # print(input$help_application)
 		  guide_01$init()$start()
 
 	  })
@@ -131,6 +131,15 @@ server <- function(input, output, session) {
 		  guide_03$init()$start()
 
 	  })
+    #         shiny::observeEvent(input$help_nonclinical, {
+	# 	  shiny::updateActionButton(session, "help_nonclinical_02", style = "display: block" )
+
+	#   })
+
+            shiny::observeEvent(input$help_nonclinical_02, {
+		  guide_04$init()$start()
+
+	  })
 
       shiny::observeEvent(input$show_help, {
         if(input$show_help) {
@@ -140,20 +149,22 @@ server <- function(input, output, session) {
             shiny::updateCheckboxInput(session, "show_help", label="Show Help Button")
         }
 
+        session$sendCustomMessage(type = "toggle_help", input$show_help)
+
         
           
       })
-      shiny::observeEvent(input$show_help, {
-         session$sendCustomMessage(type = "toggle_help", input$show_help)
+
+        shiny::observeEvent(input$show_help, {
+    
+        session$sendCustomMessage(type = "toggle_help", input$show_help)
 
           
       })
 
-      shiny::observeEvent(input$show_help_ac, {
-        session$sendCustomMessage(type = "toggle_show_hide", input$show_help_ac)
-          
-      })
 
+    #   
+    
      
 values <- shiny::reactiveValues()
 values$Application <- NULL
@@ -2777,14 +2788,23 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
         shiny::fluidRow( style= "margin-right:50px;",
 			shiny::column(width = 3, offset = 1, style = "background-color:#ffffff",
 			htmltools::tags$div(style= " padding-bottom: 10px"),
-            htmltools::br(),
+            # htmltools::br(),
             shiny::checkboxInput("show_help", label = "Show Help Button"),
-            shiny::actionButton("show_help_ac", label = "show/hide Help Button"),
+            # shiny::actionButton("show_help_ac", label = "show/hide Help Button"),
            
             shiny::actionButton("help_nonclinical", 
-          label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
-          htmltools::br(),
-			shiny::textOutput("non_clin_page_application"),
+          label = "Need Help? Start Here \U1F604",icon = shiny::icon("mouse-pointer")),
+        #    htmltools::br(),
+        #    htmltools::br(),
+           htmltools::tags$div(id = "help_button_space"),
+            shiny::actionButton("help_nonclinical_02", 
+          label = "Manual Entry",icon = shiny::icon("mouse-pointer")),
+        #   htmltools::br(),
+          
+        #   htmltools::tags$div(style= " padding-bottom: 10px"),
+          htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
+		#   htmltools::br(),
+        	shiny::textOutput("non_clin_page_application"),
 			htmltools::br(),
         shiny::uiOutput("selectStudy"),
         htmltools::br(),

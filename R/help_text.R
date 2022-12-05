@@ -1,5 +1,5 @@
 
-guide_01 <- cicerone::Cicerone$new()$step(
+guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "help_application",
     title = "Read Carefully",
     description = "Follow the step to create New Application, Now Hit Next"
@@ -43,7 +43,7 @@ guide_01 <- cicerone::Cicerone$new()$step(
     )
 )
 
-guide_02 <- cicerone::Cicerone$new()$step(
+guide_02 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "clin_page_application",
     title = "Current Application",
     description = paste0("This is the application you selected to work on. ",
@@ -91,23 +91,23 @@ guide_02 <- cicerone::Cicerone$new()$step(
 guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
   el = "non_clin_page_application",
     title = "Current Application",
-    description = paste0("This is the application you selected to work on. ",
-    "If selected application: <strong>New Application</strong> , <br> go back to Application tab and ",
-    "create your application first"),
+    description = paste0("This is the application you selected to work on. <br> ",
+    "If, selected application: <strong>New Application</strong> , <br> go back to Application tab and ",
+    "create your application first."),
     position = "right"
 )$step(
      el = "selectStudy-label",
     title = "Select Study",
     description = paste0("To add a new study to the application, select ",
-    "<strong> New Study.</strong> There are two workflow: <br> <strong>01.</strong> ",
+    "<strong> New Study.</strong> There are two workflow for nonclinical data entry: <br> <strong>01.</strong> ",
     "Automated Data Entry <br> <strong>02.</strong> Manual Data Entry. <br>",
-    "Let's start with automated data entry. <br> Hit Next"),
+    "Let's start with <br>  <strong>workflow 01: automated data entry.</strong> <br> Hit Next"),
     position = "right"
 
 )$step(
-     el = "ind_id-selectized",
+     el = "ind_id-label",
     title = "Select IND",
-    description = paste0("If you click on <strong>Choose</strong> it will show a long list",
+    description = paste0("If you click on dropdown menu it will show a long list",
     " of IND number. Best way to find the ind number by typing the number here. You don't need",
     " to type <strong>IND</strong> keyword. Just typing the number will show you the search",
      " result. If this list contain IND number you are searching, it  should be on top. Click the number to select. When you",
@@ -192,17 +192,18 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 )$step(
      el = "Doses",
     title = "About Each Dose",
-    description = paste0("This part will be repeated per number of dose. If there are three",
-    " doses in a study, this will be repeated tree times. Dose, Cmax and AUC value will be  updated",
-    " from study data. "),
+    description = paste0(
+    " Dose, Cmax and AUC value will be  updated",
+    " from study data if available "),
     position = "right"
 
 )$step(
      el = "NOAEL1",
     title = "NOAEL?",
     description = paste0("NOAEL information not in the database. So You need to check manually",
-    " if this dose is NOAEL. ", 
-    " Default is unchecked, means this dose not NOAEL. Check the appropriate NOAEL box."),
+    " if this dose is NOAEL. <br>", 
+    " <strong> checked: </strong> means <strong> NOAEL dose</strong>",
+    " <strong> unchecked: </strong> means <strong> not NOAEL dose</strong>"),
     position = "right"
 
 )$step(
@@ -223,16 +224,14 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 )$step(
      el = "Findings",
     title = "Findings",
-    description = paste0("This part will be repeated as per number of findings you entered. ",
-    "If you enter 5 in <strong> Number of Findings</strong>",
-    "  this will be repeated 5 times. <br>",
+    description = paste0("Here you need to enter finding information. <br>",
     "Hit next to see how to complete this section. "),
     position = "left"
 
 )$step(
-     el = "Finding1-selectized",
+     el = "Finding1-label",
     title = "Finding",
-    description = paste0("Type the finding here. After you type, <br> you need to click ",
+    description = paste0("Type the finding in the text box. After you type, <br> you need to click ",
     "<strong>Add</strong> appeared below or hit <strong>Enter</strong> in keyboard. "),
     position = "left"
 
@@ -277,6 +276,20 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     " On popup dialogbox: <br> If you want to delete then hit <strong>Delete</strong>, <br> if you  don't want to delete hit <strong>Cancel</strong>"),
     position = "right"
 
+)$step(
+    el = "help_nonclinical_02",
+    title = "Workflow 02: Manual Data Entry",
+    description = paste0("If your study not available in database and you want to add study manually, click", 
+    " this button to see the steps.")
+)
+
+guide_04 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
+  el = "non_clin_page_application",
+    title = "Current Application",
+    description = paste0("This is the application you selected to work on. ",
+    "If selected application: <strong>New Application</strong> , <br> go back to Application tab and ",
+    "create your application first"),
+    position = "right"
 )$step(
      el = "selectStudy-label",
     title = "Select Study",
@@ -322,17 +335,18 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 )$step(
      el = "Doses",
     title = "About Each Dose",
-    description = paste0("This part will be repeated per number of dose. ",
-    " If you entered three doses in previous section, this will be repeated three times.  ",
-    " You also need to enter the dose, Cmax and AUC value manually"),
+    description = paste0(
+    " You need to enter the dose, Cmax and AUC value manually. <br>",
+    "Dose is mandatory, but Cmax and AUC value are optional. "),
     position = "right"
 
 )$step(
      el = "NOAEL1",
     title = "NOAEL?",
-    description = paste0("You need to check manually",
-    " if this dose is NOAEL. ", 
-    " Default is unchecked, means this dose not NOAEL. Check the appropriate NOAEL box."),
+  description = paste0("NOAEL information not in the database. So You need to check manually",
+    " if this dose is NOAEL. <br>", 
+    " <strong> checked: </strong> means <strong> NOAEL dose</strong>",
+    " <strong> unchecked: </strong> means <strong> not NOAEL dose</strong>"),
     position = "right"
 
 )$step(
@@ -352,16 +366,14 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 )$step(
      el = "Findings",
     title = "Findings",
-    description = paste0("This part will be repeated as per number of findings you entered. ",
-    "If you enter 5 in <strong> Number of Findings</strong>",
-    "  this will be repeated 5 times. <br>",
+    description = paste0("Here you need to enter finding information. <br>",
     "Hit next to see how to complete this section. "),
     position = "left"
 
 )$step(
-     el = "Finding1-selectized",
+     el = "Finding1-label",
     title = "Finding",
-    description = paste0("Type the finding here. After you type, <br> you need to click ",
+      description = paste0("Type the finding in the text box. After you type, <br> you need to click ",
     "<strong>Add</strong> appeared below or hit <strong>Enter</strong> in keyboard. "),
     position = "left"
 
@@ -407,4 +419,3 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     position = "right"
 
 )
-
