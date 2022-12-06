@@ -25,6 +25,21 @@ if(data) {
 }
 }
 )
+
+// $(document).on('shiny:disconnected', function(event) {
+//        alert("Disconnected from server");
+//       })
+    
+// $(document).on('shiny:disconnected', function(event) {
+
+    
+//     // alert("Session disconnected from server. Refresh the page")
+//     if (window.confirm('Ok to Confirm, Cancel to Stay here'))
+//    {
+//    window.open('http://www.google.com', '_blank');
+//    };
+// })
+
 // Shiny.addCustomMessageHandler("toggle_show_hide", function(data){
     
 //         $("#help_nonclinical_02").style("display: block")
