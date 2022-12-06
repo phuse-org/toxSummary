@@ -25,6 +25,7 @@ Imports:
     officer,
     patchwork,
     pkgload,
+    rlang,
     RSQLite,
     shiny,
     shinycssloaders,
