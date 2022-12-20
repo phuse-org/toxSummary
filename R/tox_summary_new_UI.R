@@ -26,7 +26,12 @@
 #' @return function run the app.
 #' 
 #' @export
-#' 
+#' @examples 
+#' \dontrun{
+#' toxSummary_app(database_path = "path/of/your/database.db",
+#' studyid_file = "path/for/IND_studyid_mapping.csv", 
+#' save_file_path = NULL)
+#' }
 
 
 
