@@ -29,8 +29,8 @@ toxSummary::toxSummary_app(
  ```
  pkgload::load_all(".")
  toxSummary::toxSummary_app(
-    database_path = "path/of/your/database.db"
-    studyid_file = "path/for/IND_studyid_mapping.csv"
+    database_path = "path/of/your/database.db",
+    studyid_file = "path/for/IND_studyid_mapping.csv",
     save_file_path = NULL
 )
  ```
@@ -47,8 +47,8 @@ then run
 
 ```
 toxSummary::toxSummary_app(
-    database_path = "path/of/your/database.db"
-    studyid_file = "path/for/IND_studyid_mapping.csv"
+    database_path = "path/of/your/database.db",
+    studyid_file = "path/for/IND_studyid_mapping.csv",
     save_file_path = NULL
 )
 ```
@@ -78,9 +78,9 @@ Then copy the code from here and change the database and file paths.
 
 ```
  toxSummary::toxSummary_app(
-    database_path = "path/of/your/database.db"
-    studyid_file = "path/for/IND_studyid_mapping.csv"
-    save_file_path = NULL
+    database_path = "path/of/your/database.db",
+    studyid_file = "path/for/IND_studyid_mapping.csv",
+    save_file_path = NULL)
 ```
 
 

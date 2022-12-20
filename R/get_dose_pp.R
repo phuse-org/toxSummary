@@ -1,8 +1,18 @@
 
-# function to get dose and Pharmacokinetics parameter for a specific study
 
+################################################################################
+## function to get dose and Pharmacokinetics parameter for a specific study       
+## 
+## History:
+## -----------------------------------------------------------------------------
+## Date         Programmer            Note
+## ----------   --------------------  ------------------------------------------
+## 2022-12-20   Yousuf Ali,           Initial version
+################################################################################
 
 get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, visit_day=NULL){
+    # function to get dose and Pharmacokinetics parameter for a specific study
+
   '%ni%' <- Negate('%in%')
   studyid <- as.character(studyid)
   pk_param <- toupper(as.character(pk_param))
@@ -231,6 +241,7 @@ final_df
 
 
 clean_txval_dose <- function(dose) {
+    # function to clean doses
   index <- 1:length(dose)
   dose_char <- dose
   dose_num <- as.numeric(dose)
