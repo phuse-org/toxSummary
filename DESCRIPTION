@@ -29,7 +29,6 @@ Imports:
     RSQLite,
     shiny,
     shinycssloaders,
-    shinydashboard,
     stringr
 Depends: 
     R (>= 2.10)
