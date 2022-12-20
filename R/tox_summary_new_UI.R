@@ -1789,91 +1789,6 @@ values$Findings <- ''
     shiny::updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
   })
   
-  # download tar file ----
-
-  output$tar_file <- shiny::downloadHandler(
-    filename = function() {
-      "all_file.tar"
-    },
-    content = function(file) {
-      all_file <- utils::tar("all_file.tar", files = paths$save_file_path)
-      file.copy("all_file.tar", file)
-    }
-  )
-####
-  output$Admin_toggle <- shiny::renderUI({
-    if (basename(user()) == "md_ali") {
-"Admin"
-    }
-  })
-  ###
-  output$download_tar_file <- shinydashboard::renderMenu({
-    if (input$pass_admin == "HeLLo_aDMiN_PT") {
-      shiny::downloadButton("tar_file", "Download all file")
-    }
-  })
-  ####
-  output$show_file_table <- shinydashboard::renderMenu({
-    if (input$pass_admin == "HeLLo_aDMiN_PT") {
-      DT::DTOutput("dir_list")
-    }
-  })
-  
-  
-  #####
-  dir_to_df <- shiny::reactive({
-    
-    df_files <- data.frame(matrix(ncol = 2))
-    colnames(df_files) <- c("user", "files")
-    folder_list <- basename(list.dirs(paths$save_file_path))
-    folder_list <- utils::tail(folder_list, -1)
-    count <- 1
-    for (folder in folder_list) {
-      
-        file_list <- grep(".rds", list.files(fs::path(paths$save_file_path, folder)), value = T)
-        for (file in file_list) {
-          df_files[count, "user"] <- folder
-          file <- unlist(strsplit(file, ".rds"))
-          df_files[count, "files"] <- file
-          count <- count+1
-        }
-    }
-    df_files <- df_files %>% 
-      dplyr::arrange(user, files)
-    df_files
-  })
-  
-###
-  
-  output$dir_list <- DT::renderDT({
-    dir_tab <- dir_to_df()
-    dir_tab <- DT::datatable(dir_tab, rownames = FALSE, class = "cell-border stripe",
-                              filter = list(position = 'top'),
-                              extensions = list("Buttons" = NULL),
-                              caption = htmltools::tags$caption(
-                                style = "caption-side: top; text-align: center; font-size: 20px; color: black",
-                                "Table :", htmltools::strong("All the RDS Files")
-                              ),
-                              options = list(
-                                scrollY = TRUE,
-                                pageLength = 100,
-                                dom = "lfrtipB",
-                                buttons = c("csv", "excel", "copy", "print"),
-                                columnDefs = list(list(className = "dt-center", targets = "_all")),
-                                initComplete = DT::JS(
-                                  "function(settings, json) {",
-                                  "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-                                  "}"),
-                                rowsGroup = list(0))) %>%
-      DT::formatStyle(columns = colnames(dir_tab), `font-size` = "18px")
-    
-    path <- dt_extension # folder containing dataTables.rowsGroup.js
-    dep <- htmltools::htmlDependency(
-      "RowsGroup", "2.0.0", 
-      path, script = "dataTables.rowsGroup.js")
-    dir_tab$dependencies <- c(dir_tab$dependencies, list(dep))
-    dir_tab
-  })
   
   
   ## save units for Cmax and AUC ----
@@ -2670,15 +2585,7 @@ shiny::sidebarLayout(
                htmltools::hr(style = "border-top: 1px dashed black"),
                
                htmltools::h4("Upload Application in RDS format:"),
-               shiny::fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F)),
-      shiny::tabPanel(shiny::uiOutput("Admin_toggle"),
-               htmltools::br(),
-               shiny::passwordInput("pass_admin", "Password:", placeholder = "Restricted for Admin"),
-               shiny::uiOutput("download_tar_file"),
-               htmltools::br(),
-               htmltools::hr(),
-               htmltools::br(),
-               shiny::uiOutput("show_file_table"))
+               shiny::fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F))
 			   )
 
 	)
