@@ -48,12 +48,37 @@
     * Introduction, Methods, results, conclusions
     * [shiny app example](https://link.springer.com/search?query=shiny&search-within=Journal&facet-journal-id=43441)
     * Springer
+* [Regulatory Toxicology and Pharmacology](https://www-sciencedirect-com.fda.idm.oclc.org/journal/regulatory-toxicology-and-pharmacology)  
+    *  impact factor: 3.59
+    *  [aims and scope](https://www-sciencedirect-com.fda.idm.oclc.org/journal/regulatory-toxicology-and-pharmacology/about/aims-and-scope)
+    *  [review time](https://journalinsights.elsevier.com/journals/0273-2300/review_speed)
+    *  Submission to first decision: 1 month
+    *  Submission to final decision: 2 moths
+* [Computational Statistics & Data Analysis](https://www-sciencedirect-com.fda.idm.oclc.org/journal/computational-statistics-and-data-analysis)
+    * impact factor: 2.0
+    * acceptance rate: 11%
 * [Journal of Pharmacological and Toxicological Methods](https://www-sciencedirect-com.fda.idm.oclc.org/journal/journal-of-pharmacological-and-toxicological-methods)
     * impact factor: 2.28
 * [Pharmaceutical Statistics](https://onlinelibrary.wiley.com/journal/15391612)
     *  impact factor 1.23
+* [Statistics in Medicine](https://onlinelibrary.wiley.com/journal/10970258?utm_source=wileysjf&utm_medium=web)
+    * impact factor: 2.497
 * [Biostatistics](https://academic.oup.com/biostatistics/pages/About)
     * impact factor: 5.28
+* [BMC Bioinformatics](https://bmcbioinformatics.biomedcentral.com/submission-guidelines/aims-and-scope)
+    * impact factor: 4.34
 
+* [Alternatives to Laboratory animals](https://journals.sagepub.com/home/atla)
+    * impact factor: 2.43
 
+* [BMC Medical Research Methodology](https://bmcmedresmethodol.biomedcentral.com/)
+    * impact factor: 4.6
+
+### resources:
 * [checks](https://www.elsevier.com/connect/11-steps-to-structuring-a-science-paper-editors-will-take-seriously)
+
+
+
+
+
+
