@@ -2422,7 +2422,7 @@ htmltools::tagList(
 			htmltools::br(),
 			htmltools::tags$hr(style = "border-top: 1px solid#337ab7;"),
 			shiny::uiOutput('studyName'),
-            shiny::actionButton("help_application", label = "Need Help? \U1F604", icon = shiny::icon("mouse-pointer")),
+            shiny::actionButton("help_application", label = "Need Help?", icon = shiny::icon("mouse-pointer")),
 		)
                   
       }
@@ -2599,7 +2599,7 @@ shiny::fluidRow(
 htmltools::h4("Edit Clinical Data", style= "text-align:center"),
 		 htmltools::tags$hr(style = "border-top: 1px solid#1e9acd;"),
           shiny::actionButton("help_clinical", 
-          label = "Need Help? \U1F604",icon = shiny::icon("mouse-pointer")),
+          label = "Need Help?",icon = shiny::icon("mouse-pointer")),
           htmltools::br(),
           htmltools::br(),
 		shiny::textOutput("clin_page_application"),
@@ -2718,7 +2718,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
             # shiny::actionButton("show_help_ac", label = "show/hide Help Button"),
            
             shiny::actionButton("help_nonclinical", 
-          label = "Need Help? Start Here \U1F604",icon = shiny::icon("mouse-pointer")),
+          label = "Need Help? Start Here",icon = shiny::icon("mouse-pointer")),
         #    htmltools::br(),
         #    htmltools::br(),
            htmltools::tags$div(id = "help_button_space"),
