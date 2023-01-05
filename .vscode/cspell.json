@@ -1,0 +1,14 @@
+{
+    "version": "0.2",
+    "ignorePaths": ["R", "app.R"],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [
+        "dontrun",
+        "fread",
+        "MRHD",
+        "studyid"
+    ],
+    "ignoreWords": [],
+    "import": []
+}
