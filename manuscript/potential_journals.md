@@ -5,7 +5,7 @@
     *  [review time](https://journalinsights.elsevier.com/journals/0273-2300/review_speed)
     *  Submission to first decision: 1 month
     *  Submission to final decision: 2 moths
-
+    * [article guideline: page 10](https://www-elsevier-com.fda.idm.oclc.org/wps/find/journaldescription.cws_home/622939?generatepdf=true)
 *  [Therapeutic Innovation & Regulatory Science (TIRS)](https://www.springer.com/journal/43441/)
     * impact factor 1.3
     * open access fee $3390
