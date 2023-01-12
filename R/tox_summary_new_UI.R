@@ -2482,6 +2482,16 @@ shiny::sidebarLayout(
 	htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
 	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
       cicerone::use_cicerone(),
+      shinydisconnect::disconnectMessage(
+      text = "Your session has timed out.",
+    refresh = "Reload",
+    background = "#000000e6",
+    size = 36,
+    width = "full",
+    top = "center",
+    colour = "white",
+    overlayColour = "#999",
+    overlayOpacity = 0.4),
 
 	#   tags$head(tags$script(src = "button.js")),
     # shinyjs::useShinyjs(),
