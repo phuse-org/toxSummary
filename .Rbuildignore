@@ -29,3 +29,6 @@
 ^manuscript$
 ^\.lintr$
 ^\.vscode$
+^README\.html$
+^docs$
+^README_files$
