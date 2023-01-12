@@ -4,3 +4,4 @@ rsconnect/*
 .Rproj.user
 blankData.rds
 ignore/
+docs

@@ -32,3 +32,5 @@
 ^README\.html$
 ^docs$
 ^README_files$
+^_pkgdown\.yml$
+^pkgdown$
