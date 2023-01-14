@@ -5,3 +5,8 @@ rsconnect/*
 blankData.rds
 ignore/
 docs
+my_data_fda/
+screenshot/
+.Rhistory
+Applications/
+Applications_Demo.rds
