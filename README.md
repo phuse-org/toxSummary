@@ -5,10 +5,41 @@
 
 ## Overview
 Visualize and Summarize Nonclinical Study Results
+## Installation
+Package can be installed from CRAN when published to CRAN.
+
+```
+#install toxSummary package
+install.packages("toxSummary")
+```
+Development version can be installed from GitHub.
+
+```
+# install devtools if already not installed 
+install.packages("devtools")
+#install toxSummary package
+devtools::install_github('phuse-org/toxSummary')
+```
+## Run the app
+```
+library(toxSummary)
+toxSummary::toxSummary_app(
+    database_path = "path/of/your/database.db",
+    studyid_file = "path/for/IND_studyid_mapping.csv",
+    save_file_path = NULL
+)
+```
+an example database can be found in GitHub repository. 
+[database link](https://github.com/phuse-org/toxSummary/tree/master/test_data)
 
 
-## How to run the app
-Clone the repo and set repo as working directory. 
+```database_path = "path/of/your/database.db"```  
+```studyid_file = "path/for/IND_studyid_mapping.csv"```   
+Both argument are mandatory when  running the function from package.  
+Package does not contain database. Database is too big for a package.
+
+## How to run the app from cloned repo.
+Clone the [GitHub](https://github.com/phuse-org/toxSummary) repo and set repo as working directory. 
 Open app.R file (or copy code given below) and run all the code.  
 
 ```
@@ -35,45 +66,9 @@ toxSummary::toxSummary_app(
 )
  ```
 
-## When published in public repo (GitHub)
-This can be install like a R package
-```
-# install devtools if already not installed 
-install.packages("devtools")
-#install toxSummary package
-devtools::install_github('phuse-org/toxSummary')
-```
-then run
-
-```
-toxSummary::toxSummary_app(
-    database_path = "path/of/your/database.db",
-    studyid_file = "path/for/IND_studyid_mapping.csv",
-    save_file_path = NULL
-)
-```
-
-
-
-```database_path = "path/of/your/database.db"```  
-```studyid_file = "path/for/IND_studyid_mapping.csv"```   
-Both argument are mandatory when  running the function from package.  
-Package does not contain database. Database is too big for a package.
-
-## Deploy the app (WIP)
-
-### from cloned repo:
-Deploying Shiny app as package is little different. 
-There is not publish button when you open app.R file in RStudio.  
-__crate manifest.json file__
-- shinyappsio   
-  ``` rsconnect::deployApp()``` 
-- rsconnect  
-  ```rsconnect::deployApp()``` 
-
-### From the installed package
-app.R file not included in the package.
-first create app.R file in the working directory.  
+## How to deploy the app
+#### From the installed package
+First create app.R file in the working directory.  
 Then copy the code from here and change the database and file paths.
 
 ```
@@ -82,6 +77,18 @@ Then copy the code from here and change the database and file paths.
     studyid_file = "path/for/IND_studyid_mapping.csv",
     save_file_path = NULL)
 ```
+
+Deploying Shiny app as package is little different. 
+There is no publish button when you open app.R file in RStudio.  
+
+Running  ``` rsconnect::writeManifest() ``` command on console will create
+ manifest.json file.
+app then can be deploy to shinyappsio or rsconnect running following command
+on console.
+  ``` rsconnect::deployApp()```
+
+Keep in mind that when app running on server, app need to have 
+access to the files given in database_path and studyid_file arguments.
 
 
 ## Demo App
