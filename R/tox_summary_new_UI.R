@@ -10,18 +10,19 @@
 ##              Kevin Snyder
 ################################################################################
 
-#' @title run toxSummary app
-#' @param database_path Mandatory/cr
+#' @title Run toxSummary app
+#' @param database_path Mandatory, character\cr
 #'    file path for database
-#' @param studyid_file Mandatory/cr
+#' @param studyid_file Mandatory, character\cr
 #' 		file path for studyid
 #' 
-#' @param save_file_path optional
-#' 		path where created application file will be saved.
+#' @param save_file_path Optional, character\cr
+#'    path where file will be saved when app create any files. 
 #' 		If NULL, file will be saved in  working directory
 #' 
-#' @param where_to_run Mandatory/cr
-#' 		where run will be running. Default is local
+#' @param where_to_run Optional, character\cr
+#' 		where app will be running. Default is "local". Should use "rsconnect"
+#'    when deploy to rsconnect.
 #' 
 #' @return function run the app.
 #' 
@@ -30,7 +31,8 @@
 #' \dontrun{
 #' toxSummary_app(database_path = "path/of/your/database.db",
 #' studyid_file = "path/for/IND_studyid_mapping.csv", 
-#' save_file_path = NULL)
+#' save_file_path = NULL,
+#' where_to_run = "local")
 #' }
 
 

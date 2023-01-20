@@ -4,8 +4,9 @@
 
 
 ## Overview
-Visualize and Summarize Nonclinical Study Results
-## Installation
+Visualize and Summarize Nonclinical Study Results.  
+
+## Installation  
 Package can be installed from CRAN when published to CRAN.
 
 ```
@@ -29,7 +30,7 @@ toxSummary::toxSummary_app(
     save_file_path = NULL
 )
 ```
-an example database can be found in GitHub repository. 
+an example database can be found in GitHub repository
 [database link](https://github.com/phuse-org/toxSummary/tree/master/test_data)
 
 
@@ -39,8 +40,8 @@ Both argument are mandatory when  running the function from package.
 Package does not contain database. Database is too big for a package.
 
 ## How to run the app from cloned repo.
-Clone the [GitHub](https://github.com/phuse-org/toxSummary) repo and set repo as working directory. 
-Open app.R file (or copy code given below) and run all the code.  
+Clone the [GitHub](https://github.com/phuse-org/toxSummary) repo and set repo as
+working directory. Open app.R file (or copy code given below) and run the code.  
 
 ```
 pkgload::load_all(".")
@@ -54,9 +55,10 @@ toxSummary::toxSummary_app(
     save_file_path = NULL
 )
 ```
- This will open toxSummary app.   
- The default/example database (in "test_data/test_db.db" directory) only contain few studies.
- To connect your database
+ This will open toxSummary app.  The default/example database
+(in "test_data/test_db.db" directory) only contain few studies. To connect your
+database provide files directory.  
+
  ```
  pkgload::load_all(".")
  toxSummary::toxSummary_app(
@@ -75,26 +77,21 @@ Then copy the code from here and change the database and file paths.
  toxSummary::toxSummary_app(
     database_path = "path/of/your/database.db",
     studyid_file = "path/for/IND_studyid_mapping.csv",
-    save_file_path = NULL)
+    save_file_path = NULL,
+    where_to_run = "rsconnect")
+
 ```
 
 Deploying Shiny app as package is little different. 
-There is no publish button when you open app.R file in RStudio.  
+There is no publish button when you open app.R file in RStudio.  Running
+``` rsconnect::writeManifest() ``` command in R console will create
+manifest.json file. app then can be deployed on rsconnect running  
+``` rsconnect::deployApp()``` command in R console.  
 
-Running  ``` rsconnect::writeManifest() ``` command on console will create
- manifest.json file.
-app then can be deploy to shinyappsio or rsconnect running following command
-on console.
-  ``` rsconnect::deployApp()```
-
-Keep in mind that when app running on server, app need to have 
-access to the files given in database_path and studyid_file arguments.
+Keep in mind that when app running on server, app need to have access to the
+files given in database_path and studyid_file argument. 
 
 
 ## Demo App
 A demo app can be found here
- 
-[Demo Shiny App_updated](https://yousuf28.shinyapps.io/toxsummary)
-
-older version of the app  
-[Demo Shiny App](https://phuse-org.shinyapps.io/toxSummary/) 
+[update the link after deploy new version](https://phuse-org.shinyapps.io/toxSummary/) 
