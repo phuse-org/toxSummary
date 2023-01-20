@@ -38,6 +38,12 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/Introduction.html">Introduction</a>
+  </div>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -56,68 +62,77 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Visualize and Summarize Nonclinical Study Results</p>
+<p>Visualize and Summarize Nonclinical Study Results.</p>
 </div>
 <div class="section level2">
-<h2 id="how-to-run-the-app">How to run the app<a class="anchor" aria-label="anchor" href="#how-to-run-the-app"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Clone the repo and set repo as working directory. Open app.R file (or copy code given below) and run all the code.</p>
-<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/test_db.db"</span></span>
-<span><span class="va">study_list_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/IND_with_studies_2.csv"</span></span>
-<span></span>
-<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxsummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
-<span>    database_path <span class="op">=</span> <span class="va">db_path</span>,</span>
-<span>    studyid_file <span class="op">=</span> <span class="va">study_list_path</span>,</span>
-<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre>
-<p>This will open toxSummary app.<br>
-The default/example database (in “test_data/test_db.db” directory) only contain few studies. To connect your database <code>pkgload::load_all(".")  toxSummary::toxSummary_app(     database_path = "path/of/your/database.db",     studyid_file = "path/for/IND_studyid_mapping.csv",     save_file_path = NULL )</code></p>
-</div>
-<div class="section level2">
-<h2 id="when-published-in-public-repo-github">When published in public repo (GitHub)<a class="anchor" aria-label="anchor" href="#when-published-in-public-repo-github"></a>
-</h2>
-<p>This can be install like a R package</p>
+<p>Package can be installed from CRAN when published to CRAN.</p>
+<pre><code><span><span class="co">#install toxSummary package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"toxSummary"</span><span class="op">)</span></span></code></pre>
+<p>Development version can be installed from GitHub.</p>
 <pre><code><span><span class="co"># install devtools if already not installed </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="co">#install toxSummary package</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'phuse-org/toxSummary'</span><span class="op">)</span></span></code></pre>
-<p>then run</p>
-<pre><code><span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxsummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
+</div>
+<div class="section level2">
+<h2 id="run-the-app">Run the app<a class="anchor" aria-label="anchor" href="#run-the-app"></a>
+</h2>
+<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span></span>
+<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
 <span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
 <span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
 <span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre>
+<p>an example database can be found in GitHub repository <a href="https://github.com/phuse-org/toxSummary/tree/master/test_data" class="external-link">database link</a></p>
 <p><code>database_path = "path/of/your/database.db"</code><br><code>studyid_file = "path/for/IND_studyid_mapping.csv"</code><br>
 Both argument are mandatory when running the function from package.<br>
 Package does not contain database. Database is too big for a package.</p>
 </div>
 <div class="section level2">
-<h2 id="deploy-the-app-wip">Deploy the app (WIP)<a class="anchor" aria-label="anchor" href="#deploy-the-app-wip"></a>
+<h2 id="how-to-run-the-app-from-cloned-repo">How to run the app from cloned repo.<a class="anchor" aria-label="anchor" href="#how-to-run-the-app-from-cloned-repo"></a>
 </h2>
-<div class="section level3">
-<h3 id="from-cloned-repo">from cloned repo:<a class="anchor" aria-label="anchor" href="#from-cloned-repo"></a>
-</h3>
-<p>Deploying Shiny app as package is little different. There is not publish button when you open app.R file in RStudio.<br><strong>crate manifest.json file</strong> - shinyappsio<br><code>rsconnect::deployApp()</code> - rsconnect<br><code>rsconnect::deployApp()</code></p>
+<p>Clone the <a href="https://github.com/phuse-org/toxSummary" class="external-link">GitHub</a> repo and set repo as working directory. Open app.R file (or copy code given below) and run the code.</p>
+<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/test_db.db"</span></span>
+<span><span class="va">study_list_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/IND_with_studies_2.csv"</span></span>
+<span></span>
+<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
+<span>    database_path <span class="op">=</span> <span class="va">db_path</span>,</span>
+<span>    studyid_file <span class="op">=</span> <span class="va">study_list_path</span>,</span>
+<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre>
+<p>This will open toxSummary app. The default/example database (in “test_data/test_db.db” directory) only contain few studies. To connect your database provide files directory.</p>
+<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
+<span>   database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
+<span>   studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
+<span>   save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre>
 </div>
-<div class="section level3">
-<h3 id="from-the-installed-package">From the installed package<a class="anchor" aria-label="anchor" href="#from-the-installed-package"></a>
-</h3>
-<p>app.R file not included in the package. first create app.R file in the working directory.<br>
+<div class="section level2">
+<h2 id="how-to-deploy-the-app">How to deploy the app<a class="anchor" aria-label="anchor" href="#how-to-deploy-the-app"></a>
+</h2>
+<div class="section level4">
+<h4 id="from-the-installed-package">From the installed package<a class="anchor" aria-label="anchor" href="#from-the-installed-package"></a>
+</h4>
+<p>First create app.R file in the working directory.<br>
 Then copy the code from here and change the database and file paths.</p>
-<pre><code><span> <span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxsummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
+<pre><code><span> <span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
 <span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
 <span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
-<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre>
+<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    where_to_run <span class="op">=</span> <span class="st">"rsconnect"</span><span class="op">)</span></span></code></pre>
+<p>Deploying Shiny app as package is little different. There is no publish button when you open app.R file in RStudio. Running <code>rsconnect::writeManifest()</code> command in R console will create manifest.json file. app then can be deployed on rsconnect running<br><code>rsconnect::deployApp()</code> command in R console.</p>
+<p>Keep in mind that when app running on server, app need to have access to the files given in database_path and studyid_file argument.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="demo-app">Demo App<a class="anchor" aria-label="anchor" href="#demo-app"></a>
 </h2>
-<p>A demo app can be found here</p>
-<p><a href="https://yousuf28.shinyapps.io/toxsummary" class="external-link">Demo Shiny App_updated</a></p>
-<p>older version of the app<br><a href="https://phuse-org.shinyapps.io/toxSummary/" class="external-link">Demo Shiny App</a></p>
+<p>A demo app can be found here <a href="https://phuse-org.shinyapps.io/toxSummary/" class="external-link">update the link after deploy new version</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
