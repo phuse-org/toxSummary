@@ -34,4 +34,4 @@
 ^README_files$
 ^_pkgdown\.yml$
 ^pkgdown$
-^vignettes/articles$
+^\.github$

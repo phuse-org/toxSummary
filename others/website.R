@@ -1,6 +1,6 @@
 library(usethis)
 library(pkgdown)
-
+usethis::use_vignette("Introduction")
 pkgdown::build_site()
 usethis::use_article("Introduction")
 pkgdown::build_site()

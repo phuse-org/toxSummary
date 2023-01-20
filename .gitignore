@@ -10,3 +10,4 @@ screenshot/
 .Rhistory
 Applications/
 Applications_Demo.rds
+inst/doc

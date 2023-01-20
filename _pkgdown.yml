@@ -1,4 +1,8 @@
 url: ~
 template:
-  bootstrap: 5
+    bootswatch: zephyr
+    bootstrap: 5
+    bslib:
+      primary: "#134486"
+      pkgdown-nav-height: 100px
 
