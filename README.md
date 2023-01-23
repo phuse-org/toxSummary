@@ -2,7 +2,8 @@
 
 # toxSummary
 
-<a href="https://github.com/phuse-org/toxSummary"><img src="man/figures/logo.png" alt="toxSummary logo" align="right" style="max-width: 20%;"/></a>
+<a href="https://github.com/phuse-org/toxSummary"><img src="man/figures/logo.png" 
+alt="toxSummary logo" align="right" width=30% height="auto"/></a>
 
 
 
