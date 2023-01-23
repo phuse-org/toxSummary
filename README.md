@@ -2,6 +2,9 @@
 
 # toxSummary
 
+<a href="https://github.com/phuse-org/toxSummary"><img src="man/figures/logo.png" alt="toxSummary logo" align="right" style="max-width: 40%;"/></a>
+
+
 
 ## Overview
 Visualize and Summarize Nonclinical Study Results.  

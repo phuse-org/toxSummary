@@ -3,6 +3,6 @@ template:
     bootswatch: zephyr
     bootstrap: 5
     bslib:
-      primary: "#134486"
+      primary: "#414b51"
+      # primary: "#497f9c"
       pkgdown-nav-height: 100px
-
