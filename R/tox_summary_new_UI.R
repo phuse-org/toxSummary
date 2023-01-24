@@ -50,7 +50,7 @@
 
 #test
 
-toxSummary_app <- function(database_path, studyid_file,
+toxSummary_app <- function(database_path=NULL, studyid_file=NULL,
  save_file_path = NULL, where_to_run= "local") {
 
  if (is.null(save_file_path)) {
@@ -58,39 +58,38 @@ toxSummary_app <- function(database_path, studyid_file,
  } else {
      save_file_path <- save_file_path
  }
+ if ((!(is.null(database_path))) & (!(is.null(studyid_file)))) {
  paths <- get_paths(
      database_path = database_path,
-     save_file_path = save_file_path, where_to_run = where_to_run
- )
-
-
-if (paths$save_file_path == getwd()) {
-    if (!dir.exists("Applications")) {
-        dir.create("Applications")
-    }
-
-    paths$save_file_path <- fs::path(getwd(), "Applications")
-	# message("file will be saved in ", paths$save_file_path)
-}
-
+     save_file_path = save_file_path, where_to_run = where_to_run)
  conn <- DBI::dbConnect(drv = RSQLite::SQLite(), paths$database_path)
-
-
-## study id file
-# study id file should a csv with IND number and studyid
  col_name <- c(
     "application_type",
     "IND_num",
     "studyID")
-
-
   ind_table <- data.table::fread(studyid_file,
     col.names = col_name)
-
 ind_table <- ind_table[application_type == "IND",]
 # ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
 ind_number_list <- ind_table$IND_num
 # ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
+
+ } else {
+  paths <- list(
+    save_file_path = save_file_path,
+    where_to_run= where_to_run
+  )
+  ind_number_list <- character(0)
+ }
+if (paths$save_file_path == getwd()) {
+    if (!dir.exists("Applications")) {
+        dir.create("Applications")
+    }
+paths$save_file_path <- fs::path(getwd(), "Applications")
+	# message("file will be saved in ", paths$save_file_path)
+}
+## study id file
+# study id file should a csv with IND number and studyid
 
 
 #########
