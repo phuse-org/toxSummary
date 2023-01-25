@@ -5,17 +5,17 @@
 \title{Run toxSummary app}
 \usage{
 toxSummary_app(
-  database_path,
-  studyid_file,
+  database_path = NULL,
+  studyid_file = NULL,
   save_file_path = NULL,
   where_to_run = "local"
 )
 }
 \arguments{
-\item{database_path}{Mandatory, character\cr
+\item{database_path}{Optional, character\cr
 file path for database}
 
-\item{studyid_file}{Mandatory, character\cr
+\item{studyid_file}{Optional, character\cr
 file path for studyid}
 
 \item{save_file_path}{Optional, character\cr
@@ -34,9 +34,6 @@ Run toxSummary app
 }
 \examples{
 \dontrun{
-toxSummary_app(database_path = "path/of/your/database.db",
-studyid_file = "path/for/IND_studyid_mapping.csv", 
-save_file_path = NULL,
-where_to_run = "local")
+toxSummary_app()
 }
 }

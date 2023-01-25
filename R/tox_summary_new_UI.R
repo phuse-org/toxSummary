@@ -11,9 +11,9 @@
 ################################################################################
 
 #' @title Run toxSummary app
-#' @param database_path Mandatory, character\cr
+#' @param database_path Optional, character\cr
 #'    file path for database
-#' @param studyid_file Mandatory, character\cr
+#' @param studyid_file Optional, character\cr
 #' 		file path for studyid
 #' 
 #' @param save_file_path Optional, character\cr
@@ -29,12 +29,8 @@
 #' @export
 #' @examples 
 #' \dontrun{
-#' toxSummary_app(database_path = "path/of/your/database.db",
-#' studyid_file = "path/for/IND_studyid_mapping.csv", 
-#' save_file_path = NULL,
-#' where_to_run = "local")
+#' toxSummary_app()
 #' }
-
 
 
 

@@ -6,3 +6,29 @@ template:
       primary: "#414b51"
       # primary: "#497f9c"
       pkgdown-nav-height: 100px
+navbar:
+  structure:
+    left:
+    - intro
+    - reference
+    - articles
+    - resources
+    right: github
+  components:
+    reference:
+      text: Reference
+      href: reference/index.html
+    github: 
+      icon: fab fa-github fa-lg
+      href: https://github.com/phuse-org/toxSummary
+      aria-label: github
+    articles:
+      text: Articles
+      menu:
+      - text: Introduction to toxSummary
+        href: articles/Introduction.html
+      - text: Exposure Margin Calculation 
+        href: articles/Exposure-Margin.html
+    resources:
+        text: Resources
+        href: https://github.com/phuse-org/toxSummary 

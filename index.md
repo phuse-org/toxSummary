@@ -6,7 +6,6 @@
 alt="toxSummary logo" align="right" width=30% height="auto"/></a> -->
 
 
-
 ## Overview
 Visualize and Summarize Nonclinical Study Results.  
 
@@ -25,7 +24,15 @@ install.packages("devtools")
 #install toxSummary package
 devtools::install_github('phuse-org/toxSummary')
 ```
-## Run the app
+
+## Run the app 
+```
+library(toxSummary)
+toxSummary::toxSummary_app()
+
+```
+
+## Run the app with database connection
 ```
 library(toxSummary)
 toxSummary::toxSummary_app(
@@ -37,22 +44,30 @@ toxSummary::toxSummary_app(
 an example database can be found in GitHub repository
 [database link](https://github.com/phuse-org/toxSummary/tree/master/test_data)
 
-
 ```database_path = "path/of/your/database.db"```  
 ```studyid_file = "path/for/IND_studyid_mapping.csv"```   
-Both argument are mandatory when  running the function from package.  
 Package does not contain database. Database is too big for a package.
 
 ## How to run the app from cloned repo.
 Clone the [GitHub](https://github.com/phuse-org/toxSummary) repo and set repo as
-working directory. Open app.R file (or copy code given below) and run the code.  
+working directory.
+If you don't have any database to connect and want to run app, 
+only run this following code in R console.
+```
+pkgload::load_all(".")
+toxSummary::toxSummary_app()
+```
+To run the app with database connection follow this direction;
+set repo as working directory and open app.R file (or copy code given below) 
+and run the code.   if you connect to your database then change the path to 
+your files.
+otherwise this will connect to  example database available in test_data
+directory.
 
 ```
 pkgload::load_all(".")
-
 db_path <- "test_data/test_db.db"
 study_list_path <- "test_data/IND_with_studies_2.csv"
-
 toxSummary::toxSummary_app(
     database_path = db_path,
     studyid_file = study_list_path,
@@ -60,17 +75,7 @@ toxSummary::toxSummary_app(
 )
 ```
  This will open toxSummary app.  The default/example database
-(in "test_data/test_db.db" directory) only contain few studies. To connect your
-database provide files directory.  
-
- ```
- pkgload::load_all(".")
- toxSummary::toxSummary_app(
-    database_path = "path/of/your/database.db",
-    studyid_file = "path/for/IND_studyid_mapping.csv",
-    save_file_path = NULL
-)
- ```
+(in "test_data/test_db.db" directory) only contain few studies.
 
 ## How to deploy the app
 #### From the installed package

@@ -1,0 +1,54 @@
+---
+title: "Exposure Margin"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(toxSummary)
+```
+
+## Exposure Margin Calculation:
+
+Clinical information: Human Proposed "Start Dose": 1.5 mg/day
+
+Dog to Human conversion factor = 1.8
+
+Dog 4 week (IV) study:
+
+HED = Human Equivalent Dose
+
++---------------------------------------+-------------------+-----------------+-----------------+
+| Animal Dose ---\>                     | 0.25 mg/kg/day    | 0.8 mg/kg/day   | 2.5 mg/kg/day   |
++---------------------------------------+-------------------+-----------------+-----------------+
+| HED = Animal Dose / Conversion factor | = 0.25/1.8        | =0.8/1.8        | =2.5/1.8        |
+|                                       |                   |                 |                 |
+| Dog to Human conversion factor 1.8    | = 0.139 mg/kg/day | =0.44 mg/kg/day | =1.39 mg/kg/day |
++---------------------------------------+-------------------+-----------------+-----------------+
+| mg/kg/day ---\> mg/day                | =0.139\*60        | =0.44\*60       | =1.39\*60       |
+|                                       |                   |                 |                 |
+| Human weight 60 kg                    | =8.33 mg/day      | =26.67 mg/day   | =83.33 mg/day   |
++---------------------------------------+-------------------+-----------------+-----------------+
+| Proposed Human                        |                   |                 |                 |
+|                                       |                   |                 |                 |
+| Start Dose =1.5 mg/day                |                   |                 |                 |
++---------------------------------------+-------------------+-----------------+-----------------+
+| Exposure Margin =                     | =8.33/1.5         | 26.67/1.5       | =83.33/1.5      |
+|                                       |                   |                 |                 |
+| HED/Human dose                        | =5.6              | =17.78          | =55.55          |
++---------------------------------------+-------------------+-----------------+-----------------+
+| Exposure Margin                       | 5.6               | 18              | 56              |
++---------------------------------------+-------------------+-----------------+-----------------+
+
+: Exposure Margin Calculation
+
+![](images/04_clinical.jpg)
+
+![](images/05_nonclinical.jpg)
+
+![](images/01_em.jpg)

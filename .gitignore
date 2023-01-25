@@ -4,7 +4,6 @@ rsconnect/*
 .Rproj.user
 blankData.rds
 ignore/
-docs
 my_data_fda/
 screenshot/
 .Rhistory

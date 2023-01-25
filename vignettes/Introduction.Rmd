@@ -18,6 +18,13 @@ knitr::opts_chunk$set(
 library(toxSummary)
 ```
 App will run locally.  
+## Workflow
+app have two workflow. User can enter nonclinical data manually or user can pull 
+nonclinical the data 
+from database created from SEND data. Instruction for how to create SEND database can 
+be found here [sendigR link].
+whether user choose to enter data manually or pull from database for nonclinical part,
+other part are same.
 
 ## Application Tab  
 On the landing page (Application tab) there is a button  
