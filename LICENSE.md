@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-This presentation reflects the views of the author and should not be construed to represent FDA’s views or policies.
+This package/shiny app reflects the views of the author and should not be 
+construed to represent FDA’s views or policies.
 
-Any examples or sample analyses in this presentation are for illustrative purposes only.
+Any examples or sample analyses in this package are for illustrative purposes only.

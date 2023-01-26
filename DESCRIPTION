@@ -1,12 +1,17 @@
 Package: toxSummary
-Title: Visualize and Summarize Nonclinical Study Results
+Title: Visualize and Summarize Repeat-Dose Toxicology Study Results
 Version: 0.0.0.9000
 Authors@R:
  c(
     person("Yousuf", "Ali", email=  "md.ali@fda.hhs.gov", role = c( "cre",  "aut")),
-    person("Kevin", "Snyder", email= "kevin.snyder@fda.hhs.gov", role = c("aut")))
-Description: What the package does (one paragraph).
+    person("Kevin", "Snyder", email= "kevin.snyder@fda.hhs.gov", role = c("aut")),
+    person(given = "FDA", role = "cph"))
+Description: R Shiny app that generate plot and summary table from repeat-dose
+        toxicology study results to facilitate holistic evaluation of the drug safety of 
+        active pharmaceutical ingredient (API) prior to initiation of clinical trials. 
 License: MIT + file LICENSE
+url: https://github.com/phuse-org/toxSummary
+BugReports: https://github.com/phuse-org/toxSummary/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
