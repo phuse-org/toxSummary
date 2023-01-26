@@ -55,7 +55,6 @@ library(toxSummary)
 toxSummary::toxSummary_app()
 
 ```
-
 ## Run the app with database connection
 ```
 library(toxSummary)
@@ -65,6 +64,8 @@ toxSummary::toxSummary_app(
     save_file_path = NULL
 )
 ```
+When save_file_path set to NULL, files will be saved in current working directory.
+
 an example database can be found in GitHub repository
 [database link](https://github.com/phuse-org/toxSummary/tree/master/test_data)
 
@@ -128,3 +129,36 @@ files given in database_path and studyid_file argument.
 ## Demo App
 A demo app can be found here
 [update the link after deploy new version](https://phuse-org.shinyapps.io/toxSummary/) 
+
+MIT LICENSE 
+Copyright (c) 2023 Food and Drug Administration (FDA) 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE, ANY UPDATES TO THE SOFTWARE MADE BY CRAN, OR THE USE OR 
+OTHER DEALINGS IN THE SOFTWARE OR ANY UPDATED VERSION.
+
+This package/shiny app reflects the views of the author and should not be 
+construed to represent FDA’s views or policies.
+
+Any examples or sample analyses in this package are for illustrative purposes only.
+
+Nothing in these scripts is intended to guide the analytic process and 
+any interpretations of data found as a result of using these scripts are 
+solely the responsibility of the user of the scripts and not the developers.
+ All users are responsible for ensuring their own compliance with applicable laws, 
+regulations, and agency guidance.

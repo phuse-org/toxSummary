@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) Food and Drug Administration (FDA) 
+Copyright (c) 2023 Food and Drug Administration (FDA) 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -18,9 +18,16 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE, ANY UPDATES TO THE SOFTWARE MADE BY CRAN, OR THE USE OR 
+OTHER DEALINGS IN THE SOFTWARE OR ANY UPDATED VERSION.
 
 This package/shiny app reflects the views of the author and should not be 
 construed to represent FDA’s views or policies.
 
 Any examples or sample analyses in this package are for illustrative purposes only.
+
+Nothing in these scripts is intended to guide the analytic process and 
+any interpretations of data found as a result of using these scripts are 
+solely the responsibility of the user of the scripts and not the developers.
+ All users are responsible for ensuring their own compliance with applicable laws, 
+regulations, and agency guidance.

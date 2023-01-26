@@ -18,7 +18,7 @@
 #' 
 #' @param save_file_path Optional, character\cr
 #'    path where file will be saved when app create any files. 
-#' 		If NULL, file will be saved in  working directory
+#' 		If NULL, file will be saved in current working directory
 #' 
 #' @param where_to_run Optional, character\cr
 #' 		where app will be running. Default is "local". Should use "rsconnect"
