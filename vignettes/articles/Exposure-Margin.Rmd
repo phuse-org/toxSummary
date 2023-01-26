@@ -47,8 +47,8 @@ HED = Human Equivalent Dose
 
 : Exposure Margin Calculation
 
-![](images/04_clinical.jpg)
+![Clinical](https://user-images.githubusercontent.com/31291716/214689841-d6617330-ac4d-4e54-b14e-6f1633c5c97c.jpg)
+![Nonclinical](https://user-images.githubusercontent.com/31291716/214689875-9a45eb63-e72c-43f5-bbc4-260047dcb6c9.jpg)
+![Plot](https://user-images.githubusercontent.com/31291716/214689883-a8b546a2-2ab2-4730-9269-78c12d62dfca.jpg)
 
-![](images/05_nonclinical.jpg)
 
-![](images/01_em.jpg)
