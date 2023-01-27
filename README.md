@@ -130,7 +130,10 @@ files given in database_path and studyid_file argument.
 A demo app can be found here
 [update the link after deploy new version](https://phuse-org.shinyapps.io/toxSummary/) 
 
+## toxSummary license  
+
 MIT LICENSE 
+
 Copyright (c) 2023 Food and Drug Administration (FDA) 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
