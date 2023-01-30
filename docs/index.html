@@ -16,8 +16,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Visualize and Summarize Repeat-Dose Toxicology Study Results">
 <meta property="og:description" content="R Shiny app that generate plot and summary table from repeat-dose
@@ -83,60 +83,99 @@
 <img src="logo.png" class="logo" alt=""><h1 id="toxsummary">toxSummary<a class="anchor" aria-label="anchor" href="#toxsummary"></a>
 </h1>
 </div>
-<p>toxSummary is an R Shiny app to visualize and summarize repeat-dose toxicology study results. toxSummary app also wrapped in R package for so app can be distributed easily.</p>
+<p>toxSummary is an R Shiny app to visualize and summarize repeat-dose
+toxicology study results. toxSummary app also wrapped in R package for
+so app can be distributed easily.</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Prior to initiation of clinical trials, repeat-dose toxicology studies are conducted in multiple species to support the safety of the active pharmaceutical ingredient (API) in the proposed clinical dosing regimen, route of administration, and duration of treatment. The primary metric used to extrapolate the safety of clinical dosage from repeat-dose toxicology study results is the safety margin, i.e. the ratio of no observable adverse effect level (NOAEL) from the toxicology study to the proposed clinical dose. This ratio can be calculated by using allometric scaling to approximate the equivalent human dose from that used in the toxicology study based on the body surface area of the species employed or by comparing the empirically measured maximum plasma concentration (Cmax) or total plasma exposure (AUC) between the toxicokinetic animal data and the human pharmacokinetic data, if available. Another important consideration in drug safety evaluation is the nature and severity of the toxicities observed at doses above the NOAEL. As toxicity studies of various durations are typically conducted in multiple species and potentially via multiple routes of administration, it can be challenging to effectively integrate all of this information. In collaboration with the Pharmaceutical Users Software Exchange (PHUSE) Nonclinical Scripts Working Group and with consultation from toxicologists at FDA, an open source R shiny application was developed to allow users to interactively visualize safety margins and the severity of user-defined significant toxicities across studies throughout a drug development program in a single plot. The application can also present this information in tabular form that can be exported in various formats, e.g. CSV, Excel or Word files. These functionalities are designed to facilitate holistic evaluation of the drug safety by generating graphical and tabular summaries of the full toxicological profile of an API.</p>
+<p>Prior to initiation of clinical trials, repeat-dose toxicology
+studies are conducted in multiple species to support the safety of the
+active pharmaceutical ingredient (API) in the proposed clinical dosing
+regimen, route of administration, and duration of treatment. The primary
+metric used to extrapolate the safety of clinical dosage from
+repeat-dose toxicology study results is the safety margin, i.e. the
+ratio of no observable adverse effect level (NOAEL) from the toxicology
+study to the proposed clinical dose. This ratio can be calculated by
+using allometric scaling to approximate the equivalent human dose from
+that used in the toxicology study based on the body surface area of the
+species employed or by comparing the empirically measured maximum plasma
+concentration (Cmax) or total plasma exposure (AUC) between the
+toxicokinetic animal data and the human pharmacokinetic data, if
+available. Another important consideration in drug safety evaluation is
+the nature and severity of the toxicities observed at doses above the
+NOAEL. As toxicity studies of various durations are typically conducted
+in multiple species and potentially via multiple routes of
+administration, it can be challenging to effectively integrate all of
+this information. In collaboration with the Pharmaceutical Users
+Software Exchange (PHUSE) Nonclinical Scripts Working Group and with
+consultation from toxicologists at FDA, an open source R shiny
+application was developed to allow users to interactively visualize
+safety margins and the severity of user-defined significant toxicities
+across studies throughout a drug development program in a single plot.
+The application can also present this information in tabular form that
+can be exported in various formats, e.g. CSV, Excel or Word files. These
+functionalities are designed to facilitate holistic evaluation of the
+drug safety by generating graphical and tabular summaries of the full
+toxicological profile of an API.</p>
 <p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="reference/figures/toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Package can be installed from CRAN.</p>
-<pre><code><span><span class="co">#install toxSummary package</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"toxSummary"</span><span class="op">)</span></span></code></pre>
+<pre><code><span class="co">#install toxSummary package</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"toxSummary"</span><span class="op">)</span></code></pre>
 <p>Development version can be installed from GitHub.</p>
-<pre><code><span><span class="co"># install devtools if already not installed </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="co">#install toxSummary package</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'phuse-org/toxSummary'</span><span class="op">)</span></span></code></pre>
+<pre><code><span class="co"># install devtools if already not installed </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="co">#install toxSummary package</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'phuse-org/toxSummary'</span><span class="op">)</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="run-the-app">Run the app<a class="anchor" aria-label="anchor" href="#run-the-app"></a>
 </h2>
-<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span></span>
-<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
+<pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span>
+<span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span><span class="op">)</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="run-the-app-with-database-connection">Run the app with database connection<a class="anchor" aria-label="anchor" href="#run-the-app-with-database-connection"></a>
 </h2>
-<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span></span>
-<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
-<span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
-<span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
-<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre>
-<p>an example database can be found in GitHub repository <a href="https://github.com/phuse-org/toxSummary/tree/master/test_data" class="external-link">database link</a></p>
+<pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span>
+<span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span>
+    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,
+    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,
+    save_file_path <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre>
+<p>an example database can be found in GitHub repository <a href="https://github.com/phuse-org/toxSummary/tree/master/test_data" class="external-link">database
+link</a></p>
 <p><code>database_path = "path/of/your/database.db"</code><br><code>studyid_file = "path/for/IND_studyid_mapping.csv"</code><br>
-Package does not contain database. Database is too big for a package.</p>
+Package does not contain database. Database is too big for a
+package.</p>
 </div>
 <div class="section level2">
 <h2 id="how-to-run-the-app-from-cloned-repo">How to run the app from cloned repo.<a class="anchor" aria-label="anchor" href="#how-to-run-the-app-from-cloned-repo"></a>
 </h2>
-<p>Clone the <a href="https://github.com/phuse-org/toxSummary" class="external-link">GitHub</a> repo and set repo as working directory. If you don’t have any database to connect and want to run app, only run this following code in R console.</p>
-<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
-<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
-<p>To run the app with database connection follow this direction; set repo as working directory and open app.R file (or copy code given below) and run the code. if you connect to your database then change the path to your files. otherwise this will connect to example database available in test_data directory.</p>
-<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
-<span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/test_db.db"</span></span>
-<span><span class="va">study_list_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/IND_with_studies_2.csv"</span></span>
-<span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
-<span>    database_path <span class="op">=</span> <span class="va">db_path</span>,</span>
-<span>    studyid_file <span class="op">=</span> <span class="va">study_list_path</span>,</span>
-<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre>
-<p>This will open toxSummary app. The default/example database (in “test_data/test_db.db” directory) only contain few studies.</p>
+<p>Clone the <a href="https://github.com/phuse-org/toxSummary" class="external-link">GitHub</a> repo and set
+repo as working directory. If you don’t have any database to connect and
+want to run app, only run this following code in R console.</p>
+<pre><code><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pkgload/man/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span>
+<span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span><span class="op">)</span></code></pre>
+<p>To run the app with database connection follow this direction; set
+repo as working directory and open app.R file (or copy code given below)
+and run the code. if you connect to your database then change the path
+to your files. otherwise this will connect to example database available
+in test_data directory.</p>
+<pre><code><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pkgload/man/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span>
+<span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/test_db.db"</span>
+<span class="va">study_list_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/IND_with_studies_2.csv"</span>
+<span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span>
+    database_path <span class="op">=</span> <span class="va">db_path</span>,
+    studyid_file <span class="op">=</span> <span class="va">study_list_path</span>,
+    save_file_path <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre>
+<p>This will open toxSummary app. The default/example database (in
+“test_data/test_db.db” directory) only contain few studies.</p>
 </div>
 <div class="section level2">
 <h2 id="how-to-deploy-the-app">How to deploy the app<a class="anchor" aria-label="anchor" href="#how-to-deploy-the-app"></a>
@@ -146,19 +185,24 @@ Package does not contain database. Database is too big for a package.</p>
 </h4>
 <p>First create app.R file in the working directory.<br>
 Then copy the code from here and change the database and file paths.</p>
-<pre><code><span> <span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
-<span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
-<span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
-<span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    where_to_run <span class="op">=</span> <span class="st">"rsconnect"</span><span class="op">)</span></span></code></pre>
-<p>Deploying Shiny app as package is little different. There is no publish button when you open app.R file in RStudio. Running <code>rsconnect::writeManifest()</code> command in R console will create manifest.json file. app then can be deployed on rsconnect running<br><code>rsconnect::deployApp()</code> command in R console.</p>
-<p>Keep in mind that when app running on server, app need to have access to the files given in database_path and studyid_file argument.</p>
+<pre><code><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span>
+    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,
+    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,
+    save_file_path <span class="op">=</span> <span class="cn">NULL</span>,
+    where_to_run <span class="op">=</span> <span class="st">"rsconnect"</span><span class="op">)</span></code></pre>
+<p>Deploying Shiny app as package is little different. There is no
+publish button when you open app.R file in RStudio. Running
+<code><a href="https://rdrr.io/pkg/rsconnect/man/writeManifest.html" class="external-link">rsconnect::writeManifest()</a></code> command in R console will create
+manifest.json file. app then can be deployed on rsconnect running<br><code><a href="https://rdrr.io/pkg/rsconnect/man/deployApp.html" class="external-link">rsconnect::deployApp()</a></code> command in R console.</p>
+<p>Keep in mind that when app running on server, app need to have access
+to the files given in database_path and studyid_file argument.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="demo-app">Demo App<a class="anchor" aria-label="anchor" href="#demo-app"></a>
 </h2>
-<p>A demo app can be found here <a href="https://phuse-org.shinyapps.io/toxSummary/" class="external-link">update the link after deploy new version</a></p>
+<p>A demo app can be found here <a href="https://phuse-org.shinyapps.io/toxSummary/" class="external-link">update the link after
+deploy new version</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -207,7 +251,8 @@ Then copy the code from here and change the database and file paths.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
     </footer>
