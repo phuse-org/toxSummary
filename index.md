@@ -32,6 +32,9 @@ various formats, e.g. CSV, Excel or Word files. These functionalities are design
  facilitate holistic evaluation of the drug safety by generating graphical and tabular 
 summaries of the full toxicological profile of an API. 
 
+<a href="https://github.com/phuse-org/toxSummary"><img src="man/figures/toxsui.jpg" 
+alt="UI" align="center" width=100% height="auto"/></a>
+
 ## Installation  
 Package can be installed from CRAN.
 
