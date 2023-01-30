@@ -46,13 +46,13 @@ HED = Human Equivalent Dose
 +---------------------------------------+-------------------+-----------------+-----------------+
 
 : Exposure Margin Calculation
-
-![Clinical](https://user-images.githubusercontent.com/31291716/214689841-d6617330-ac4d-4e54-b14e-6f1633c5c97c.jpg)
-![Nonclinical](https://user-images.githubusercontent.com/31291716/214689875-9a45eb63-e72c-43f5-bbc4-260047dcb6c9.jpg)
-![Plot](https://user-images.githubusercontent.com/31291716/214689883-a8b546a2-2ab2-4730-9269-78c12d62dfca.jpg)
+![Clinical](https://user-images.githubusercontent.com/31291716/215581375-b351f896-2aa8-4097-9b41-96dc290be739.jpg)
 
 
+![Nonclinical](https://user-images.githubusercontent.com/31291716/215581356-ad4420b2-9dd9-4e2b-8a84-f156dbc4f397.jpg)
 
 
-<a href="https://github.com/phuse-org/toxSummary"><img src="man/figures/toxsui.jpg" 
-alt="UI" align="center" width=100% height="auto"/></a>
+![Plot](https://user-images.githubusercontent.com/31291716/215581298-b702a8ba-3dc7-4650-8f6a-776bb2301c69.jpg)
+
+
+
