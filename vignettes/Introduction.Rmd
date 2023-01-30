@@ -39,8 +39,11 @@ There is a button on top of the left column called "Need Help?".   When user
 click on the button will provide self guided tour for all the button in this
 page.  
 
- <a href="https://github.com/phuse-org/toxSummary"><img src="04_clinical.jpg" 
-alt="Clinical Tab" align="center" width=100% height="auto"/></a>
+<a href="https://github.com/phuse-org/toxSummary"><img
+src="04_clinical.jpg" alt="Clinical Tab" align="center" width=100%
+height="auto"/></a> 
+
+
 
 ## Edit Nonclinical Tab    
 There is a button on top of the left column called "Show Help Button". 
@@ -94,6 +97,10 @@ plot, dose box is color coded with degree of severity of finding.  Mouse
 hovering on box will show finding.  The whole plot can be customized by changing
 the different input located at the top of the plot.
 
+<a href="https://github.com/phuse-org/toxSummary"><img src="toxsui.jpg" 
+alt="UI" align="center" width=100% height="auto"/></a>
+
+
 ## Tables
 App generate multiple summary plots located right side of figure tab.  Clinical
 relevance table group by findings. Use can look into which finding is common
@@ -108,10 +115,10 @@ There is a notes table that show all the notes if user provided note while
 adding the study in nonclinical section. 
 All the table can be downloaded as csv, Excel and microsoft word file. 
 
-<a href="https://github.com/phuse-org/toxSummary"><img src="table_01.jpg" 
-alt="Clinical Relevance Table" align="center" width=100% height="auto"/></a>
+<a href="https://github.com/phuse-org/toxSummary"><img src="table_01.jpg"
+alt="Table" align="center" width=100% height="auto"/></a>
 
-## More information
-For more information, please visit following website
-- [GitHub Repository](https://github.com/phuse-org/toxSummary)
-- [toxSummary Website](https://phuse-org.github.io/toxSummary/)
+## More information  
+For more information, please visit following website  
+- [GitHub Repository](https://github.com/phuse-org/toxSummary)  
+- [toxSummary Website](https://phuse-org.github.io/toxSummary/)  
