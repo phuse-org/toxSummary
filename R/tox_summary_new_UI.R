@@ -2469,7 +2469,7 @@ htmltools::tagList(
 
 ###############################    UI   ################################ ----
 
-ui <- shiny::navbarPage("Nonclinical Summary",
+ui <- shiny::navbarPage("toxSummary",
 shiny::tabPanel("Application",
 shiny::sidebarLayout(
 	shiny::sidebarPanel(width = 2,
