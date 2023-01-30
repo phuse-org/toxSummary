@@ -25,6 +25,9 @@ with degree of severity. Plot can be customized with other input button like
 sliders, drag and drop and checkbox. App also generate multiple summary table
 for all the studies.  Summary table also highly customizable as user needed. 
 
+<a href="https://github.com/phuse-org/toxSummary"><img src="man/figures/toxsui.jpg" 
+alt="UI" align="center" width=100% height="auto"/></a>
+
 ## Application Tab  
 On the landing page (Application tab) there is a button  
 on bottom of the left sidebar called "Need Help?".  
