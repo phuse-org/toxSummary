@@ -2,10 +2,9 @@
 
 
 # toxSummary
-
 toxSummary is an R Shiny app to visualize and summarize repeat-dose toxicology
-study results.  toxSummary app also wrapped in R package for so app can be
-distributed easily. 
+study results. toxSummary app wrapped in R package (which is also called 
+toxSummary) so app can be distributed easily. 
 
 ## Overview
 Prior to initiation of clinical trials, repeat-dose toxicology studies are
