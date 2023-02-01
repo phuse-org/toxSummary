@@ -18,17 +18,21 @@ knitr::opts_chunk$set(
 library(toxSummary)
 ```
 ## Overview
-For an Active Pharmaceutical Ingradient (API), multiple studies are done in
-animals.  Pharmacologist or toxicologist may want to compare among the studies. 
-So plot shows all doses, exposure margin, any user provided notes, and findings
-with degree of severity. Plot can be customized with other input button like
-sliders, drag and drop and checkbox. App also generate multiple summary table
-for all the studies.  Summary table also highly customizable as user needed. 
+
+Multiple studies are done in animals to ensure safety of an Active
+Pharmaceutical Ingredient (API) prior to initiation of clinical trials.
+Pharmacologist or toxicologist may want to compare among the studies.  So app
+generate a plot that shows all doses with calculated exposure margin, any user
+provided notes, and findings with degree of severity. Plot can be customized
+with other input button like sliders, drag and drop and checkbox. App also
+generate multiple summary table for all the studies.  Summary table also highly
+customizable and can be downloaded in different format. 
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="toxsui.jpg" 
 alt="UI" align="center" width=100% height="auto"/></a>
 
 ## Application Tab  
+
 On the landing page (Application tab) there is a button  
 on bottom of the left sidebar called "Need Help?".  
 When user click on the button it will show how to use the app and
@@ -103,10 +107,9 @@ greater than NOAEL dose for a study. Table also include NOAEL, Cmax, AUC and
 safety margin  column.  The safety margin table show all the studies that have
 NOAEL dose. It filter out all the other study that does not have NOAEL dose.
 Table include NOAEL, HED (human equivalent dose) Cmax, AUC, safety margin at
-proposed clinical dose.
-There is a notes table that show all the notes if user provided note while 
-adding the study in nonclinical section. 
-All the table can be downloaded as csv, Excel and microsoft word file. 
+proposed clinical dose.  There is a notes table that show all the notes if user
+provided note while adding the study in nonclinical section.  All the table can
+be downloaded as csv, Excel and microsoft word file. 
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="table_01.jpg" 
 alt="Clinical Relevance Table" align="center" width=100% height="auto"/></a>
