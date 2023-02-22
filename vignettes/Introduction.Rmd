@@ -70,7 +70,6 @@ When user choose to connect to database, user need one more csv file that map
 studies to a corresponding number. An example file can be found here 
 [link](https://github.com/phuse-org/toxSummary/blob/master/test_data/IND_with_studies_2.csv).
 
-
 |                      |             |             |
 |:--------------------:|:-----------:|:-----------:|
 | **application_type** | **IND_num** | **studyID** |

@@ -1131,10 +1131,10 @@ values$Findings <- ''
             SM_MRHD <- HED/(Data[["Clinical Information"]][["MRHD"]][["MRHDAUC"]])
           } else {SM_MRHD <- NA}
         }
-        plotData[i, "HED_value"]<- round(HED, digits = 2) ##for table 03
-        plotData[i, "SM"] <- round(HED/humanDose, 2)
-        plotData[i, "SM_start_dose"] <- round(SM_start, digits = 2)
-        plotData[i, "SM_MRHD"] <- round(SM_MRHD, digits = 2)
+        plotData[i, "HED_value"]<- round(HED, digits = 3) ##for table 03
+        plotData[i, "SM"] <- round(HED/humanDose, 3)
+        plotData[i, "SM_start_dose"] <- round(SM_start, digits = 3)
+        plotData[i, "SM_MRHD"] <- round(SM_MRHD, digits = 3)
       }
     }
     return(plotData)
@@ -1745,7 +1745,11 @@ values$Findings <- ''
         ggplot2::guides(fill = ggplot2::guide_legend(override.aes = ggplot2::aes(label = "")))
 
       ggiraph::girafe(code = print(p+q+ patchwork::plot_layout(ncol = 2, widths = c(3,1))),
-             options = list(ggiraph::opts_tooltip(css = tooltip_css)),
+             options = list(ggiraph::opts_tooltip(css = tooltip_css),
+                            ggiraph::opts_toolbar(
+                              pngname = paste0(basename(unlist(strsplit(input$selectData, ".rds"))),
+                                               "_downloaded on ",
+                                               date()))),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
     }
