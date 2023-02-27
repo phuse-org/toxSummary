@@ -489,7 +489,7 @@ values$Findings <- ''
     }
     
     Data <- getData()
-    studyName <- paste(input$Species,input$Duration,sep=': ')
+    studyName  <- studyname_with_sp_sex()
     Data[['Nonclinical Information']][[studyName]] <- list(
 	  IND_number = input$ind_id,
 	  studyid_name  = input$study_id,
@@ -518,7 +518,6 @@ values$Findings <- ''
 
     shiny::observeEvent(input$saveStudy_02, {
 		session$sendCustomMessage("mymessage", "saveStudy")
-    #   shinyjs::click("saveStudy")
     })
   
 
@@ -582,10 +581,34 @@ values$Findings <- ''
     shiny::removeModal()
 	
   })
-  
+
+# which sex selected
+## study name
+ studyname_with_sp_sex <- shiny::reactive({
+# I put in condition so that I can change how I want to print male and female
+    if (! is.null(input$which_sex)) {
+sex <- input$which_sex
+if (length(sex) >1) {
+add_sex <- "FM"
+} else if (sex == "M")  {
+add_sex <- "M"
+} else if (sex == "F") {
+add_sex <- "F"
+}
+    text  <- paste0(input$Species, ": ", input$Duration, " (" , add_sex, ")")
+    } else {
+
+    ## text  <- paste(input$Species,input$Duration,sep=': ')
+    text  <- paste0(input$Species, ": ", input$Duration)
+    }
+    text
+ })
+
+
+
 # title 
   output$studyTitle <- shiny::renderText({
-    text  <- paste(input$Species,input$Duration,sep=': ')
+    text <- studyname_with_sp_sex()
 	text <- strwrap(text, 30)
 	text
   })
