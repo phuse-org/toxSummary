@@ -1733,7 +1733,7 @@ values$Findings <- ''
               axis.ticks.y = ggplot2::element_blank(),
               axis.text.y = ggplot2::element_blank(),
               axis.title.x = ggplot2::element_blank(),
-              axis.text.x = ggplot2::element_text(size= 16, angle = 90), #need to work
+              axis.text.x = ggplot2::element_text(size= 16, angle = 270), #need to work
               #plot.title = element_text(size=20,hjust = 0.5),
               panel.grid.major.y = ggplot2::element_blank(),
               panel.grid.minor.y = ggplot2::element_blank(),
