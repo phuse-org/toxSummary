@@ -1692,7 +1692,8 @@ values$Findings <- ''
       }
       
       p <- plot_p_label +
-        ggplot2::scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)))+
+        ggplot2::scale_x_log10(limits = c(min(axis_limit$SM/2), max(axis_limit$SM*2)),
+                               breaks = scales::breaks_log( n = 10))+
         #scale_fill_manual(values = color_NOAEL)+
         ggplot2::ylim(0,y_max)+
         ggplot2::facet_grid( Study ~ ., labeller = ggplot2::label_wrap_gen(width = input$text_width))+
