@@ -72,6 +72,15 @@ body{
 }
 
 
+/* table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd { */
+/*     background-color: red; */
+/* } */
+
+/* table.dataTable.stripe tbody tr.even, table.dataTable.display tbody tr.even { */
+/*     background-color: green; */
+/* } */
+
+
 /* bottom left */
 
   /* #shiny-notification-panel {

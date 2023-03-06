@@ -1176,13 +1176,18 @@ add_sex <- "F"
              Severity = as.factor(Severity))
     
     plotData_tab <- plotData_tab %>% 
-      dplyr::select( Findings,Rev, Study, Dose, SM, Severity) %>%
+      dplyr::select( Findings,Rev, Study, Dose, SM, Severity,NOAEL) %>%
       dplyr::filter(Severity != "Absent") %>% 
-      dplyr::select(-Severity) %>% 
+      ## dplyr::select(-Severity) %>%
       dplyr::rename(Reversibility = Rev,
              "Clinical Exposure Margin" = SM,
              "Dose (mg/kg/day)" = Dose)
-    
+    plotData_tab <- plotData_tab %>%
+      dplyr::mutate(color_noael= ifelse(NOAEL==TRUE, Severity, 0))
+      ## dplyr::mutate(color_noeal=  Severity)
+      plotData_tab <- plotData_tab %>%
+        dplyr::select(-Severity)
+        ## dplyr::select(-NOAEL)
     plotData_tab$Findings <- factor(plotData_tab$Findings,levels= input$displayFindings)
     plotData_tab <- plotData_tab %>%
       dplyr::arrange(Findings)
@@ -1196,6 +1201,7 @@ add_sex <- "F"
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_tab <- dt_01()
+    color_band <- c('gray','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#b10026')
     plotData_tab <- DT::datatable(plotData_tab, rownames = FALSE,
                               class = "cell-border stripe",
                               filter = list(position = 'top'),
@@ -1207,18 +1213,36 @@ add_sex <- "F"
                               ),
                               options = list(
                                 dom = "lfrtipB",
-                                buttons = c("csv", "excel", "copy", "print"),
+                                ## buttons = list(list(extend="csv" ,
+                                ##      exportOptions= list(columns=":visible"))),
+                                buttons = list(
+                                               list(
+                                                 extend='csv',
+                                                 exportOptions = list(columns = ":visible")
+                                               ),
+
+                                               list(
+                                                 extend='excel',
+                                                 exportOptions = list(columns = ":visible")
+                                               )
+                                               ),
+
                                 colReorder = TRUE,
-                                scrollY = TRUE,
+                                ## scrollY = TRUE,
                                 pageLength = 25,
-                                columnDefs = list(list(className = "dt-center", targets = "_all")),
+                                columnDefs = list(list(className = "dt-center", targets = "_all"),
+                                                  list(targets = list(5,6), visible = FALSE)),
                                 initComplete = DT::JS(
                                   "function(settings, json) {",
                                   "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
                                   "}"),
                                 rowsGroup = list(0,1,2))) %>%
-      DT::formatStyle(columns = colnames(plotData_tab), `font-size` = "18px")
-    
+      DT::formatStyle(columns = colnames(plotData_tab), `font-size` = "18px") %>%
+      DT::formatStyle("Clinical Exposure Margin","color_noael",
+                      backgroundColor = DT::styleEqual(c(2,3,4,5,6,7),color_band)) %>%
+      DT::formatStyle("Dose (mg/kg/day)", "NOAEL",
+                      backgroundColor = DT::styleEqual(c(TRUE), c("green")))
+
     path <- dt_extension # folder containing dataTables.rowsGroup.js
     dep <- htmltools::htmlDependency(
       "RowsGroup", "2.0.0",
@@ -1238,6 +1262,8 @@ add_sex <- "F"
 # Flextable for docx file
   dt_to_flex_01 <- shiny::reactive({
     plotData_tab <- filtered_tab_01()
+    plotData_tab <- plotData_tab %>%
+      dplyr::select(-c(color_noael,NOAEL))
     plotData_tab <- plotData_tab %>%
       dplyr::arrange(Findings, Reversibility, Study) %>%
       flextable::flextable() %>%
@@ -1727,6 +1753,7 @@ add_sex <- "F"
               axis.ticks.y= ggplot2::element_blank(),
               axis.text.y = ggplot2::element_blank(),
               panel.grid.major = ggplot2::element_blank(),
+          #commnet out above line to see major grid, vertical line through dose
               panel.grid.minor = ggplot2::element_blank(),
               plot.title = ggplot2::element_text(size= 20, hjust = 1),
               axis.title.x = ggplot2::element_text(size = 18, vjust = -0.9),
@@ -2492,7 +2519,7 @@ htmltools::tagList(
         )
     })
     
-    # shinyjs::runcodeServer()
+    ## shinyjs::runcodeServer()
 }
 
 ###############################    UI   ################################ ----
@@ -2519,8 +2546,8 @@ shiny::sidebarLayout(
     overlayOpacity = 0.4),
 
 	#   tags$head(tags$script(src = "button.js")),
-    # shinyjs::useShinyjs(),
-    # shinyjs::runcodeUI(),
+    ## shinyjs::useShinyjs(),
+    ## shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
@@ -2575,7 +2602,19 @@ shiny::sidebarLayout(
 						  ),
         
       shiny::tabPanel("Clinical Relevance Table",
+                      htmltools::div( id="table_shot",
                DT::DTOutput('table_01'),
+               htmltools::br(),
+               htmltools::br()),
+  capture::capture(
+    selector = "#table_shot",
+    filename = "all-page.png",
+    icon("camera"), "Take screenshot of all page"
+  ),
+
+  # ...
+
+
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
