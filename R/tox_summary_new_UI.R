@@ -1288,6 +1288,17 @@ add_sex <- "F"
     }
   )
 
+     shiny::observeEvent(input$down_jpeg, {
+       k <- rnorm(1)
+
+    session$sendCustomMessage(type = "shot",k )
+
+
+      })
+
+
+
+
   #### table 02 ----
   
   dt_02 <- shiny::reactive({
@@ -2533,6 +2544,8 @@ shiny::sidebarLayout(
 	shiny::mainPanel(width = 10,
 	htmltools::includeCSS(paste0(www_path,"/www/modal_dialog.css")),
 	  htmltools::includeScript(paste0(www_path, "/www/button.js")),
+	  htmltools::includeScript(paste0(www_path, "/www/screenshot.js")),
+	  htmltools::includeScript(paste0(www_path, "/www/dom-to-image.min.js")),
       cicerone::use_cicerone(),
       shinydisconnect::disconnectMessage(
       text = "Your session has timed out.",
@@ -2604,17 +2617,9 @@ shiny::sidebarLayout(
       shiny::tabPanel("Clinical Relevance Table",
                       htmltools::div( id="table_shot",
                DT::DTOutput('table_01'),
+               shiny::actionButton("down_jpeg","Download as jpeg"),
                htmltools::br(),
                htmltools::br()),
-  capture::capture(
-    selector = "#table_shot",
-    filename = "all-page.png",
-    icon("camera"), "Take screenshot of all page"
-  ),
-
-  # ...
-
-
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
