@@ -1201,6 +1201,8 @@ add_sex <- "F"
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_tab <- dt_01()
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    file_name <- paste0(ind_name,"_", "Clinical_Relevance_Table")
     color_band <- c('gray','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#b10026')
     plotData_tab <- DT::datatable(plotData_tab, rownames = FALSE,
                               class = "cell-border stripe",
@@ -1218,18 +1220,20 @@ add_sex <- "F"
                                 buttons = list(
                                                list(
                                                  extend='csv',
-                                                 exportOptions = list(columns = ":visible")
+                                                 exportOptions = list(columns = ":visible"),
+                                                 filename = file_name
                                                ),
 
                                                list(
                                                  extend='excel',
-                                                 exportOptions = list(columns = ":visible")
+                                                 exportOptions = list(columns = ":visible"),
+                                                 filename = file_name
                                                )
                                                ),
 
                                 colReorder = TRUE,
                                 ## scrollY = TRUE,
-                                pageLength = 25,
+                                pageLength = 100,
                                 columnDefs = list(list(className = "dt-center", targets = "_all"),
                                                   list(targets = list(5,6), visible = FALSE)),
                                 initComplete = DT::JS(
@@ -1338,6 +1342,8 @@ add_sex <- "F"
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_tab <- dt_02()
+ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+file_name <- paste0(ind_name,"_", "Key_Findings_Table")
     plotData_tab <- DT::datatable(plotData_tab, rownames = FALSE, class = "cell-border stripe",
                               filter = list(position = 'top'),
                               extensions = list("Buttons" = NULL),
@@ -1346,10 +1352,19 @@ add_sex <- "F"
                                 "Table :", htmltools::strong("Key Study Findings")
                               ),
                               options = list(
-                                scrollY = TRUE,
+                                ## scrollY = TRUE,
                                 pageLength = 100,
                                 dom = "lfrtipB",
-                                buttons = c("csv", "excel", "copy", "print"),
+                                ## buttons = c("csv", "excel"),
+                                buttons = list(
+                                               list(
+                                                 extend='csv',
+                                                 filename = file_name),
+
+                                               list(
+                                                 extend='excel',
+                                                 filename = file_name)
+                              ),
                                 columnDefs = list(list(className = "dt-center", targets = "_all")),
                                 initComplete = DT::JS(
                                   "function(settings, json) {",
@@ -1414,6 +1429,17 @@ add_sex <- "F"
     }
   )
 
+
+
+
+     shiny::observeEvent(input$down_jpeg_02, {
+       k <- rnorm(1)
+
+    session$sendCustomMessage(type = "shot_02",k )
+
+
+      })
+
   ## table 03 ----
   
   dt_03 <- shiny::reactive({
@@ -1452,6 +1478,8 @@ add_sex <- "F"
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     plotData_03 <- dt_03()
+ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
     plotData_03 <- DT::datatable(plotData_03,rownames = FALSE, 
                              extensions = list("Buttons" = NULL,
                                                "ColReorder" = NULL),
@@ -1463,11 +1491,21 @@ add_sex <- "F"
                              ),
                              options = list(
                                dom = "lfrtipB",
-                               buttons = c("csv", "excel", "copy", "print"),
+                               ## buttons = c("csv", "excel"),
+
+                                buttons = list(
+                                               list(
+                                                 extend='csv',
+                                                 filename = file_name),
+
+                                               list(
+                                                 extend='excel',
+                                                 filename = file_name)
+                              ),
                                colReorder = TRUE,
                                pageLength = 10,
                                columnDefs = list(list(className = "dt-center", targets = "_all")),
-                               scrollY = TRUE,
+                               ## scrollY = TRUE,
                                initComplete = DT::JS(
                                  "function(settings, json) {",
                                  "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
@@ -1505,7 +1543,19 @@ add_sex <- "F"
       file.copy(paste0(user(), "/safety_margin.docx"), file)
     }
   )
-  
+
+# download jpeg file for table 03
+
+
+     shiny::observeEvent(input$down_jpeg_03, {
+       k <- rnorm(1)
+
+    session$sendCustomMessage(type = "shot_03",k )
+
+
+      })
+
+
   
   ## download all table
    download_all <- shiny::reactive({
@@ -1556,6 +1606,8 @@ add_sex <- "F"
     clin_dose <- clin_data(data)
     if (clin_dose>0) {
     note_table <- all_study_notes()
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    file_name <- paste0(ind_name,"_", "Notes_Table")
     note_table <- DT::datatable(note_table,rownames = FALSE, 
                              extensions = list("Buttons" = NULL,
                                                "ColReorder" = NULL),
@@ -1567,11 +1619,21 @@ add_sex <- "F"
                              ),
                              options = list(
                                dom = "lfrtipB",
-                               buttons = c("csv", "excel", "copy", "print"),
+                               ## buttons = c("csv", "excel"),
+
+                                buttons = list(
+                                               list(
+                                                 extend='csv',
+                                                 filename = file_name),
+
+                                               list(
+                                                 extend='excel',
+                                                 filename = file_name)
+                              ),
                                colReorder = TRUE,
                                pageLength = 10,
                                columnDefs = list(list(className = "dt-center", targets = "_all")),
-                               scrollY = TRUE,
+                               ## scrollY = TRUE,
                                initComplete = DT::JS(
                                  "function(settings, json) {",
                                  "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
@@ -1602,7 +1664,19 @@ add_sex <- "F"
        file.copy(paste0(user(), "/note_table.docx"), file)
      }
    )
-   
+
+# table note jpeg
+
+     shiny::observeEvent(input$down_jpeg_04, {
+       k <- rnorm(1)
+
+    session$sendCustomMessage(type = "shot_04",k )
+
+
+      })
+
+
+
 ## filter NOAEL reactive ----
    
   filtered_plot <- shiny::reactive({
@@ -1811,7 +1885,8 @@ add_sex <- "F"
                             ggiraph::opts_toolbar(
                               pngname = paste0(basename(unlist(strsplit(input$selectData, ".rds"))),
                                                "_downloaded on ",
-                                               date()))),
+                                               date())
+                            )),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
     }
@@ -2619,7 +2694,8 @@ shiny::sidebarLayout(
                DT::DTOutput('table_01'),
                shiny::actionButton("down_jpeg","Download as jpeg"),
                htmltools::br(),
-               htmltools::br()),
+               htmltools::br()
+               ),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
@@ -2627,7 +2703,12 @@ shiny::sidebarLayout(
                htmltools::br()
       ),
       shiny::tabPanel("Key Findings Table",
+               htmltools::div(
                DT::DTOutput('table_02'),
+               shiny::actionButton("down_jpeg_02","Download as jpeg"),
+               htmltools::br(),
+               htmltools::br()
+               ),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
@@ -2635,7 +2716,13 @@ shiny::sidebarLayout(
                htmltools::br()
       ),
       shiny::tabPanel("Safety Margin Table",
+
+               htmltools::div(
                DT::DTOutput('table_03'),
+               shiny::actionButton("down_jpeg_03","Download as jpeg"),
+               htmltools::br(),
+               htmltools::br()
+               ),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
@@ -2648,7 +2735,12 @@ shiny::sidebarLayout(
                shiny::downloadButton("down_all", "Docx file download")),
 	shiny::tabPanel("Notes Table",
 				htmltools::br(),
-	   			DT::DTOutput("table_note"),
+               htmltools::div(
+               DT::DTOutput("table_note"),
+               shiny::actionButton("down_jpeg_04","Download as jpeg"),
+               htmltools::br(),
+               htmltools::br()
+               ),
 				htmltools::h4("Click on button below to export the table in a docx file"),
 				shiny::downloadButton("down_notes", "Docx file download")),
       
