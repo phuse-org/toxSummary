@@ -27,10 +27,11 @@
 Shiny.addCustomMessageHandler("shot", function(message) {
 
 var mes = message;
+  // console.log(mes["file_name"])
   domtoimage.toJpeg(document.getElementById('table_01'),  {bgcolor: "#ffffff"})
     .then(function (dataUrl) {
         var link = document.createElement('a');
-      link.download = 'Clinical_Relevance_Table.jpeg';
+      link.download = mes["file_name"];
         link.href = dataUrl;
         link.click();
     });
@@ -44,7 +45,7 @@ var mes = message;
   domtoimage.toJpeg(document.getElementById('table_02'),  {bgcolor: "#ffffff"})
     .then(function (dataUrl) {
         var link = document.createElement('a');
-      link.download = 'Key_Findings_Table.jpeg';
+      link.download = mes["file_name"];
         link.href = dataUrl;
         link.click();
     });
@@ -57,7 +58,7 @@ var mes = message;
   domtoimage.toJpeg(document.getElementById('table_03'),  {bgcolor: "#ffffff"})
     .then(function (dataUrl) {
         var link = document.createElement('a');
-      link.download = 'Safety_Margin_Table.jpeg';
+      link.download = mes["file_name"];
         link.href = dataUrl;
         link.click();
     });
@@ -75,7 +76,7 @@ var mes = message;
   domtoimage.toJpeg(document.getElementById('table_note'),  {bgcolor: "#ffffff"})
     .then(function (dataUrl) {
         var link = document.createElement('a');
-      link.download = 'Table_Note.jpeg';
+      link.download = mes["file_name"];
         link.href = dataUrl;
         link.click();
     });

@@ -1282,20 +1282,25 @@ add_sex <- "F"
 # download table 01 
   output$down_01_doc <- shiny::downloadHandler(
     filename = function() {
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
       Sys.sleep(2)
-      paste0("clinical_relevance", ".docx")
+      paste0(ind_name,"_clinical_relevance", ".docx")
     },
     content = function(file) {
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+      path_file <- paste0(user(), "/", ind_name, "_clinical_relevance.docx")
       flextable::save_as_docx(dt_to_flex_01(),
-	   path = paste0(user(), "/clinical_relevance.docx"))
-      file.copy(paste0(user(),"/clinical_relevance.docx"), file)
+	   path = path_file)
+      file.copy(path_file, file)
     }
   )
-
+# download jpeg file table_01
      shiny::observeEvent(input$down_jpeg, {
-       k <- rnorm(1)
-
-    session$sendCustomMessage(type = "shot",k )
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    file_name <- paste0(ind_name,"_", "Clinical_Relevance_Table.jpeg")
+    k <- rnorm(1)
+    name_list <- list(num = k, file_name = file_name)
+    session$sendCustomMessage(type = "shot",name_list)
 
 
       })
@@ -1421,11 +1426,14 @@ file_name <- paste0(ind_name,"_", "Key_Findings_Table")
   
   output$down_02_doc <- shiny::downloadHandler(
     filename = function() {
-      paste0("key_findings", ".docx")
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+      paste0(ind_name,"_key_findings", ".docx")
     },
     content = function(file) {
-      flextable::save_as_docx(dt_to_flex_02(), path = paste0(user(), "/key_findings.docx"))
-      file.copy(paste0(user(), "/key_findings.docx"), file)
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+      path_file <- paste0(user(), "/", ind_name, "_key_findings.docx")
+      flextable::save_as_docx(dt_to_flex_02(), path = path_file)
+      file.copy(path_file, file)
     }
   )
 
@@ -1433,9 +1441,11 @@ file_name <- paste0(ind_name,"_", "Key_Findings_Table")
 
 
      shiny::observeEvent(input$down_jpeg_02, {
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    file_name <- paste0(ind_name,"_", "Key_Findings_Table.jpeg")
        k <- rnorm(1)
-
-    session$sendCustomMessage(type = "shot_02",k )
+    name_list <- list(num = k, file_name = file_name)
+    session$sendCustomMessage(type = "shot_02",name_list)
 
 
       })
@@ -1536,11 +1546,14 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
 # download table 03
   output$down_03_doc <- shiny::downloadHandler(
     filename = function() {
-      paste0("safety_margin", ".docx")
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+      paste0(ind_name, "_safety_margin", ".docx")
     },
     content = function(file) {
-      flextable::save_as_docx(dt_to_flex_03(), path = paste0(user(), "/safety_margin.docx") )
-      file.copy(paste0(user(), "/safety_margin.docx"), file)
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+      path_file <- paste0(user(), "/", ind_name, "_safety_margin.docx")
+      flextable::save_as_docx(dt_to_flex_03(),path = path_file)
+      file.copy(path_file, file)
     }
   )
 
@@ -1548,11 +1561,11 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
 
 
      shiny::observeEvent(input$down_jpeg_03, {
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    file_name <- paste0(ind_name,"_", "Safety_Margin_Table.jpeg")
        k <- rnorm(1)
-
-    session$sendCustomMessage(type = "shot_03",k )
-
-
+    name_list <- list(num = k, file_name = file_name)
+    session$sendCustomMessage(type = "shot_03",name_list)
       })
 
 
@@ -1575,11 +1588,14 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
 ##
    output$down_all <- shiny::downloadHandler(
      filename = function() {
-       paste0("table_all", ".docx")
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+       paste0(ind_name, "_table_all", ".docx")
      },
      content = function(file) {
-       print(download_all() , target = paste0(user(), "/table_all.docx"))
-       file.copy(paste0(user(), "/table_all.docx"), file)
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    path_file <- paste0(user(), "/", ind_name, "_table_all.docx")
+       print(download_all() , target = path_file )
+       file.copy( path_file, file)
 
 
      }
@@ -1656,21 +1672,26 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
  # download notes table
    output$down_notes <- shiny::downloadHandler(
      filename = function() {
-       paste0("note_table", ".docx")
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+       paste0(ind_name, "_note_table", ".docx")
      },
      content = function(file) {
-       flextable::save_as_docx(table_note_to_flex(),
-	    path = paste0(user(), "/note_table.docx"))
-       file.copy(paste0(user(), "/note_table.docx"), file)
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+      path_file <- paste0(user(), "/", ind_name, "_note_table.docx")
+       flextable::save_as_docx(table_note_to_flex(),path = path_file)
+
+       file.copy(path_file, file)
      }
    )
 
 # table note jpeg
 
      shiny::observeEvent(input$down_jpeg_04, {
-       k <- rnorm(1)
-
-    session$sendCustomMessage(type = "shot_04",k )
+    ind_name <- basename(unlist(strsplit(input$selectData, ".rds")))
+    file_name <- paste0(ind_name,"_", "Table_Note.jpeg")
+    k <- rnorm(1)
+    name_list <- list(num = k, file_name = file_name)
+    session$sendCustomMessage(type = "shot_04",name_list)
 
 
       })
@@ -1884,8 +1905,7 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
              options = list(ggiraph::opts_tooltip(css = tooltip_css),
                             ggiraph::opts_toolbar(
                               pngname = paste0(basename(unlist(strsplit(input$selectData, ".rds"))),
-                                               "_downloaded on ",
-                                               date())
+                                               "_Summary_Plot_", Sys.time())
                             )),
              fonts = list(sans= "Roboto"),
              width_svg = 18, height_svg = plotHeight())
