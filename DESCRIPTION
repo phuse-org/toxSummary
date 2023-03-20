@@ -1,6 +1,6 @@
 Package: toxSummary
 Title: Visualize and Summarize Repeat-Dose Toxicology Study Results
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R:
  c(
     person("Yousuf", "Ali", email=  "md.ali@fda.hhs.gov", role = c( "cre",  "aut")),
