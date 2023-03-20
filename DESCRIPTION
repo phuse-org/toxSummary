@@ -10,7 +10,7 @@ Description: R Shiny app that generate plot and summary table from repeat-dose
         toxicology study results to facilitate holistic evaluation of the drug safety of 
         active pharmaceutical ingredient (API) prior to initiation of clinical trials. 
 License: MIT + file LICENSE
-url: https://github.com/phuse-org/toxSummary
+Url: https://github.com/phuse-org/toxSummary/
 BugReports: https://github.com/phuse-org/toxSummary/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -28,7 +28,6 @@ Imports:
     htmltools,
     magrittr,
     patchwork,
-    pkgload,
     rlang,
     RSQLite,
     scales,
