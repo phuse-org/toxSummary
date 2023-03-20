@@ -43,6 +43,7 @@
     utils::globalVariables("TSVAL")
     utils::globalVariables("st_title")
     utils::globalVariables("choice_option")
+    utils::globalVariables("color_noael")
 
     invisible()
 }
