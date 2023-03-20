@@ -511,13 +511,24 @@ values$Findings <- ''
     shiny::showNotification("Saved", duration = 3)
     studyList <- names(Data[['Nonclinical Information']])
     shiny::updateSelectInput(session,'selectStudy',choices=studyList,selected=studyName)
-    input$refreshPlot
+    ## input$refreshPlot
+
+       k <- rnorm(1)
+    name_list <- list(num = k, id = "refreshPlot")
+		session$sendCustomMessage(type = "save_nonclin_info" ,name_list)
+
+
+
+
+
   })
   
   # second save study button ----
 
     shiny::observeEvent(input$saveStudy_02, {
-		session$sendCustomMessage("mymessage", "saveStudy")
+       k <- rnorm(1)
+    name_list <- list(num = k, id = "saveStudy")
+		session$sendCustomMessage(type = "mymessage",name_list)
     })
   
 

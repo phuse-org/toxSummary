@@ -10,13 +10,20 @@
 ################################################################################
 */
 Shiny.addCustomMessageHandler("mymessage", function (message) {
-  document.getElementById(message).click();
+    var msg = message;
+    var id = msg["id"]
+  document.getElementById(id).click();
 });
 
 Shiny.addCustomMessageHandler("save_clin_info", function(message) {
 	document.getElementById(message).click()
 })
 
+Shiny.addCustomMessageHandler("save_nonclin_info", function(message) {
+    var msg = message;
+    var id = msg["id"];
+	document.getElementById(id).click()
+})
 
 Shiny.addCustomMessageHandler("confirm_study_remove", function(message) {
 	document.getElementById(message).click()
