@@ -37,7 +37,7 @@
     
     <a class="navbar-brand me-2" href="index.html">toxSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,13 +105,13 @@
 <div class="section level2">
 <h2 id="run-the-app">Run the app<a class="anchor" aria-label="anchor" href="#run-the-app"></a>
 </h2>
-<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span></span>
+<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/phuse-org/toxSummary" class="external-link">toxSummary</a></span><span class="op">)</span></span>
 <span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="run-the-app-with-database-connection">Run the app with database connection<a class="anchor" aria-label="anchor" href="#run-the-app-with-database-connection"></a>
 </h2>
-<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span></span>
+<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/phuse-org/toxSummary" class="external-link">toxSummary</a></span><span class="op">)</span></span>
 <span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
 <span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
 <span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
@@ -125,10 +125,10 @@ Package does not contain database. Database is too big for a package.</p>
 <h2 id="how-to-run-the-app-from-cloned-repo">How to run the app from cloned repo.<a class="anchor" aria-label="anchor" href="#how-to-run-the-app-from-cloned-repo"></a>
 </h2>
 <p>Clone the <a href="https://github.com/phuse-org/toxSummary" class="external-link">GitHub</a> repo and set repo as working directory. If you don’t have any database to connect and want to run app, only run this following code in R console.</p>
-<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
+<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
 <span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
 <p>To run the app with database connection follow this direction; set repo as working directory and open app.R file (or copy code given below) and run the code. if you connect to your database then change the path to your files. otherwise this will connect to example database available in test_data directory.</p>
-<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
+<pre><code><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span>
 <span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/test_db.db"</span></span>
 <span><span class="va">study_list_path</span> <span class="op">&lt;-</span> <span class="st">"test_data/IND_with_studies_2.csv"</span></span>
 <span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>

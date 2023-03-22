@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">toxSummary</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,105 +89,29 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">toxSummary</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/phuse-org/toxSummary" class="external-link">toxSummary</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="exposure-margin-calculation">Exposure Margin Calculation:<a class="anchor" aria-label="anchor" href="#exposure-margin-calculation"></a>
 </h2>
 <p>This is an example of how exposure margin calculated for dog 4 week
-(IV) study using body surface area (BSA) formula.<br>
-- Clinical information: Human Proposed “Start Dose”: 1.5 mg/day<br>
-- Dog to Human conversion factor = 1.8<br>
-- HED = Human Equivalent Dose<br>
-- Dog 4 week (IV) study:</p>
-<table style="width:98%;" class="table">
-<caption>Exposure Margin Calculation</caption>
-<colgroup>
-<col width="40%">
-<col width="20%">
-<col width="18%">
-<col width="18%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Animal Dose —&gt;</td>
-<td>0.25 mg/kg/day</td>
-<td>0.8 mg/kg/day</td>
-<td>2.5 mg/kg/day</td>
-</tr>
-<tr class="even">
-<td>
-<p>HED = Animal Dose / Conversion factor</p>
-<p>Dog to Human conversion factor 1.8</p>
-</td>
-<td>
-<p>= 0.25/1.8</p>
-<p>= 0.139 mg/kg/day</p>
-</td>
-<td>
-<p>=0.8/1.8</p>
-<p>=0.44 mg/kg/day</p>
-</td>
-<td>
-<p>=2.5/1.8</p>
-<p>=1.39 mg/kg/day</p>
-</td>
-</tr>
-<tr class="odd">
-<td>
-<p>mg/kg/day —&gt; mg/day</p>
-<p>Human weight 60 kg</p>
-</td>
-<td>
-<p>=0.139*60</p>
-<p>=8.33 mg/day</p>
-</td>
-<td>
-<p>=0.44*60</p>
-<p>=26.67 mg/day</p>
-</td>
-<td>
-<p>=1.39*60</p>
-<p>=83.33 mg/day</p>
-</td>
-</tr>
-<tr class="even">
-<td>
-<p>Proposed Human</p>
-<p>Start Dose =1.5 mg/day</p>
-</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>
-<p>Exposure Margin =</p>
-<p>HED/Human dose</p>
-</td>
-<td>
-<p>=8.33/1.5</p>
-<p>=5.6</p>
-</td>
-<td>
-<p>26.67/1.5</p>
-<p>=17.78</p>
-</td>
-<td>
-<p>=83.33/1.5</p>
-<p>=55.55</p>
-</td>
-</tr>
-<tr class="even">
-<td>Exposure Margin</td>
-<td>5.6</td>
-<td>18</td>
-<td>56</td>
-</tr>
-</tbody>
-</table>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/31291716/215581375-b351f896-2aa8-4097-9b41-96dc290be739.jpg" alt=""><p class="caption">Clinical</p>
-</div>
+(IV) study using body surface area (BSA) formula. Clinical information:
+Human Proposed “Start Dose”: 1.5 mg/day Dog to Human conversion factor =
+1.8 HED = Human Equivalent Dose Dog 4 week (IV) study:
++—————————————+——————-+—————–+—————–+ | Animal Dose —&gt; | 0.25
+mg/kg/day | 0.8 mg/kg/day | 2.5 mg/kg/day |
++—————————————+——————-+—————–+—————–+ | HED = Animal Dose / Conversion
+factor | = 0.25/1.8 | =0.8/1.8 | =2.5/1.8 | | | | | | | Dog to Human
+conversion factor 1.8 | = 0.139 mg/kg/day | =0.44 mg/kg/day | =1.39
+mg/kg/day | +—————————————+——————-+—————–+—————–+ | mg/kg/day —&gt;
+mg/day | =0.139*60 | =0.44*60 | =1.39*60 | | | | | | | Human weight 60
+kg | =8.33 mg/day | =26.67 mg/day | =83.33 mg/day |
++—————————————+——————-+—————–+—————–+ | Proposed Human | | | | | | | | |
+| Start Dose =1.5 mg/day | | | | +—————————————+——————-+—————–+—————–+ |
+Exposure Margin = | =8.33/1.5 | 26.67/1.5 | =83.33/1.5 | | | | | | |
+HED/Human dose | =5.6 | =17.78 | =55.55 |
++—————————————+——————-+—————–+—————–+ | Exposure Margin | 5.6 | 18 | 56
+| +—————————————+——————-+—————–+—————–+</p>
+<p>: Exposure Margin Calculation <img src="https://user-images.githubusercontent.com/31291716/215581375-b351f896-2aa8-4097-9b41-96dc290be739.jpg" alt="Clinical"></p>
 <div class="figure">
 <img src="https://user-images.githubusercontent.com/31291716/215581356-ad4420b2-9dd9-4e2b-8a84-f156dbc4f397.jpg" alt=""><p class="caption">Nonclinical</p>
 </div>
