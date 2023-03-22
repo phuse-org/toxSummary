@@ -91,7 +91,7 @@ as shown above.
 
 ## Plot   
 When user create an application and add study information, app will create plot
-and plot will be shown on Application Tab.  The plot is can be think of as two
+and plot will be shown on Application Tab. Plot can be think of as two
 subplot.  On the left plot, one big rectangular represents one study and small
 rectangular box represents dose. If the color of small rectangular box is green,
 it represent No Observed Adverse Effect Level (NOAEL) dose. Other doses are
@@ -106,17 +106,17 @@ alt="UI" align="center" width=100% height="auto"/></a>
 
 
 ## Tables
-App generate multiple summary plots located right side of figure tab.  Clinical
-relevance table group by findings. Use can look into which finding is common
+App generate multiple summary plots located right side of figure tab. Clinical
+relevance table is group by findings. User can look into which finding is common
 across studies. Table also show reversibility, dose and exposure margin
 information.  The key finding table show all the findings that are  found at
 greater than NOAEL dose for a study. Table also include NOAEL, Cmax, AUC and
 safety margin  column.  The safety margin table show all the studies that have
 NOAEL dose. It filter out all the other study that does not have NOAEL dose.
-Table include NOAEL, HED (human equivalent dose) Cmax, AUC, safety margin at
+Table include NOAEL, HED (Human Equivalent Dose) Cmax, AUC, safety margin at
 proposed clinical dose.  There is a notes table that show all the notes if user
 provided note while adding the study in nonclinical section.  All the table can
-be downloaded as csv, Excel and microsoft word file. 
+be downloaded as csv, Excel and microsoft word file. User also can download all the plot as image (jpeg file). 
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="table_01.jpg"
 alt="Table" align="center" width=100% height="auto"/></a>
