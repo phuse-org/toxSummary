@@ -37,7 +37,7 @@ guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "reload_app",
     title = "Some tips",
     description = paste0(
-        "General workflow of the app: <br> 01. You create an Program in this page. <br>",
+        "General workflow of the app: <br> 01. You create a Program in this page. <br>",
         "02. Enter  clinical information in Edit clinical page (don't forget to hit save button). <br> ",
         "03. Enter Nonclinical information in Nonclinical Page (don't forget to hit save button). <br>"  ,
         "about Relaod Button: ",
