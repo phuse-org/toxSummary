@@ -11,21 +11,21 @@
 guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "help_application",
     title = "Read Carefully",
-    description = "Follow the step to create New Application, Now Hit Next"
+    description = "Follow the step to create New Program, Now Hit Next"
 )$step(
     el = "select_Data",
     title = "Step: 01",
-    description = "To create a new application, make sure <strong>New Application</strong> selected here",
+    description = "To create a new Program, make sure <strong>New Program</strong> selected here",
     position = "right"
 )$step(
     el = "newApplication",
     title = "Step: 2",
-    description = "Type an application number in the text box",
+    description = "Type a Program number in the text box",
     position = "right"
 )$step(
     el = "saveData",
     title = "Step: 3",
-    description = "Hit the <strong>Submit</strong> button to create the application",
+    description = "Hit the <strong>Submit</strong> button to create the Program",
     position = "right"
 )$step(
     ".nav",
@@ -37,7 +37,7 @@ guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "reload_app",
     title = "Some tips",
     description = paste0(
-        "General workflow of the app: <br> 01. You create an application in this page. <br>",
+        "General workflow of the app: <br> 01. You create an Program in this page. <br>",
         "02. Enter  clinical information in Edit clinical page (don't forget to hit save button). <br> ",
         "03. Enter Nonclinical information in Nonclinical Page (don't forget to hit save button). <br>"  ,
         "about Relaod Button: ",
@@ -53,7 +53,7 @@ guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 )$step(
     el = "refreshPlot",
     title = "Plot Options",
-    description = paste("Let's assume you already created an application and added a study. That will create plot on this page.",
+    description = paste("Let's assume you already created a Program and added a study. That will create plot on this page.",
     "Next few options will help you to customize the plot."),
     position = "right"
 )$step(
@@ -104,10 +104,10 @@ guide_01 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 
 guide_02 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     el = "clin_page_application",
-    title = "Current Application",
-    description = paste0("This is the application you selected to work on. ",
-    "If this is New Application, go back to previous page (Application Tab) and ",
-    "create your application first"),
+    title = "Current Program",
+    description = paste0("This is the Program you selected to work on. ",
+    "If this is New Program, go back to previous page (Program Tab) and ",
+    "create your Program first"),
     position = "bottom"
 
 )$step(
@@ -149,15 +149,15 @@ guide_02 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 
 guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
   el = "non_clin_page_application",
-    title = "Current Application",
-    description = paste0("This is the application you selected to work on. <br> ",
-    "If, selected application: <strong>New Application</strong> , <br> go back to Application tab and ",
-    "create your application first."),
+    title = "Current Program",
+    description = paste0("This is the Program you selected to work on. <br> ",
+    "If, selected Program: <strong>New Program</strong> , <br> go back to Program tab and ",
+    "create your Program first."),
     position = "right"
 )$step(
      el = "selectStudy-label",
     title = "Select Study",
-    description = paste0("To add a new study to the application, select ",
+    description = paste0("To add a new study to the Program, select ",
     "<strong> New Study.</strong> There are two workflow for nonclinical data entry: <br> <strong>01.</strong> ",
     "Automated Data Entry <br> <strong>02.</strong> Manual Data Entry. <br>",
     "Let's start with <br>  <strong>workflow 01: automated data entry.</strong> <br> Hit Next"),
@@ -165,15 +165,15 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 
 )$step(
      el = "ind_id-label",
-    title = "Select IND",
+    title = "Select Program",
     description = paste0("If you click on dropdown menu it will show a long list",
-    " of IND number. Best way to find the ind number by typing the number here. You don't need",
-    " to type <strong>IND</strong> keyword. Just typing the number will show you the search",
-     " result. If this list contain IND number you are searching, it  should be on top. Click the number to select. When you",
-     " select IND number, another option <strong>Select StudyID</strong> will appear below. You",
+    " of Program number." ,
+    "Just typing the number will show you the search",
+     " result. If this list contain Program number you are searching, it  should be on top. Click the number to select. When you",
+     " select Program number, another option <strong>Select StudyID</strong> will appear below. You",
      " need to select one study from the list. ",
-     "For the next step, let's assume you selected IND number and StudyID. ",
-      "In case IND not availabe  in database",
+     "For the next step, let's assume you selected Program number and StudyID. ",
+      "In case Program not availabe  in database",
      " it will not show up in search. In that case you need to enter data manually. I will show how to enter data manually later. ",
      "<br> Now hit next"),
     position = "right"
@@ -236,7 +236,7 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     " If AUC and Visit day empty, it will only get  dose  information. ",
     "This button label right now <strong>Click to Update</strong>. When you click the button, label will",
      " be changed to <strong>Updated</strong>. ",
-     " If you change anything from IND, StudyID, Sex, AUC, Visit Day then button label will be changed to ",
+     " If you change anything from Program, StudyID, Sex, AUC, Visit Day then button label will be changed to ",
      "<strong>Click to Update</strong> and you need to click again to update the data. <br> ",
      " It may take few ",
     "seconds to load the data for first time but it will be lot faster in next query."),
@@ -311,7 +311,7 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     title = "note?",
     description = paste0("This is Optional: <br> If you check this box, there will be an text input area.",
     " You can type particular note for this study. There will be a table generated from all study notes ",
-    " for this application.", " Notes also can be displayed on the plot."),
+    " for this Program.", " Notes also can be displayed on the plot."),
     position = "left"
 
 )$step(
@@ -344,15 +344,15 @@ guide_03 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
 
 guide_04 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
   el = "non_clin_page_application",
-    title = "Current Application",
-    description = paste0("This is the application you selected to work on. ",
-    "If selected application: <strong>New Application</strong> , <br> go back to Application tab and ",
-    "create your application first"),
+    title = "Current Program",
+    description = paste0("This is the Program you selected to work on. ",
+    "If selected Program: <strong>New Program</strong> , <br> go back to Program tab and ",
+    "create your Program first"),
     position = "right"
 )$step(
      el = "selectStudy-label",
     title = "Select Study",
-    description = paste0("To add a new study to the application, select ",
+    description = paste0("To add a new study to the Program, select ",
     "<strong> New Study.</strong>"),
     position = "right"
 
@@ -453,7 +453,7 @@ guide_04 <- cicerone::Cicerone$new(allow_close = FALSE)$step(
     title = "note?",
     description = paste0("This is Optional: <br> If you check this box, there will be an text input area.",
     " You can type particular note for this study. There will be a table generated from all study notes ",
-    " for this application.", " Notes also can be displayed on the plot."),
+    " for this Program.", " Notes also can be displayed on the plot."),
     position = "left"
 
 )$step(

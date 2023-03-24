@@ -220,7 +220,7 @@ values$Findings <- ''
       if (input$selectData != "blankData.rds") {
           htmltools::HTML(paste(
               htmltools::p(htmltools::HTML(paste0(
-                  '<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Application:</u></h4>
+                  '<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Selected Program:</u></h4>
                       <h4 style= "color:#337ab7"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                   (basename(unlist(strsplit(input$selectData, ".rds")))), "</h4>"
               )))
@@ -255,7 +255,7 @@ values$Findings <- ''
           grep(".rds", list.files(user(), full.names = T), value = T)
       )
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
-      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Program"
     #   shiny::selectInput("selectData", "Select Application:", datasets)
       shiny::updateSelectInput(session, "selectData",
           choices = datasets, selected = values$Application
@@ -267,7 +267,7 @@ values$Findings <- ''
 
   shiny::observeEvent(input$deleteData, {
       shiny::showModal(shiny::modalDialog(
-          title = "Delete Application?",
+          title = "Delete Program?",
           footer = htmltools::tagList(
               shiny::modalButton("Cancel"),
               shiny::actionButton("confirmDelete", "Delete")
@@ -284,7 +284,7 @@ values$Findings <- ''
           grep(".rds", list.files(user(), full.names = T), value = T)
       )
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
-      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Program"
     #   shiny::selectInput("selectData", "Select Application:", datasets)
       shiny::updateSelectInput(session, "selectData",
           choices = datasets, selected = "blankData.rds"
@@ -1934,7 +1934,7 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
   output$download_rds <- shiny::renderUI({
     datasets <- c(grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    shiny::selectInput("downloadRDS", "Select to Download an Application:", choices = datasets, selected = NULL)
+    shiny::selectInput("downloadRDS", "Select to Download an Program:", choices = datasets, selected = NULL)
   })
   
   output$down_btn <- shiny::downloadHandler(
@@ -1954,8 +1954,8 @@ file_name <- paste0(ind_name,"_", "Safety_Margin_Table")
     file.copy(input$upload_rds$datapath,   paste0(user(), "/",  input$upload_rds$name))
     datasets <- c('blankData.rds',grep('.rds',list.files(user(),full.names = T),value=T))
     names(datasets) <- basename(unlist(strsplit(datasets,'.rds')))
-    names(datasets)[which(datasets=='blankData.rds')] <- 'New Application'
-    shiny::selectInput('selectData','Select Application:',datasets)
+    names(datasets)[which(datasets=='blankData.rds')] <- 'New Program'
+    shiny::selectInput('selectData','Select Program:',datasets)
     shiny::updateSelectInput(session,'selectData',choices=datasets,selected=values$Application)
   })
   
@@ -2460,10 +2460,10 @@ output$clin_page_application  <- shiny::renderText({
 	if(input$selectData != "blankdData.rds") {
 	text <- basename(unlist(strsplit(input$selectData, ".rds")))
 	if(text =="blankData") {
-		text <- paste0("Selected Application: ", "New Application")
+		text <- paste0("Selected Program: ", "New Program")
 	} else {
-	text <- paste0("Selected Application: ", text)}
-	} else { text <- paste0("Selected Application: ", "New Application")
+	text <- paste0("Selected Program: ", text)}
+	} else { text <- paste0("Selected Program: ", "New Program")
 	}
 	text
 
@@ -2475,10 +2475,10 @@ output$non_clin_page_application  <- shiny::renderText({
 	if(input$selectData != "blankdData.rds") {
 	text <- basename(unlist(strsplit(input$selectData, ".rds")))
 	if(text =="blankData") {
-		text <- paste0("Selected Application: ", "New Application")
+		text <- paste0("Selected Program: ", "New Program")
 	} else {
-	text <- paste0("Selected Application: ", text)}
-	} else { text <- paste0("Selected Application: ", "New Application")
+	text <- paste0("Selected Program: ", text)}
+	} else { text <- paste0("Selected Program: ", "New Program")
 	}
 	text
 
@@ -2525,14 +2525,14 @@ shiny::observeEvent(eventExpr = input$selectData, ignoreNULL = FALSE, ignoreInit
           full.names = T
       ), value = T))
       names(datasets) <- basename(unlist(strsplit(datasets, ".rds")))
-      names(datasets)[which(datasets == "blankData.rds")] <- "New Application"
+      names(datasets)[which(datasets == "blankData.rds")] <- "New Program"
       if (is.null(values$selectData)) {
-          shiny::selectInput("selectData", "Select Application:",
+          shiny::selectInput("selectData", "Select Program:",
               datasets,
               selected = "blankData.rds"
           )
       } else {
-          shiny::selectInput("selectData", "Select Application:",
+          shiny::selectInput("selectData", "Select Program:",
               datasets,
               selected = values$selectData
           )
@@ -2558,7 +2558,7 @@ htmltools::tagList(
 
 		shiny::uiOutput("select_Data"),
 		shiny::conditionalPanel('input.selectData=="blankData.rds"',
-							shiny::textInput('newApplication','Enter New Application Number:', placeholder = "Type Here")
+							shiny::textInput('newApplication','Enter New Program Number:', placeholder = "Type Here")
 							),
 			shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle'),
 			style = "background-color: white;
@@ -2584,7 +2584,7 @@ htmltools::tagList(
         
 			shiny::uiOutput('select_Data'),
 			shiny::conditionalPanel('input.selectData=="blankData.rds"',
-							shiny::textInput('newApplication','Enter New Application Number:',placeholder = "Type Here")
+							shiny::textInput('newApplication','Enter New Program Number:',placeholder = "Type Here")
 			),
 			shiny::actionButton('deleteData','Delete',icon=shiny::icon('minus-circle'),
 			style = "background-color: white;
@@ -2611,7 +2611,7 @@ htmltools::tagList(
    
 		shiny::uiOutput('select_Data'),
 		shiny::conditionalPanel('input.selectData=="blankData.rds"',
-						shiny::textInput('newApplication','Enter New Application Number:', placeholder = "Type Here")
+						shiny::textInput('newApplication','Enter New Program Number:', placeholder = "Type Here")
 		),
 		shiny::actionButton('saveData','Submit',icon=shiny::icon('plus-circle'),
 		style = "background-color: white;
@@ -2643,7 +2643,7 @@ htmltools::tagList(
 ###############################    UI   ################################ ----
 
 ui <- shiny::navbarPage("toxSummary",
-shiny::tabPanel("Application",
+shiny::tabPanel("Program",
 shiny::sidebarLayout(
 	shiny::sidebarPanel(width = 2,
 		shiny::uiOutput("menu")
@@ -2776,18 +2776,18 @@ shiny::sidebarLayout(
 				htmltools::h4("Click on button below to export the table in a docx file"),
 				shiny::downloadButton("down_notes", "Docx file download")),
       
-      shiny::tabPanel("Download Application",
+      shiny::tabPanel("Download Program",
                htmltools::br(),
-               htmltools::h4("Download Application in RDS format:"),
+               htmltools::h4("Download Program in RDS format:"),
                htmltools::br(),
-               htmltools::p("Application can be downloaded in RDS format to share with others"),
+               htmltools::p("Program can be downloaded in RDS format to share with others"),
                
                shiny::uiOutput("download_rds"),
-               shiny::downloadButton("down_btn", "Download Application"),
+               shiny::downloadButton("down_btn", "Download Program"),
                htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                
-               htmltools::h4("Upload Application in RDS format:"),
+               htmltools::h4("Upload Program in RDS format:"),
                shiny::fileInput("upload_rds", "Upload", accept = c(".rds"), multiple = F))
 			   )
 
@@ -2954,7 +2954,7 @@ htmltools::h4("Edit Nonclinical Data", style = "text-align:center;"),
             inputId = "ind_id",
             label = htmltools::tags$div(
                 htmltools::HTML('<i class="fa fa-folder-open"
-             style = "color:#000000;font-size:18px;"></i> Select IND')
+             style = "color:#000000;font-size:18px;"></i> Select Program')
             ),
             selected = NULL,
             choices = NULL,
