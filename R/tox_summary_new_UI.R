@@ -93,13 +93,13 @@ paths$save_file_path <- fs::path(getwd(), "Applications")
 www_path <- system.file("", package = "toxSummary")
 dt_extension <- paste0(www_path, "/www/DT_extension" )
 
-### create blankData.rds and Applications_Demo.rds files
+### create blankData.rds and demo.rds files
 
 if(!file.exists("blankData.rds")) {
 	saveRDS(blank_data, "blankData.rds")
 }
-if(!file.exists("Applications_Demo.rds")){
-	saveRDS(applications_demo, "Applications_Demo.rds")
+if(!file.exists("demo.rds")){
+	saveRDS(demo, "demo.rds")
 }
 
 
@@ -207,7 +207,7 @@ values$Findings <- ''
       dir_list <- list.dirs(paths$save_file_path, full.names = F, recursive = F)
       if (!basename(user()) %in% dir_list) {
           dir.create(user())
-          file.copy("Applications_Demo.rds", user())
+          file.copy("demo.rds", user())
       }
   })
 
