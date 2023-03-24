@@ -59,7 +59,7 @@ blank_data <- list(
 
 ##########
 
-applications_demo <- list(CmaxUnit = "ng/mL", AUCUnit = "ng*h/mL",
+demo <- list(CmaxUnit = "ng/mL", AUCUnit = "ng*h/mL",
  `Clinical Information` = list(
     HumanWeight = 60L, MgKg = FALSE, `Start Dose` = list(
         StartDose = 1.5,
@@ -332,5 +332,5 @@ applications_demo <- list(CmaxUnit = "ng/mL", AUCUnit = "ng*h/mL",
     )
 ))
 usethis::use_data(blank_data,
-applications_demo,
+demo,
  overwrite = TRUE, internal = TRUE)
