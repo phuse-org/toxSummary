@@ -61,15 +61,13 @@ toxSummary_app <- function(database_path=NULL, studyid_file=NULL,
      save_file_path = save_file_path, where_to_run = where_to_run)
  conn <- DBI::dbConnect(drv = RSQLite::SQLite(), paths$database_path)
  col_name <- c(
-    "application_type",
     "IND_num",
     "studyID")
   ind_table <- data.table::fread(studyid_file,
-    col.names = col_name)
-ind_table <- ind_table[application_type == "IND",]
-# ind_number_list <- ind_table[!duplicated(IND_num), c("IND_num")]
+   select = c(1,2))
+ colnames(ind_table)  <- col_name
+## ind_table <- ind_table[application_type == "IND",]
 ind_number_list <- ind_table$IND_num
-# ind_number_list <- ind_number_list[!duplicated(ind_number_list)]
 
  } else {
   paths <- list(
