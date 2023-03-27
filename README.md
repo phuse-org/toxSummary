@@ -70,7 +70,7 @@ toxSummary::toxSummary_app()
 library(toxSummary)
 toxSummary::toxSummary_app(
     database_path = "path/of/your/database.db",
-    studyid_file = "path/for/IND_studyid_mapping.csv",
+    studyid_file = "path/for/program_studyid_mapping.csv",
     save_file_path = NULL
 )
 ```
@@ -80,7 +80,7 @@ an example database can be found in GitHub repository
 [database link](https://github.com/phuse-org/toxSummary/tree/master/test_data)
 
 ```database_path = "path/of/your/database.db"```  
-```studyid_file = "path/for/IND_studyid_mapping.csv"```   
+```studyid_file = "path/for/program_studyid_mapping.csv"```   
 Package does not contain database. Database is too big for a package.
 
 ## How to run the app from cloned repo.
@@ -121,7 +121,7 @@ Then copy the code from here and change the database and file paths.
 ```
  toxSummary::toxSummary_app(
     database_path = "path/of/your/database.db",
-    studyid_file = "path/for/IND_studyid_mapping.csv",
+    studyid_file = "path/for/program_studyid_mapping.csv",
     save_file_path = NULL,
     where_to_run = "rsconnect")
 
