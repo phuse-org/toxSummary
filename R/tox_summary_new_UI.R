@@ -2725,26 +2725,26 @@ shiny::sidebarLayout(
                       htmltools::div( id="table_shot",
                DT::DTOutput('table_01'),
                shiny::actionButton("down_jpeg","Download as jpeg"),
-               htmltools::br(),
                htmltools::br()
                ),
-               htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
                shiny::downloadButton("down_01_doc", "Docx file download"),
+               htmltools::br(),
+               htmltools::br(),
                htmltools::br()
       ),
       shiny::tabPanel("Key Findings Table",
                htmltools::div(
                DT::DTOutput('table_02'),
                shiny::actionButton("down_jpeg_02","Download as jpeg"),
-               htmltools::br(),
                htmltools::br()
                ),
-               htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
                shiny::downloadButton("down_02_doc", "Docx file download"),
+               htmltools::br(),
+               htmltools::br(),
                htmltools::br()
       ),
       shiny::tabPanel("Safety Margin Table",
@@ -2752,29 +2752,35 @@ shiny::sidebarLayout(
                htmltools::div(
                DT::DTOutput('table_03'),
                shiny::actionButton("down_jpeg_03","Download as jpeg"),
-               htmltools::br(),
                htmltools::br()
                ),
-               htmltools::br(),
                htmltools::hr(style = "border-top: 1px dashed black"),
                htmltools::h4("Click on button below to export the table in a docx file"),
                shiny::downloadButton("down_03_doc", "Docx file download"),
+               htmltools::br(),
+               htmltools::br(),
                htmltools::br()
       ),
       shiny::tabPanel("All Table", 
                htmltools::br(),
                htmltools::p("All three table (Clinical Relevance Table, Key Findings Table, Safety Margin Table) can be downloaded in single docx file. Click button below to download."),
-               shiny::downloadButton("down_all", "Docx file download")),
+               shiny::downloadButton("down_all", "Docx file download"),
+               htmltools::br(),
+               htmltools::br()
+               ),
 	shiny::tabPanel("Notes Table",
 				htmltools::br(),
                htmltools::div(
                DT::DTOutput("table_note"),
                shiny::actionButton("down_jpeg_04","Download as jpeg"),
-               htmltools::br(),
                htmltools::br()
                ),
+        htmltools::hr(style = "border-top: 1px dashed black"),
 				htmltools::h4("Click on button below to export the table in a docx file"),
-				shiny::downloadButton("down_notes", "Docx file download")),
+				shiny::downloadButton("down_notes", "Docx file download"),
+               htmltools::br(),
+               htmltools::br()
+        ),
       
       shiny::tabPanel("Download Program",
                htmltools::br(),
