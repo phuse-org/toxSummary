@@ -59,11 +59,15 @@ Dog 4 week (IV) study:
 +----------------+----------------+----------------+----------------+
 
 : Exposure Margin Calculation
-![Clinical](https://user-images.githubusercontent.com/31291716/215581375-b351f896-2aa8-4097-9b41-96dc290be739.jpg)
 
-![Nonclinical](https://user-images.githubusercontent.com/31291716/215581356-ad4420b2-9dd9-4e2b-8a84-f156dbc4f397.jpg)
+### Clinical  
+ <img src="04_clinical.jpg" 
+alt="UI" align="center" width=100% height="auto"/>
 
-![Plot](https://user-images.githubusercontent.com/31291716/227003497-13de06c0-812b-4c17-b8a0-3b77eb2e81d0.jpg)
-## plot
-<a href="https://github.com/phuse-org/toxSummary/tree/gh-pages/articles><img src="toxsui.jpg" 
-alt="UI" align="center" width=100% height="auto"/></a>
+### Nonclinical  
+ <img src="05_nonclinical.jpg" 
+alt="UI" align="center" width=100% height="auto"/>
+
+### Plot  
+<img src="toxsui.jpg" 
+alt="UI" align="center" width=100% height="auto"/>

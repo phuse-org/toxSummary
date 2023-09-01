@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction">
 <meta property="og:description" content="toxSummary">
@@ -78,7 +78,7 @@
 
 
 <div class="row">
-  <main id="main" class="col-md-9"><div class="page-header">
+  <main id="main"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Introduction</h1>
             
       
@@ -89,12 +89,12 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/phuse-org/toxSummary" class="external-link">toxSummary</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/phuse-org/toxSummary" class="external-link">toxSummary</a></span><span class="op">)</span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>Multiple studies are done in animals to ensure safety of an Active Pharmaceutical Ingredient (API) prior to initiation of clinical trials. Pharmacologist or toxicologist may want to compare among the studies. So app generate a plot that shows all doses with calculated exposure margin, any user provided notes, and findings with degree of severity. Plot can be customized with other input button like sliders, drag and drop and checkbox. App also generate multiple summary table for all of the studies. Summary table also highly customizable and can be downloaded in different format.</p>
-<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
+<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="program-tab">Program Tab<a class="anchor" aria-label="anchor" href="#program-tab"></a>
@@ -105,7 +105,7 @@
 <h2 id="edit-clinical-tab">Edit Clinical Tab<a class="anchor" aria-label="anchor" href="#edit-clinical-tab"></a>
 </h2>
 <p>There is a button on top of the left column called “Need Help?”. When user click on the button will provide self guided tour for all the button in this page.</p>
-<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/04_clinical.jpg" alt="Clinical Tab" align="center" width="100%" height="auto"></a></p>
+<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="04_clinical.jpg" alt="Clinical Tab" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="edit-nonclinical-tab">Edit Nonclinical Tab<a class="anchor" aria-label="anchor" href="#edit-nonclinical-tab"></a>
@@ -114,7 +114,7 @@
 1. Need Help? start here<br>
 2. Manual Entry<br>
 These button will provide self guided tour to this page and give information what all input button does and how to enter data here.</p>
-<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/05_nonclinical.jpg" alt="Nonclinical Tab" align="center" width="100%" height="auto"></a></p>
+<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="05_nonclinical.jpg" alt="Nonclinical Tab" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="database-connection">Database Connection<a class="anchor" aria-label="anchor" href="#database-connection"></a>
@@ -164,13 +164,13 @@ These button will provide self guided tour to this page and give information wha
 <h2 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
 </h2>
 <p>When user create an program and add study information, app will create plot and plot will be shown on program tab. Plot can be think of as two subplot. On the left plot, one big rectangular represents one study and small rectangular box represents dose. If the color of small rectangular box is green, it represent No Observed Adverse Effect Level (NOAEL) dose. Other doses are colored black. Mouse hovering on dose box will show exposure margin. User can select to show dose and exposure margin same time from checkbox. On the right plot, dose box is color coded with degree of severity of finding. Mouse hovering on box will show finding. The whole plot can be customized by changing the different input located at the top of the plot.</p>
-<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
+<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="tables">Tables<a class="anchor" aria-label="anchor" href="#tables"></a>
 </h2>
 <p>App generate multiple summary table located right side of the figure tab. Clinical relevance table is group by findings. User can look into which finding is common across studies. Table also show reversibility, dose and exposure margin information. The key finding table show all the findings that are found at greater than NOAEL dose for a study. Table also include NOAEL, Cmax, AUC and safety margin column. The safety margin table show all the studies that have NOAEL dose. It filter out all the other study that does not have NOAEL dose. Table include NOAEL, HED (Human Equivalent Dose) Cmax, AUC, safety margin at proposed clinical dose. There is a notes table that show all the notes if user provided note while adding the study in nonclinical section. All the table can be downloaded as csv, Excel and microsoft word file. User also can download all the plot as image (jpeg file).</p>
-<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/table_01.jpg" alt="Table" align="center" width="100%" height="auto"></a></p>
+<p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="table_01.jpg" alt="Table" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="more-information">More information<a class="anchor" aria-label="anchor" href="#more-information"></a>
@@ -192,7 +192,7 @@ These button will provide self guided tour to this page and give information wha
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
     </footer>
