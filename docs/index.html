@@ -99,6 +99,7 @@
 <p>Development version can be installed from GitHub.</p>
 <pre><code><span><span class="co"># install devtools if already not installed </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co">#install toxSummary package</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'phuse-org/toxSummary'</span><span class="op">)</span></span></code></pre>
 </div>
@@ -114,11 +115,11 @@
 <pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/phuse-org/toxSummary" class="external-link">toxSummary</a></span><span class="op">)</span></span>
 <span><span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
 <span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
-<span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
+<span>    studyid_file <span class="op">=</span> <span class="st">"path/for/program_studyid_mapping.csv"</span>,</span>
 <span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre>
-<p>an example database can be found in GitHub repository <a href="https://github.com/phuse-org/toxSummary/tree/master/test_data" class="external-link">database link</a></p>
-<p><code>database_path = "path/of/your/database.db"</code><br><code>studyid_file = "path/for/IND_studyid_mapping.csv"</code><br>
+<p>When save_file_path set to NULL, files will be saved in current working directory. an example database can be found in GitHub repository <a href="https://github.com/phuse-org/toxSummary/tree/master/test_data" class="external-link">database link</a></p>
+<p><code>database_path = "path/of/your/database.db"</code><br><code>studyid_file = "path/for/program_studyid_mapping.csv"</code><br>
 Package does not contain database. Database is too big for a package.</p>
 </div>
 <div class="section level2">
@@ -148,7 +149,7 @@ Package does not contain database. Database is too big for a package.</p>
 Then copy the code from here and change the database and file paths.</p>
 <pre><code><span> <span class="fu">toxSummary</span><span class="fu">::</span><span class="fu"><a href="reference/toxSummary_app.html">toxSummary_app</a></span><span class="op">(</span></span>
 <span>    database_path <span class="op">=</span> <span class="st">"path/of/your/database.db"</span>,</span>
-<span>    studyid_file <span class="op">=</span> <span class="st">"path/for/IND_studyid_mapping.csv"</span>,</span>
+<span>    studyid_file <span class="op">=</span> <span class="st">"path/for/program_studyid_mapping.csv"</span>,</span>
 <span>    save_file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>    where_to_run <span class="op">=</span> <span class="st">"rsconnect"</span><span class="op">)</span></span></code></pre>
 <p>Deploying Shiny app as package is little different. There is no publish button when you open app.R file in RStudio. Running <code><a href="https://rdrr.io/pkg/rsconnect/man/writeManifest.html" class="external-link">rsconnect::writeManifest()</a></code> command in R console will create manifest.json file. app then can be deployed on rsconnect running<br><code><a href="https://rdrr.io/pkg/rsconnect/man/deployApp.html" class="external-link">rsconnect::deployApp()</a></code> command in R console.</p>
@@ -158,7 +159,7 @@ Then copy the code from here and change the database and file paths.</p>
 <div class="section level2">
 <h2 id="demo-app">Demo App<a class="anchor" aria-label="anchor" href="#demo-app"></a>
 </h2>
-<p>A demo app can be found here <a href="https://phuse-org.shinyapps.io/toxSummary/" class="external-link">update the link after deploy new version</a></p>
+<p>A demo app can be found here <a href="https://phuse-org.shinyapps.io/toxSummary/" class="external-link">demo app link</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
