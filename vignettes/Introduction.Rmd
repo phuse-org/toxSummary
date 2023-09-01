@@ -25,16 +25,16 @@ Pharmacologist or toxicologist may want to compare among the studies.  So app
 generate a plot that shows all doses with calculated exposure margin, any user
 provided notes, and findings with degree of severity. Plot can be customized
 with other input button like sliders, drag and drop and checkbox. App also
-generate multiple summary table for all the studies.  Summary table also highly
-customizable and can be downloaded in different format. 
+generate multiple summary table for all of the studies.  Summary table also
+highly customizable and can be downloaded in different format. 
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="toxsui.jpg" 
 alt="UI" align="center" width=100% height="auto"/></a>
 
 ## Program Tab  
 
-On the landing page (Program tab) there is a button  
-on bottom of the left sidebar called "Need Help?".  
+On the landing page (Program tab) there is a button on bottom of the left 
+sidebar called "Need Help?".
 When user click on the button it will show how to use the app and
 will provide self guided tour for all the button in this page.
 
@@ -60,14 +60,14 @@ what all input button does and how to enter data here.
 <a href="https://github.com/phuse-org/toxSummary"><img src="05_nonclinical.jpg" 
 alt="Nonclinical Tab" align="center" width=100% height="auto"/></a>
 
-## Database Connection
-User can enter nonclinical data manually or nonclinical data can be filled out 
+## Database Connection  
+User can enter nonclinical data manually or nonclinical data can be filled out
 from database. To extract from database, user need to create a SQLite database
 from Standard for Exchange of Nonclinical Data (SEND). Instruction for how to
 create SEND database can be found here
 [https://github.com/phuse-org/sendigR](https://github.com/phuse-org/sendigR).
-When user choose to connect to database, user need one csv file that map 
-studies to a corresponding program number. An example file can be found here 
+When user choose to connect to database, user need one csv file that map
+studies to a corresponding program number. An example file can be found here
 [link](https://github.com/phuse-org/toxSummary/blob/master/test_data/IND_with_studies_2.csv).
 
 |          |             |
@@ -84,27 +84,27 @@ studies to a corresponding program number. An example file can be found here
 
 
 for above example, study ID GLP003, PDS2014 and CV01 in id column, all belong to
-program number 155582 (last 3 rows). 
-Make sure first column contain program number and second column contain study ID number.
+program number 155582 (last 3 rows).  Make sure first column contain program
+number and second column contain study ID number.
 
 ## Plot   
-When user create an program and add study information, app will create plot
-and plot will be shown on program tab. Plot can be think of as two
-subplot.  On the left plot, one big rectangular represents one study and small
-rectangular box represents dose. If the color of small rectangular box is green,
-it represent No Observed Adverse Effect Level (NOAEL) dose. Other doses are
-colored black.  Mouse hovering on dose box will show exposure margin. User can
-select to show dose and exposure margin same time from checkbox.  On the right
-plot, dose box is color coded with degree of severity of finding.  Mouse
-hovering on box will show finding.  The whole plot can be customized by changing
-the different input located at the top of the plot.
+When user create an program and add study information, app will create plot and
+plot will be shown on program tab. Plot can be think of as two subplot.  On the
+left plot, one big rectangular represents one study and small rectangular box
+represents dose. If the color of small rectangular box is green, it represent No
+Observed Adverse Effect Level (NOAEL) dose. Other doses are colored black.
+Mouse hovering on dose box will show exposure margin. User can select to show
+dose and exposure margin same time from checkbox.  On the right plot, dose box
+is color coded with degree of severity of finding.  Mouse hovering on box will
+show finding.  The whole plot can be customized by changing the different input
+located at the top of the plot.
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="toxsui.jpg" 
 alt="UI" align="center" width=100% height="auto"/></a>
 
 
-## Tables
-App generate multiple summary plots located right side of figure tab. Clinical
+## Tables  
+App generate multiple summary table located right side of the figure tab. Clinical
 relevance table is group by findings. User can look into which finding is common
 across studies. Table also show reversibility, dose and exposure margin
 information.  The key finding table show all the findings that are  found at
@@ -114,7 +114,8 @@ NOAEL dose. It filter out all the other study that does not have NOAEL dose.
 Table include NOAEL, HED (Human Equivalent Dose) Cmax, AUC, safety margin at
 proposed clinical dose.  There is a notes table that show all the notes if user
 provided note while adding the study in nonclinical section.  All the table can
-be downloaded as csv, Excel and microsoft word file. User also can download all the plot as image (jpeg file). 
+be downloaded as csv, Excel and microsoft word file. User also can download all
+the plot as image (jpeg file). 
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="table_01.jpg"
 alt="Table" align="center" width=100% height="auto"/></a>
