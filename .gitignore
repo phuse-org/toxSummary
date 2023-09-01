@@ -10,3 +10,5 @@ screenshot/
 Applications/
 Applications_Demo.rds
 inst/doc
+/doc/
+/Meta/

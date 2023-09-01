@@ -1,12 +1,12 @@
 
 
-
 # toxSummary
 toxSummary is an R Shiny app to visualize and summarize repeat-dose toxicology
 study results. toxSummary app wrapped in R package (which is also called 
 toxSummary) so app can be distributed easily. 
 
 ## Overview
+
 Prior to initiation of clinical trials, repeat-dose toxicology studies are
 conducted in multiple species to support the safety of the active pharmaceutical
 ingredient (API) in the proposed clinical dosing regimen, route of
@@ -38,6 +38,7 @@ tabular summaries of the full toxicological profile of an API.
 alt="UI" align="center" width=100% height="auto"/></a>
 
 ## Installation  
+
 Package can be installed from CRAN.
 
 ```
@@ -49,6 +50,7 @@ Development version can be installed from GitHub.
 ```
 # install devtools if already not installed 
 install.packages("devtools")
+
 #install toxSummary package
 devtools::install_github('phuse-org/toxSummary')
 ```
@@ -59,24 +61,27 @@ library(toxSummary)
 toxSummary::toxSummary_app()
 
 ```
-
 ## Run the app with database connection
+
 ```
 library(toxSummary)
 toxSummary::toxSummary_app(
     database_path = "path/of/your/database.db",
-    studyid_file = "path/for/IND_studyid_mapping.csv",
+    studyid_file = "path/for/program_studyid_mapping.csv",
     save_file_path = NULL
 )
 ```
+
+When save_file_path set to NULL, files will be saved in current working directory.
 an example database can be found in GitHub repository
 [database link](https://github.com/phuse-org/toxSummary/tree/master/test_data)
 
 ```database_path = "path/of/your/database.db"```  
-```studyid_file = "path/for/IND_studyid_mapping.csv"```   
+```studyid_file = "path/for/program_studyid_mapping.csv"```   
 Package does not contain database. Database is too big for a package.
 
 ## How to run the app from cloned repo.
+
 Clone the [GitHub](https://github.com/phuse-org/toxSummary) repo and set repo as
 working directory.
 If you don't have any database to connect and want to run app, 
@@ -85,9 +90,10 @@ only run this following code in R console.
 pkgload::load_all(".")
 toxSummary::toxSummary_app()
 ```
-To run the app with database connection follow this direction; set repo as
-working directory and open app.R file (or copy code given below) and run the
-code.   if you connect to your database then change the path to your files.
+To run the app with database connection follow this direction;
+set repo as working directory and open app.R file (or copy code given below) 
+and run the code.   if you connect to your database then change the path to 
+your files.
 otherwise this will connect to  example database available in test_data
 directory.
 
@@ -112,7 +118,7 @@ Then copy the code from here and change the database and file paths.
 ```
  toxSummary::toxSummary_app(
     database_path = "path/of/your/database.db",
-    studyid_file = "path/for/IND_studyid_mapping.csv",
+    studyid_file = "path/for/program_studyid_mapping.csv",
     save_file_path = NULL,
     where_to_run = "rsconnect")
 
@@ -130,4 +136,4 @@ files given in database_path and studyid_file argument.
 
 ## Demo App
 A demo app can be found here
-[update the link after deploy new version](https://phuse-org.shinyapps.io/toxSummary/) 
+[demo app link](https://phuse-org.shinyapps.io/toxSummary/) 

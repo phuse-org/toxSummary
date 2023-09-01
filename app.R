@@ -9,3 +9,8 @@ toxSummary::toxSummary_app(
     save_file_path = NULL
 )
 
+?toxSummary_app
+
+browseVignettes('toxSummary')
+
+browseVignettes('tidyr')

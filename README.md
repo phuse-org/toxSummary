@@ -139,7 +139,7 @@ files given in database_path and studyid_file argument.
 
 ## Demo App
 A demo app can be found here
-[update the link after deploy new version](https://phuse-org.shinyapps.io/toxSummary/) 
+[demo app link](https://phuse-org.shinyapps.io/toxSummary/) 
 
 ## toxSummary license  
 

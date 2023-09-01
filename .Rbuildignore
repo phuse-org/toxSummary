@@ -41,3 +41,12 @@
 ^index\.md$
 ^vignettes/articles$
 ^Md\.Ali$
+^demo\.rds$
+^example\.R$
+^hide\.patch$
+^pkgr\.yml$
+^reviewer_file_share\.rds$
+^test_not_in_home\.R$
+^user\.R$
+^doc$
+^Meta$
