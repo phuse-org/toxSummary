@@ -18,11 +18,11 @@ library(toxSummary)
 
 ## Exposure Margin Calculation:
 This is an example of how exposure margin calculated for dog 4 week (IV) study using 
-body surface area (BSA) formula.
-Clinical information: Human Proposed "Start Dose": 1.5 mg/day
-Dog to Human conversion factor = 1.8
-HED = Human Equivalent Dose
-Dog 4 week (IV) study:
+body surface area (BSA) formula.  
+Clinical information: Human Proposed "Start Dose": 1.5 mg/day  
+Dog to Human conversion factor = 1.8  
+HED = Human Equivalent Dose  
+Dog 4 week (IV) study:  
 
 
 +----------------+----------------+----------------+----------------+
