@@ -1,8 +1,8 @@
-pandoc: 2.14.0.3
-pkgdown: 2.0.2
+pandoc: '2.12'
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  Introduction: Introduction.html
   Exposure-Margin: Exposure-Margin.html
-last_built: 2023-09-01T21:15Z
+  Introduction: Introduction.html
+last_built: 2023-09-05T14:33Z
 
