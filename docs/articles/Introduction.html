@@ -93,33 +93,70 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Multiple studies are done in animals to ensure safety of an Active Pharmaceutical Ingredient (API) prior to initiation of clinical trials. Pharmacologist or toxicologist may want to compare among the studies. So app generate a plot that shows all doses with calculated exposure margin, any user provided notes, and findings with degree of severity. Plot can be customized with other input button like sliders, drag and drop and checkbox. App also generate multiple summary table for all of the studies. Summary table also highly customizable and can be downloaded in different format.</p>
+<p>Multiple studies are done in animals to ensure safety of an Active
+Pharmaceutical Ingredient (API) prior to initiation of clinical trials.
+Pharmacologist or toxicologist may want to compare among the studies. So
+app generate a plot that shows all doses with calculated exposure
+margin, any user provided notes, and findings with degree of severity.
+Plot can be customized with other input button like sliders, drag and
+drop and checkbox. App also generate multiple summary table for all of
+the studies. Summary table also highly customizable and can be
+downloaded in different format.</p>
 <p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="program-tab">Program Tab<a class="anchor" aria-label="anchor" href="#program-tab"></a>
 </h2>
-<p>On the landing page (Program tab) there is a button on bottom of the left sidebar called “Need Help?”. When user click on the button it will show how to use the app and will provide self guided tour for all the button in this page.</p>
+<p>On the landing page (Program tab) there is a button on bottom of the
+left sidebar called “Need Help?”. When user click on the button it will
+show how to use the app and will provide self guided tour for all the
+button in this page. User can crate new program by selecting New program
+in ‘Select Program’ input. This page have multiple other tab for figure
+and tables.</p>
 </div>
 <div class="section level2">
 <h2 id="edit-clinical-tab">Edit Clinical Tab<a class="anchor" aria-label="anchor" href="#edit-clinical-tab"></a>
 </h2>
-<p>There is a button on top of the left column called “Need Help?”. When user click on the button will provide self guided tour for all the button in this page.</p>
+<p>There is a button on top of the left column called “Need Help?”. When
+user click on the button will provide self guided tour for all the
+button in this page.<br>
+Clinical Dosing chechbox have options to provide more information about
+dose. When user select a dose, there are more options appeared. By
+default, dose are in mg/day. But user can choose mg/kg. User need to
+make sure that unit match for provided clinical and nonclinical
+dose.</p>
 <p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/04_clinical.jpg" alt="Clinical Tab" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="edit-nonclinical-tab">Edit Nonclinical Tab<a class="anchor" aria-label="anchor" href="#edit-nonclinical-tab"></a>
 </h2>
-<p>There is a button on top of the left column called “Show Help Button”. When user click on this button, it will show two other button<br>
+<p>There is a button on top of the left column called “Show Help
+Button”. When user click on this button, it will show two other
+button<br>
 1. Need Help? start here<br>
 2. Manual Entry<br>
-These button will provide self guided tour to this page and give information what all input button does and how to enter data here.</p>
+These button will provide self guided tour to this page and give
+information what all input button does and how to enter data here. There
+are two workflow for data entry.<br>
+1. Automated data entry<br>
+2. Manual data entry<br>
+If SQLite database connected to database then app can get all the study
+information from the study and fill out appropriate input. But If App
+run without database connection, User can fill out all the information
+manually here about study. In both case user still need to provide
+findings manually in the right column.</p>
 <p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/05_nonclinical.jpg" alt="Nonclinical Tab" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="database-connection">Database Connection<a class="anchor" aria-label="anchor" href="#database-connection"></a>
 </h2>
-<p>User can enter nonclinical data manually or nonclinical data can be filled out from database. To extract from database, user need to create a SQLite database from Standard for Exchange of Nonclinical Data (SEND). Instruction for how to create SEND database can be found here <a href="https://github.com/phuse-org/sendigR" class="external-link">https://github.com/phuse-org/sendigR</a>. When user choose to connect to database, user need one csv file that map studies to a corresponding program number. An example file can be found here <a href="https://github.com/phuse-org/toxSummary/blob/master/test_data/IND_with_studies_2.csv" class="external-link">link</a>.</p>
+<p>User can enter nonclinical data manually or nonclinical data can be
+filled out from database. To extract from database, user need to create
+a SQLite database from Standard for Exchange of Nonclinical Data (SEND).
+Instruction for how to create SEND database can be found here <a href="https://github.com/phuse-org/sendigR" class="external-link">https://github.com/phuse-org/sendigR</a>.
+When user choose to connect to database, user need one csv file that map
+studies to a corresponding program number. An example file can be found
+here <a href="https://github.com/phuse-org/toxSummary/blob/master/test_data/IND_with_studies_2.csv" class="external-link">link</a>.</p>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="center"><strong>number</strong></td>
@@ -158,26 +195,53 @@ These button will provide self guided tour to this page and give information wha
 <td align="center">CV01</td>
 </tr>
 </tbody></table>
-<p>for above example, study ID GLP003, PDS2014 and CV01 in id column, all belong to program number 155582 (last 3 rows). Make sure first column contain program number and second column contain study ID number.</p>
+<p>for above example, study ID GLP003, PDS2014 and CV01 in id column,
+all belong to program number 155582 (last 3 rows). Make sure first
+column contain program number and second column contain study ID
+number.</p>
 </div>
 <div class="section level2">
 <h2 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
 </h2>
-<p>When user create an program and add study information, app will create plot and plot will be shown on program tab. Plot can be think of as two subplot. On the left plot, one big rectangular represents one study and small rectangular box represents dose. If the color of small rectangular box is green, it represent No Observed Adverse Effect Level (NOAEL) dose. Other doses are colored black. Mouse hovering on dose box will show exposure margin. User can select to show dose and exposure margin same time from checkbox. On the right plot, dose box is color coded with degree of severity of finding. Mouse hovering on box will show finding. The whole plot can be customized by changing the different input located at the top of the plot.</p>
+<p>When user create an program and add study information, app will
+create plot and plot will be shown on program tab. Plot can be think of
+as two subplot. On the left plot, one big rectangular represents one
+study and small rectangular box represents dose. If the color of small
+rectangular box is green, it represent No Observed Adverse Effect Level
+(NOAEL) dose. Other doses are colored black. Mouse hovering on dose box
+will show exposure margin. User can select to show dose and exposure
+margin same time from checkbox. On the right plot, dose box is color
+coded with degree of severity of finding. Mouse hovering on box will
+show finding. The whole plot can be customized by changing the different
+input located at the top of the plot.</p>
 <p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/toxsui.jpg" alt="UI" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="tables">Tables<a class="anchor" aria-label="anchor" href="#tables"></a>
 </h2>
-<p>App generate multiple summary table located right side of the figure tab. Clinical relevance table is group by findings. User can look into which finding is common across studies. Table also show reversibility, dose and exposure margin information. The key finding table show all the findings that are found at greater than NOAEL dose for a study. Table also include NOAEL, Cmax, AUC and safety margin column. The safety margin table show all the studies that have NOAEL dose. It filter out all the other study that does not have NOAEL dose. Table include NOAEL, HED (Human Equivalent Dose) Cmax, AUC, safety margin at proposed clinical dose. There is a notes table that show all the notes if user provided note while adding the study in nonclinical section. All the table can be downloaded as csv, Excel and microsoft word file. User also can download all the plot as image (jpeg file).</p>
+<p>App generate multiple summary table located right side of the figure
+tab. Clinical relevance table is group by findings. User can look into
+which finding is common across studies. Table also show reversibility,
+dose and exposure margin information. The key finding table show all the
+findings that are found at greater than NOAEL dose for a study. Table
+also include NOAEL, Cmax, AUC and safety margin column. The safety
+margin table show all the studies that have NOAEL dose. It filter out
+all the other study that does not have NOAEL dose. Table include NOAEL,
+HED (Human Equivalent Dose) Cmax, AUC, safety margin at proposed
+clinical dose. There is a notes table that show all the notes if user
+provided note while adding the study in nonclinical section. All the
+table can be downloaded as csv, Excel and microsoft word file. User also
+can download all the plot as image (jpeg file).</p>
 <p><a href="https://github.com/phuse-org/toxSummary" class="external-link"><img src="../../../../../OneDrive%20-%20FDA/yousuf/00_github_projects/toxSummary/articles/table_01.jpg" alt="Table" align="center" width="100%" height="auto"></a></p>
 </div>
 <div class="section level2">
 <h2 id="more-information">More information<a class="anchor" aria-label="anchor" href="#more-information"></a>
 </h2>
 <p>For more information, please visit following website<br>
-- <a href="https://github.com/phuse-org/toxSummary" class="external-link">GitHub Repository</a><br>
-- <a href="https://phuse-org.github.io/toxSummary/" class="external-link">toxSummary Website</a></p>
+- <a href="https://github.com/phuse-org/toxSummary" class="external-link">GitHub
+Repository</a><br>
+- <a href="https://phuse-org.github.io/toxSummary/" class="external-link">toxSummary
+Website</a></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

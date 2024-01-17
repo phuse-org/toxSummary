@@ -50,3 +50,6 @@
 ^user\.R$
 ^doc$
 ^Meta$
+^CRAN-SUBMISSION$
+^cran-comments\.md$
+^toxsummary - Copy1\.vsdx$

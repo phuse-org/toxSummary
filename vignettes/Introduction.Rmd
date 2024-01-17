@@ -37,11 +37,17 @@ On the landing page (Program tab) there is a button on bottom of the left
 sidebar called "Need Help?".
 When user click on the button it will show how to use the app and
 will provide self guided tour for all the button in this page.
+User can crate new program by selecting New program in 'Select Program' input.
+This page have multiple other tab for figure and tables. 
 
 ## Edit Clinical Tab  
 There is a button on top of the left column called "Need Help?".   When user
 click on the button will provide self guided tour for all the button in this
 page.  
+Clinical Dosing chechbox have options to provide more information about dose.
+When user select a dose, there are more options appeared. By default, dose are in mg/day. But 
+user can choose mg/kg. User need to make sure that unit match for provided clinical and nonclinical dose. 
+
 
 <a href="https://github.com/phuse-org/toxSummary"><img
 src="04_clinical.jpg" alt="Clinical Tab" align="center" width=100%
@@ -56,6 +62,16 @@ When user click on this button, it will show two other button
 2. Manual Entry  
 These button will provide self guided tour to this page and give information
 what all input button does and how to enter data here.
+There are two workflow for data entry.  
+1. Automated data entry  
+2. Manual data entry  
+If SQLite database connected to database then app can get all the study information from the 
+study and fill out appropriate input. 
+But If App run without database connection, User can fill out all the information manually here about 
+study. 
+In both case user still need to provide findings manually in the right column. 
+
+
 
 <a href="https://github.com/phuse-org/toxSummary"><img src="05_nonclinical.jpg" 
 alt="Nonclinical Tab" align="center" width=100% height="auto"/></a>
