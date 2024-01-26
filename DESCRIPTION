@@ -8,7 +8,7 @@ Authors@R:
     person(given = "FDA", role = "cph"))
 Description: 'shiny' app that generates plots and summary tables from repeat-dose
         toxicology study results to facilitate holistic evaluation of the drug safety of 
-        active pharmaceutical ingredient (API) prior to initiation of clinical trials. 
+        active pharmaceutical ingredients (API) prior to initiation of clinical trials.
 License: MIT + file LICENSE
 URL: https://github.com/phuse-org/toxSummary
 BugReports: https://github.com/phuse-org/toxSummary/issues
