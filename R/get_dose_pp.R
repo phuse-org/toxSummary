@@ -20,7 +20,6 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
 
   visit_day <- as.integer(visit_day)
   }
-  print(studyid)
   studyid_list_all <- DBI::dbGetQuery(conn = conn,
   'SELECT DISTINCT STUDYID FROM TX')
   studyid_list_pp <- DBI::dbGetQuery(conn = conn,
@@ -81,7 +80,6 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
   }
 # if all USUBJID populated in PP domain
   if (nrow(pp_domain) == sum(pp_domain$USUBJID != "")) {
-	  print("first condition_ line 75")
     df <- merge(dose_wide, pp_domain, by = c("STUDYID", "USUBJID"))
  
 	# filter sex
@@ -109,7 +107,6 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
 # if all USUBJID empty in pp domain
 
   } else if (nrow(pp_domain) == sum(pp_domain$USUBJID == "")) {
-	  print("second condition- line 94")
     pooldef_list <- DBI::dbGetQuery(conn = conn,
 	 'SELECT DISTINCT STUDYID FROM POOLDEF')
 
@@ -150,7 +147,6 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
 
   } else {
-	  print("third condition_ line 127")
     # filter only poolid populated
     poolid_pp <- pp_domain[POOLID != "", ]
     poolid_pp <- poolid_pp[, USUBJID := NULL]
@@ -201,9 +197,7 @@ get_pk_param <- function(conn, studyid, pk_param="AUCLST", sex_include=NULL, vis
     df <- df[, .SD, .SDcols=c(1,2,3,5,4)]
   }
   df <- df[order(PPTESTCD,TRTDOS),]
-#   print(df)
   df <- na.omit(df)
-  print(df)
 
   return(df)
 }

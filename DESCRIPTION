@@ -6,7 +6,7 @@ Authors@R:
     person("Yousuf", "Ali", email=  "md.ali@fda.hhs.gov", role = c( "cre",  "aut")),
     person("Kevin", "Snyder", email= "kevin.snyder@fda.hhs.gov", role = c("aut")),
     person(given = "FDA", role = "cph"))
-Description: R Shiny app that generate plot and summary table from repeat-dose
+Description: 'shiny' app that generates plots and summary tables from repeat-dose
         toxicology study results to facilitate holistic evaluation of the drug safety of 
         active pharmaceutical ingredient (API) prior to initiation of clinical trials. 
 License: MIT + file LICENSE

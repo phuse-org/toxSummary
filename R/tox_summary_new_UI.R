@@ -27,8 +27,8 @@
 #' @return function run the app.
 #' 
 #' @export
-#' @examples 
-#' \dontrun{
+#' @examples
+#' if(interactive()) {
 #' toxSummary_app()
 #' }
 
