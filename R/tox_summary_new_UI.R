@@ -16,8 +16,9 @@
 #' @param studyid_file Optional, character\cr
 #' 		file path for studyid
 #' 
-#' @param save_file_path mandatory, character\cr
-#'    directory where file will be saved when app create any files.
+#' @param save_file_path optional, character\cr
+#'    directory where files will be saved when app create any files.
+#'    if NULL, all the files will be created in temp directory.
 #'
 #' @param where_to_run Optional, character\cr
 #' 		where app will be running. Default is "local". Should use "rsconnect"
@@ -47,7 +48,12 @@
 #test
 
 toxSummary_app <- function(database_path=NULL, studyid_file=NULL,
- save_file_path, where_to_run= "local") {
+ save_file_path=NULL, where_to_run= "local") {
+
+  if(is.null(save_file_path)) {
+    save_file_path <- tempdir()
+  }
+
 
  if ((!(is.null(database_path))) & (!(is.null(studyid_file)))) {
  paths <- get_paths(
@@ -73,7 +79,7 @@ ind_number_list <- ind_table$IND_num
   ## app_dir <- fs::path(save_file_path, 'Applications')
   ##   if (!dir.exists(app_dir)) {
   ##       dir.create(app_dir)
-paths$save_file_path <- save_file_path
+## paths$save_file_path <- save_file_path
 	# message("file will be saved in ", paths$save_file_path)
 ## }
 ## study id file
@@ -90,10 +96,10 @@ tempd <- tempdir()
   if(!file.exists(blank_data_path)) {
     saveRDS(blank_data, blank_data_path)
   }
-  demo_data_path <- fs::path(tempd, 'demo.rds')
-  if(!file.exists(demo_data_path)){
-    saveRDS(demo, demo_data_path)
-  }
+  ## demo_data_path <- fs::path(tempd, 'demo.rds')
+  ## if(!file.exists(demo_data_path)){
+  ##   saveRDS(demo, demo_data_path)
+  ## }
 
 
 
@@ -125,7 +131,6 @@ server <- function(input, output, session) {
 
 
  shiny::observeEvent(input$help_application, {
-    # print(input$help_application)
 		  guide_01$init()$start()
 
 	  })
@@ -200,8 +205,13 @@ values$Findings <- ''
       dir_list <- list.dirs(paths$save_file_path, full.names = F, recursive = F)
       if (!basename(user()) %in% dir_list) {
           dir.create(user())
-          file.copy(demo_data_path, user())
+          ## file.copy(demo_data_path, user())
       }
+
+      ## demo_file <- fs::path(paths$save_file_path, basename(fs::path_home()))
+      demo_file <- fs::path(user(), 'demo.rds')
+      if (!demo_file %in% list.files(user(), pattern = '.rds'))
+        saveRDS(demo, demo_file)
   })
 
   ###
@@ -317,19 +327,6 @@ values$Findings <- ''
       values$changeStudyFlag <- T
     }
   })
-
-  #### print when focus and blur
-#   shiny::observe({
-# 	if(!is.null(input$dose1)) {
-# 		rnd <- rnorm(1)
-# 		session$sendCustomMessage("dose_value", "dose1")
-# 	}
-#   })
-
-#   shiny::observeEvent(input$save_now,{
-	
-# 	print(input$save_now)
-#   })
 
 
 

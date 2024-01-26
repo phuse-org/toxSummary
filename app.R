@@ -6,4 +6,6 @@ study_list_path <- "test_data/IND_with_studies_2.csv"
 toxSummary::toxSummary_app(
     database_path = db_path,
     studyid_file = study_list_path,
-    save_file_path = 'test_data/')
+    ## save_file_path = 'test_data/'
+    save_file_path = NULL
+    )
