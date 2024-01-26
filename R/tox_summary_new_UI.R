@@ -16,10 +16,9 @@
 #' @param studyid_file Optional, character\cr
 #' 		file path for studyid
 #' 
-#' @param save_file_path Optional, character\cr
-#'    path where file will be saved when app create any files. 
-#' 		If NULL, file will be saved in current working directory
-#' 
+#' @param save_file_path mandatory, character\cr
+#'    directory where file will be saved when app create any files.
+#'
 #' @param where_to_run Optional, character\cr
 #' 		where app will be running. Default is "local". Should use "rsconnect"
 #'    when deploy to rsconnect.
@@ -48,13 +47,8 @@
 #test
 
 toxSummary_app <- function(database_path=NULL, studyid_file=NULL,
- save_file_path = NULL, where_to_run= "local") {
+ save_file_path, where_to_run= "local") {
 
- if (is.null(save_file_path)) {
-     save_file_path <- getwd()
- } else {
-     save_file_path <- save_file_path
- }
  if ((!(is.null(database_path))) & (!(is.null(studyid_file)))) {
  paths <- get_paths(
      database_path = database_path,
@@ -76,13 +70,12 @@ ind_number_list <- ind_table$IND_num
   )
   ind_number_list <- character(0)
  }
-if (paths$save_file_path == getwd()) {
-    if (!dir.exists("Applications")) {
-        dir.create("Applications")
-    }
-paths$save_file_path <- fs::path(getwd(), "Applications")
+  ## app_dir <- fs::path(save_file_path, 'Applications')
+  ##   if (!dir.exists(app_dir)) {
+  ##       dir.create(app_dir)
+paths$save_file_path <- save_file_path
 	# message("file will be saved in ", paths$save_file_path)
-}
+## }
 ## study id file
 # study id file should a csv with IND number and studyid
 
@@ -92,13 +85,15 @@ www_path <- system.file("", package = "toxSummary")
 dt_extension <- paste0(www_path, "/www/DT_extension" )
 
 ### create blankData.rds and demo.rds files
-
-if(!file.exists("blankData.rds")) {
-	saveRDS(blank_data, "blankData.rds")
-}
-if(!file.exists("demo.rds")){
-	saveRDS(demo, "demo.rds")
-}
+tempd <- tempdir()
+  blank_data_path <- fs::path(tempd, 'blankData.rds')
+  if(!file.exists(blank_data_path)) {
+    saveRDS(blank_data, blank_data_path)
+  }
+  demo_data_path <- fs::path(tempd, 'demo.rds')
+  if(!file.exists(demo_data_path)){
+    saveRDS(demo, demo_data_path)
+  }
 
 
 
@@ -205,7 +200,7 @@ values$Findings <- ''
       dir_list <- list.dirs(paths$save_file_path, full.names = F, recursive = F)
       if (!basename(user()) %in% dir_list) {
           dir.create(user())
-          file.copy("demo.rds", user())
+          file.copy(demo_data_path, user())
       }
   })
 
@@ -308,7 +303,7 @@ values$Findings <- ''
     Data <- getData()
     values$tmpData <- Data[['Nonclinical Information']][[input$selectStudy]]
     if (input$selectStudy=='New Study') {
-      blankData <- readRDS('blankData.rds')
+      blankData <- readRDS(blank_data_path)
       values$tmpData <- blankData[['Nonclinical Information']][[input$selectStudy]]
       #values$tmpData <- Data[['Nonclinical Information']][['New Study']]
     }
@@ -2635,7 +2630,7 @@ htmltools::tagList(
         )
     })
     
-    ## shinyjs::runcodeServer()
+    shinyjs::runcodeServer()
 }
 
 ###############################    UI   ################################ ----
@@ -2664,8 +2659,8 @@ shiny::sidebarLayout(
     overlayOpacity = 0.4),
 
 	#   tags$head(tags$script(src = "button.js")),
-    ## shinyjs::useShinyjs(),
-    ## shinyjs::runcodeUI(),
+    shinyjs::useShinyjs(),
+    shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
