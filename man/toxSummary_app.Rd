@@ -18,9 +18,9 @@ file path for database}
 \item{studyid_file}{Optional, character\cr
 file path for studyid}
 
-\item{save_file_path}{Optional, character\cr
-path where file will be saved when app create any files.
-If NULL, file will be saved in current working directory}
+\item{save_file_path}{optional, character\cr
+directory where files will be saved when app create any files.
+if NULL, all the files will be created in temp directory.}
 
 \item{where_to_run}{Optional, character\cr
 where app will be running. Default is "local". Should use "rsconnect"
@@ -33,7 +33,7 @@ function run the app.
 Run toxSummary app
 }
 \examples{
-\dontrun{
+if(interactive()) {
 toxSummary_app()
 }
 }
