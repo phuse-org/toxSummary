@@ -10,7 +10,7 @@ Description: 'shiny' app that generates plots and summary tables from repeat-dos
         toxicology study results to facilitate holistic evaluation of the drug safety of 
         active pharmaceutical ingredient (API) prior to initiation of clinical trials. 
 License: MIT + file LICENSE
-URL: https://github.com/phuse-org/toxSummary
+URL: https://phuse-org.github.io/toxSummary/, https://github.com/phuse-org/toxSummary
 BugReports: https://github.com/phuse-org/toxSummary/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
