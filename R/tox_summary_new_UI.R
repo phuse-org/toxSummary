@@ -2627,7 +2627,6 @@ htmltools::tagList(
         )
     })
     
-    shinyjs::runcodeServer()
 }
 
 ###############################    UI   ################################ ----
@@ -2656,8 +2655,6 @@ shiny::sidebarLayout(
     overlayOpacity = 0.4),
 
 	#   tags$head(tags$script(src = "button.js")),
-    shinyjs::useShinyjs(),
-    shinyjs::runcodeUI(),
     # tags$head(
     #   tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
     # ),
